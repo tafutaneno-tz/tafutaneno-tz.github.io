@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tafuta Neno</title>
+<meta name="theme-color" content="#f2385a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --card:#ffffff; --card-soft:#f6f1ff; --ink:#120b24; --ink-faded:rgba(29,22,48,.32);
+  --shadow:0 10px 30px rgba(40,10,60,.28);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --card:#fbf8ff; --card-soft:#efe8fb; }
+}
+:root[data-theme="dark"]{ --card:#fbf8ff; --card-soft:#efe8fb; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  height:100%; margin:0; overflow:hidden; overscroll-behavior:none;
+  font-family:"Nunito",system-ui,sans-serif; color:var(--ink);
+  background:#2a1747; -webkit-user-select:none; user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#scene{position:fixed;inset:0;z-index:0;overflow:hidden}
+#scene img{width:100%;height:100%;object-fit:cover;display:block}
+#scene .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.25))}
+#menu{background:linear-gradient(165deg,#ff8a1f 0%,#f2385a 52%,#7d1d78 100%);justify-content:flex-end;padding-bottom:13vh}
+.field{position:absolute;inset:0;overflow:hidden}
+.lt{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:900;
+  color:rgba(255,255,255,.2);line-height:1}
+.lt.hi{color:#fff;z-index:2;opacity:0;animation:fadein .3s ease forwards}
+.pill{position:absolute;border-radius:999px;z-index:1;transform:scaleX(0);transform-origin:left center;
+  box-shadow:0 6px 18px rgba(60,0,40,.35);animation:sweep .5s cubic-bezier(.6,0,.3,1) forwards}
+.menu .menu-actions{position:relative;z-index:3}
+.menu .menu-actions .btn.big{background:#fff;color:#e0245e;box-shadow:0 6px 0 #a3164a,0 12px 24px rgba(60,0,40,.3);text-shadow:none}
+.menu .menu-actions .btn.big:active{box-shadow:0 2px 0 #a3164a}
+.menu .menu-actions .btn.big small{color:#7d1d78}
+.menu .menu-actions .btn.alt{background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.75);box-shadow:none;width:75%}
+.menu .menu-actions .btn.alt:active{transform:scale(.97)}
+.app{
+  position:relative; z-index:1; height:100%;
+  display:flex; flex-direction:column; align-items:center;
+  padding:10px 8px 12px; gap:10px; max-width:600px; margin:0 auto;
+}
+.topbar{width:100%;display:flex;justify-content:space-between;align-items:center}
+.level{
+  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.05rem;color:#fff;
+  background:rgba(0,0,0,.28);padding:4px 14px;border-radius:999px;backdrop-filter:blur(4px);
+}
+.score{font-family:"Baloo 2",sans-serif;font-weight:800;color:#fff;font-size:1.05rem;
+  background:rgba(0,0,0,.28);padding:4px 14px;border-radius:999px}
+.category{
+  width:100%; background:var(--card-soft); border-radius:22px; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.category h1{
+  margin:0; text-align:center; color:#fff;
+  font-family:"Baloo 2",sans-serif; font-weight:800; font-size:1.45rem; letter-spacing:.04em;
+  padding:6px 10px 2px; background:var(--cat,#16a34a);
+}
+.words{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 16px;padding:8px 12px 10px}
+.words span{font-weight:900;font-size:1.25rem;letter-spacing:.02em;transition:color .3s, opacity .3s}
+.words span.found{color:rgba(29,22,48,.4);text-decoration:line-through;text-decoration-thickness:2px}
+.bubble-slot{height:44px;display:flex;align-items:center;justify-content:center}
+.bubble{
+  font-family:"Nunito",sans-serif;font-weight:900;font-size:1.5rem;letter-spacing:.18em;
+  color:#fff;padding:2px 20px 2px 26px;border-radius:999px;box-shadow:0 6px 16px rgba(0,0,0,.25);
+  opacity:0;transform:scale(.8);transition:opacity .12s,transform .12s;
+}
+.bubble.show{opacity:1;transform:scale(1)}
+.board-wrap{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px}
+.board{
+  position:relative; aspect-ratio:1/1; flex:none;
+  background:var(--card); border-radius:26px; box-shadow:var(--shadow);
+  padding:2%; touch-action:none;
+}
+.board-inner{position:relative;width:100%;height:100%}
+.caps{position:absolute;inset:0;pointer-events:none}
+.cap{
+  position:absolute;border-radius:999px;opacity:.92;
+  transition:opacity .2s;
+}
+.cap.temp{opacity:.85}
+.cap.fail{animation:fail .35s ease forwards}
+@keyframes fail{0%{opacity:.85}100%{opacity:0}}
+.cap.pop{animation:pop .3s ease}
+@keyframes pop{0%{filter:brightness(1.4)}100%{filter:none}}
+.grid{position:absolute;inset:0;display:grid}
+.cell{
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;color:var(--ink);line-height:1;position:relative;z-index:1;
+  transition:color .15s;
+}
+.cell.on{color:#fff}
+.overlay{
+  position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;
+  background:rgba(20,8,40,.55);backdrop-filter:blur(3px);
+}
+.overlay.show{display:flex}
+.win{
+  background:var(--card);border-radius:28px;padding:26px 30px;text-align:center;
+  box-shadow:var(--shadow);animation:rise .35s ease;width:min(86vw,340px)
+}
+@keyframes rise{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+.win h2{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:2.2rem;margin:0;color:#e2531f}
+.win p{margin:6px 0 18px;font-size:1.05rem}
+.btn{
+  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.2rem;color:#fff;border:0;cursor:pointer;
+  background:linear-gradient(180deg,#22c55e,#15803d);padding:10px 28px;border-radius:999px;
+  box-shadow:0 5px 0 #0f5e2c;
+}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0f5e2c}
+.btn:focus-visible{outline:3px solid #2f80ed;outline-offset:3px}
+/* ---------- Menu ---------- */
+.home-btn{
+  width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(0,0,0,.28);color:#fff;font-size:1.25rem;display:flex;align-items:center;justify-content:center;
+}
+.home-btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.topbar .left{display:flex;align-items:center;gap:8px}
+.menu{
+  position:fixed;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:34px;padding:24px;
+}
+.menu.show{display:flex}
+.logo{display:flex;flex-direction:column;align-items:center;gap:8px}
+.logo-row{position:relative;display:flex;gap:6px}
+.tile{
+  width:44px;height:50px;border-radius:12px;background:var(--card);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.7rem;
+  box-shadow:0 5px 0 rgba(60,20,80,.35);position:relative;z-index:1;
+  animation:drop .5s cubic-bezier(.3,1.5,.5,1) backwards;
+}
+.logo-row .ring{
+  position:absolute;left:-6px;right:-6px;top:-5px;bottom:-5px;border-radius:999px;
+  background:#e8413c;z-index:0;transform:scaleX(0);transform-origin:left;
+  animation:sweep .45s ease .75s forwards;
+}
+.logo-row.second .tile{color:#fff;background:transparent;box-shadow:none}
+.logo-row.second .tile{animation-name:fadein}
+@keyframes drop{from{transform:translateY(-40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes sweep{to{transform:scaleX(1)}}
+.menu-actions{display:flex;flex-direction:column;align-items:center;gap:14px;width:min(80vw,300px)}
+.btn.big{width:100%;font-size:1.7rem;padding:12px 0 8px;line-height:1.1}
+.btn.big small{display:block;font-size:.95rem;font-weight:600;opacity:.9}
+.btn.alt{width:100%;background:linear-gradient(180deg,#a855f7,#7e22ce);box-shadow:0 5px 0 #581c87}
+.btn.alt:active{box-shadow:0 2px 0 #581c87}
+.levels{
+  position:fixed;inset:0;z-index:6;display:none;align-items:center;justify-content:center;
+  background:rgba(20,8,40,.55);backdrop-filter:blur(3px);
+}
+.levels.show{display:flex}
+.levels-card{background:var(--card);border-radius:28px;padding:20px 22px 24px;width:min(88vw,360px);box-shadow:var(--shadow);animation:rise .3s ease}
+.levels-card h2{font-family:"Baloo 2",sans-serif;font-weight:800;margin:0 0 14px;text-align:center;font-size:1.6rem}
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.lvl{
+  aspect-ratio:1/1;border:0;border-radius:18px;cursor:pointer;color:#fff;
+  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.6rem;line-height:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+}
+.lvl small{font-family:"Nunito",sans-serif;font-size:.62rem;font-weight:900;opacity:.9}
+.lvl:disabled{background:#d9d2e6!important;color:#8d83a0;cursor:default}
+.lvl:focus-visible{outline:3px solid #2f80ed;outline-offset:2px}
+.close-row{text-align:center}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<main class="app">
+  <div class="topbar">
+    <span class="left">
+      <button class="home-btn" id="homeBtn" aria-label="Rudi kwenye menyu">⌂</button>
+      <span class="level" id="levelLbl">Kiwango 1</span>
+    </span>
+    <span class="score" id="countLbl">0/0</span>
+  </div>
+  <section class="category" id="category">
+    <h1 id="catTitle">WANYAMA</h1>
+    <div class="words" id="words"></div>
+  </section>
+  <div class="board-wrap" id="boardWrap">
+    <div class="bubble-slot"><div class="bubble" id="bubble"></div></div>
+    <div class="board" id="board">
+      <div class="board-inner" id="inner">
+        <div class="caps" id="caps"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+  </div>
+</main>
+<section class="menu" id="menu">
+  <div class="field" id="field" role="img" aria-label="Tafuta Neno"></div>
+  <div class="menu-actions">
+    <button class="btn big" id="playBtn">Cheza<small id="playSub">Kiwango 1</small></button>
+    <button class="btn alt" id="levelsBtn">Viwango</button>
+  </div>
+</section>
+<div class="levels" id="levels">
+  <div class="levels-card">
+    <h2>Viwango</h2>
+    <div class="level-grid" id="levelGrid"></div>
+    <div class="close-row"><button class="btn alt" id="closeLevels" style="width:auto;padding:8px 26px">Funga</button></div>
+  </div>
+</div>
+<div class="overlay" id="overlay">
+  <div class="win">
+    <h2>Hongera!</h2>
+    <p id="winText">Umepata maneno yote.</p>
+    <button class="btn" id="nextBtn">Endelea</button>
+  </div>
+</div>
+
+<script>
+/* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
+const LEVELS = [
+  {size:6,  scene:'kiwango1', cat:'WANYAMA', color:'#16a34a',
+   dirs:[[0,1],[1,0]],
+   words:['SIMBA','TWIGA','TEMBO','PAKA','KUKU']},
+  {size:8,  scene:'bahari', cat:'BAHARI', color:'#0891b2',
+   dirs:[[0,1],[1,0],[1,1]],
+   words:['BAHARI','SAMAKI','MCHANGA','JAHAZI','PWEZA','NAZI','KAA']},
+  {size:8, scene:'chakula', cat:'CHAKULA', color:'#c2410c',
+   dirs:[[0,1],[1,0],[1,1],[-1,1]],
+   words:['UGALI','WALI','CHAPATI','MAHARAGE','NDIZI','EMBE','CHAI','MKATE','PILAU']}
+];
+const CAP_COLORS=['#2f80ed','#22b04b','#f2891f','#e8413c','#9b51e0','#13b5a6','#e84393','#e0a800','#3a5bd9'];
+const FILL='ABDEFGHIJKLMNOPRSTUVWYZ'; // Kiswahili alphabet has no Q, X, C alone is rare
+const TAU=Math.PI*2;
+
+/* ---------- Images (from Neno) ---------- */
+const IMG={
+  kiwango1:"images/kiwango1.jpg",
+  bahari:"images/bahari.jpg",
+  chakula:"images/chakula.jpg"
+};
+const SCENE_STYLE={kiwango1:'transform:scale(1.3);transform-origin:50% 0'};
+function setScene(key){
+  $('scene').innerHTML=`<img src="${IMG[key]}" alt="" style="${SCENE_STYLE[key]||''}"><div class="shade"></div>`;
+}
+
+/* ---------- State ---------- */
+let levelIdx=0, L, size, grid, words, colorIdx=0, foundCount=0;
+const $=id=>document.getElementById(id);
+const gridEl=$('grid'), capsEl=$('caps'), innerEl=$('inner'), bubble=$('bubble');
+let sel=null, tempCap=null;
+
+/* ---------- Puzzle generation ---------- */
+function generate(){
+  for(let attempt=0;attempt<200;attempt++){
+    const g=Array.from({length:size},()=>Array(size).fill(''));
+    const placed=[]; let ok=true;
+    const list=[...L.words].sort((a,b)=>b.length-a.length);
+    for(const w of list){
+      let done=false;
+      for(let t=0;t<300 && !done;t++){
+        const [dr,dc]=L.dirs[Math.floor(Math.random()*L.dirs.length)];
+        const r0=Math.floor(Math.random()*size), c0=Math.floor(Math.random()*size);
+        const rEnd=r0+dr*(w.length-1), cEnd=c0+dc*(w.length-1);
+        if(rEnd<0||rEnd>=size||cEnd<0||cEnd>=size) continue;
+        let fits=true;
+        for(let i=0;i<w.length;i++){const ch=g[r0+dr*i][c0+dc*i]; if(ch&&ch!==w[i]){fits=false;break}}
+        if(!fits) continue;
+        const cells=[];
+        for(let i=0;i<w.length;i++){g[r0+dr*i][c0+dc*i]=w[i];cells.push([r0+dr*i,c0+dc*i])}
+        placed.push({w,cells,found:false}); done=true;
+      }
+      if(!done){ok=false;break}
+    }
+    if(!ok) continue;
+    for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(!g[r][c]) g[r][c]=FILL[Math.floor(Math.random()*FILL.length)];
+    grid=g; words=L.words.map(w=>placed.find(p=>p.w===w)); return;
+  }
+}
+
+/* ---------- Render ---------- */
+function startLevel(){
+  L=LEVELS[levelIdx]; size=L.size; colorIdx=0; foundCount=0;
+  generate();
+  setScene(L.scene);
+  $('levelLbl').textContent='Kiwango '+(levelIdx+1);
+  $('catTitle').textContent=L.cat;
+  $('category').style.setProperty('--cat',L.color);
+  $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
+  gridEl.style.gridTemplateColumns=`repeat(${size},1fr)`;
+  gridEl.style.gridTemplateRows=`repeat(${size},1fr)`;
+  gridEl.innerHTML='';
+  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+    const d=document.createElement('div'); d.className='cell'; d.textContent=grid[r][c];
+    d.dataset.r=r; d.dataset.c=c; gridEl.appendChild(d);
+  }
+  capsEl.innerHTML=''; updateCount(); fitBoard();
+}
+function updateCount(){$('countLbl').textContent=foundCount+'/'+words.length}
+
+function fitBoard(){
+  const wrap=$('boardWrap'), board=$('board');
+  const s=Math.min(wrap.clientWidth, wrap.clientHeight-52);
+  board.style.width=s+'px'; board.style.height=s+'px';
+  const cs=innerEl.clientWidth/size;
+  gridEl.style.fontSize=(cs*0.64)+'px';
+  redrawCaps();
+}
+
+/* ---------- Capsules ---------- */
+function cellCenter(r,c){const cs=innerEl.clientWidth/size;return [(c+.5)*cs,(r+.5)*cs]}
+function placeCap(el,a,b){
+  const cs=innerEl.clientWidth/size, h=cs*0.82;
+  const [x1,y1]=cellCenter(a[0],a[1]), [x2,y2]=cellCenter(b[0],b[1]);
+  const dist=Math.hypot(x2-x1,y2-y1), ang=Math.atan2(y2-y1,x2-x1);
+  el.style.left=(x1-h/2)+'px'; el.style.top=(y1-h/2)+'px';
+  el.style.width=(dist+h)+'px'; el.style.height=h+'px';
+  el.style.transformOrigin=`${h/2}px ${h/2}px`;
+  el.style.transform=`rotate(${ang}rad)`;
+}
+function redrawCaps(){
+  capsEl.querySelectorAll('.cap').forEach(el=>{
+    if(el._a) placeCap(el,el._a,el._b);
+  });
+}
+function makeCap(color,a,b,cls){
+  const el=document.createElement('div'); el.className='cap '+(cls||'');
+  el.style.background=color; el._a=a; el._b=b; placeCap(el,a,b); capsEl.appendChild(el); return el;
+}
+
+/* ---------- Selection ---------- */
+function cellFromPoint(x,y){
+  const rect=innerEl.getBoundingClientRect(), cs=rect.width/size;
+  let c=Math.floor((x-rect.left)/cs), r=Math.floor((y-rect.top)/cs);
+  return [Math.max(0,Math.min(size-1,r)),Math.max(0,Math.min(size-1,c))];
+}
+function snapEnd(start,raw){
+  const dr=raw[0]-start[0], dc=raw[1]-start[1];
+  if(dr===0&&dc===0) return start;
+  const ang=Math.atan2(dr,dc), step=Math.round(ang/(Math.PI/4));
+  const sa=step*Math.PI/4, ur=Math.round(Math.sin(sa)), uc=Math.round(Math.cos(sa));
+  let len=Math.max(Math.abs(dr),Math.abs(dc));
+  while(len>0){const r=start[0]+ur*len, c=start[1]+uc*len; if(r>=0&&r<size&&c>=0&&c<size) return [r,c]; len--}
+  return start;
+}
+function pathCells(a,b){
+  const dr=Math.sign(b[0]-a[0]), dc=Math.sign(b[1]-a[1]);
+  const n=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]));
+  const out=[]; for(let i=0;i<=n;i++) out.push([a[0]+dr*i,a[1]+dc*i]); return out;
+}
+function cellEl(r,c){return gridEl.children[r*size+c]}
+function lightPath(cells){
+  gridEl.querySelectorAll('.cell.temp-on').forEach(e=>{e.classList.remove('temp-on'); if(!e._found) e.classList.remove('on')});
+  cells.forEach(([r,c])=>{const e=cellEl(r,c); e.classList.add('on','temp-on')});
+}
+
+const board=$('board');
+board.addEventListener('pointerdown',e=>{
+  if($('overlay').classList.contains('show')) return;
+  board.setPointerCapture(e.pointerId);
+  const s=cellFromPoint(e.clientX,e.clientY);
+  const color=CAP_COLORS[colorIdx%CAP_COLORS.length];
+  sel={start:s,end:s,color};
+  tempCap=makeCap(color,s,s,'temp');
+  bubble.style.background=color;
+  updateSel();
+});
+board.addEventListener('pointermove',e=>{
+  if(!sel) return;
+  const end=snapEnd(sel.start,cellFromPoint(e.clientX,e.clientY));
+  if(end[0]!==sel.end[0]||end[1]!==sel.end[1]){sel.end=end; updateSel()}
+});
+function updateSel(){
+  tempCap._a=sel.start; tempCap._b=sel.end; placeCap(tempCap,sel.start,sel.end);
+  const cells=pathCells(sel.start,sel.end); lightPath(cells);
+  bubble.textContent=cells.map(([r,c])=>grid[r][c]).join('');
+  bubble.classList.add('show');
+}
+function endSel(){
+  if(!sel) return;
+  const cells=pathCells(sel.start,sel.end);
+  const str=cells.map(([r,c])=>grid[r][c]).join('');
+  const rev=[...str].reverse().join('');
+  const hit=words.findIndex(w=>!w.found && (w.w===str||w.w===rev) && cells.length===w.w.length);
+  bubble.classList.remove('show');
+  if(hit>=0){
+    const w=words[hit]; w.found=true; foundCount++; colorIdx++;
+    tempCap.classList.remove('temp'); tempCap.classList.add('pop');
+    cells.forEach(([r,c])=>{const e=cellEl(r,c); e._found=true; e.classList.add('on'); e.classList.remove('temp-on')});
+    $('w'+hit).classList.add('found'); updateCount();
+    if(navigator.vibrate) try{navigator.vibrate(25)}catch(_){}
+    if(foundCount===words.length) setTimeout(showWin,550);
+  }else{
+    const dead=tempCap; dead.classList.add('fail'); setTimeout(()=>dead.remove(),360);
+    lightPath([]);
+  }
+  sel=null; tempCap=null;
+}
+board.addEventListener('pointerup',endSel);
+board.addEventListener('pointercancel',endSel);
+
+/* ---------- Progress (saved on this device) ---------- */
+let unlocked=1; // number of levels opened
+try{ const v=parseInt(localStorage.getItem('tn_unlocked'),10); if(v>0) unlocked=Math.min(v,LEVELS.length) }catch(_){}
+function saveProgress(){ try{ localStorage.setItem('tn_unlocked',String(unlocked)) }catch(_){} }
+
+/* ---------- Win ---------- */
+function showWin(){
+  const last=levelIdx===LEVELS.length-1;
+  if(!last && unlocked<levelIdx+2){ unlocked=levelIdx+2; saveProgress(); }
+  $('winText').textContent= last ? 'Umemaliza viwango vyote vya majaribio!' : 'Umepata maneno yote.';
+  $('nextBtn').textContent= last ? 'Menyu' : 'Endelea';
+  $('overlay').classList.add('show');
+}
+$('nextBtn').addEventListener('click',()=>{
+  $('overlay').classList.remove('show');
+  if(levelIdx===LEVELS.length-1){ showMenu(); return; }
+  levelIdx++; startLevel();
+});
+
+/* ---------- Menu ---------- */
+function buildField(){
+  const f=$('field'); f.innerHTML='';
+  const W=f.clientWidth||window.innerWidth, H=f.clientHeight||window.innerHeight;
+  const cs=Math.max(40,Math.min(58,W/7.2));
+  const ox=W/2-3*cs, oy=0, rows=Math.ceil(H/cs)+1;
+  const cmin=-Math.ceil(ox/cs), cmax=Math.ceil((W-ox)/cs);
+  const r1=Math.max(1,Math.floor(rows*0.30)), r2=r1+1, c1=0, c2=2;
+  const special={};
+  [...'TAFUTA'].forEach((ch,i)=>special[r1+','+(c1+i)]=ch);
+  [...'NENO'].forEach((ch,i)=>special[r2+','+(c2+i)]=ch);
+  let html='';
+  for(let r=0;r<rows;r++)for(let c=cmin;c<cmax;c++){
+    const k=r+','+c, hi=special[k];
+    const ch=hi||FILL[Math.floor(Math.random()*FILL.length)];
+    const delay=hi?(r===r1?0.35+(c-c1)*0.06:1.0+(c-c2)*0.06):0;
+    html+=`<span class="lt${hi?' hi':''}" style="left:${ox+c*cs}px;top:${oy+r*cs}px;width:${cs}px;height:${cs}px;font-size:${cs*(hi?.62:.48)}px${hi?`;animation-delay:${delay}s`:''}">${ch}</span>`;
+  }
+  const pill=(r,c,n,color,delay)=>`<span class="pill" style="left:${ox+c*cs+cs*.06}px;top:${oy+r*cs+cs*.1}px;width:${n*cs-cs*.12}px;height:${cs*.8}px;background:${color};animation-delay:${delay}s"></span>`;
+  html+=pill(r1,c1,6,'#159a8c',0.2)+pill(r2,c2,4,'#3b2a8f',0.85);
+  f.innerHTML=html;
+}
+function showMenu(){
+  document.querySelector('.app').style.visibility='hidden';
+  $('playSub').textContent='Kiwango '+unlocked;
+  $('menu').classList.add('show');
+  buildField();
+}
+function startGame(idx){
+  levelIdx=idx;
+  $('menu').classList.remove('show'); $('levels').classList.remove('show');
+  document.querySelector('.app').style.visibility='visible';
+  startLevel(); requestAnimationFrame(fitBoard);
+}
+function openLevels(){
+  $('levelGrid').innerHTML=LEVELS.map((lv,i)=>{
+    const open=i<unlocked;
+    return `<button class="lvl" data-i="${i}" ${open?'':'disabled'} style="background:${lv.color}">${open?(i+1):'🔒'}<small>${lv.cat}</small></button>`;
+  }).join('');
+  $('levels').classList.add('show');
+}
+$('playBtn').addEventListener('click',()=>startGame(unlocked-1));
+$('levelsBtn').addEventListener('click',openLevels);
+$('closeLevels').addEventListener('click',()=>$('levels').classList.remove('show'));
+$('levelGrid').addEventListener('click',e=>{
+  const b=e.target.closest('.lvl'); if(b && !b.disabled) startGame(+b.dataset.i);
+});
+$('homeBtn').addEventListener('click',showMenu);
+
+window.addEventListener('resize',fitBoard);
+showMenu();
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
