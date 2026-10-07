@@ -300,10 +300,35 @@ body{
 .lvl:disabled{background:#d9d2e6!important;color:#8d83a0;cursor:default}
 .lvl:focus-visible{outline:3px solid #2f80ed;outline-offset:2px}
 .close-row{text-align:center}
+
+/* ---------- Loading screen ---------- */
+#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  background:linear-gradient(165deg,#ff8a1f 0%,#f2385a 52%,#7d1d78 100%);transition:opacity .45s ease,visibility .45s}
+#splash.out{opacity:0;visibility:hidden}
+.sp-row{display:flex;gap:6px;position:relative}
+.sp-t{width:44px;height:52px;border-radius:12px;background:#fff;color:#1d1630;display:flex;align-items:center;justify-content:center;
+  font:900 1.8rem/1 "Nunito",system-ui,sans-serif;box-shadow:0 5px 0 rgba(80,10,60,.35);animation:spdrop .5s cubic-bezier(.3,1.5,.5,1) both}
+.sp-row.neno .sp-t{background:transparent;color:#fff;box-shadow:none;position:relative;z-index:1}
+.sp-cap{position:absolute;inset:-4px -8px;border-radius:999px;background:#159a8c;transform:scaleX(0);transform-origin:left;animation:spsweep .5s ease 1s forwards}
+@keyframes spdrop{from{transform:translateY(-40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes spsweep{to{transform:scaleX(1)}}
+.sp-bar{width:min(60vw,240px);height:10px;border-radius:5px;background:rgba(255,255,255,.3);overflow:hidden}
+.sp-bar i{display:block;height:100%;width:40%;border-radius:5px;background:#fff;animation:spload 1.1s ease-in-out infinite}
+@keyframes spload{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+.sp-txt{color:#fff;font:800 1rem "Nunito",system-ui,sans-serif;opacity:.9;margin-top:-14px}
+@media (prefers-reduced-motion: reduce){ .sp-t{opacity:1} .sp-cap{transform:none} .sp-bar i{width:100%} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} .lt.hi{opacity:1!important} .pill{transform:none!important} .tile{opacity:1} }
 </style>
 </head>
 <body>
+<div id="splash" role="status" aria-label="Inapakia">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+    <div class="sp-row"><span class="sp-t" style="animation-delay:0.00s">T</span><span class="sp-t" style="animation-delay:0.07s">A</span><span class="sp-t" style="animation-delay:0.14s">F</span><span class="sp-t" style="animation-delay:0.21s">U</span><span class="sp-t" style="animation-delay:0.28s">T</span><span class="sp-t" style="animation-delay:0.35s">A</span></div>
+    <div class="sp-row neno"><span class="sp-cap"></span><span class="sp-t" style="animation-delay:0.50s">N</span><span class="sp-t" style="animation-delay:0.57s">E</span><span class="sp-t" style="animation-delay:0.64s">N</span><span class="sp-t" style="animation-delay:0.71s">O</span></div>
+  </div>
+  <div class="sp-bar"><i></i></div>
+  <div class="sp-txt">Inapakia…</div>
+</div>
 <div id="scene"></div>
 <main class="app">
   <div class="topbar">
@@ -1303,6 +1328,15 @@ $('homeBtn').addEventListener('click',()=>{ sfx.back(); showMenu('home'); });
 window.addEventListener('resize',fitBoard);
 showMenu();
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+
+/* hide the loading screen once fonts and the page are ready (shown at least 1.6 s so the logo can play, at most 5 s) */
+(()=>{ const t0=performance.now(); let done=false;
+  const hide=()=>{ if(done) return; done=true; const sp=$('splash'); sp.classList.add('out'); setTimeout(()=>sp.remove(),600); };
+  const ready=Promise.all([ new Promise(r=> document.readyState==='complete' ? r() : window.addEventListener('load',r,{once:true})),
+                            (document.fonts && document.fonts.ready) ? document.fonts.ready.catch(()=>{}) : Promise.resolve() ]);
+  ready.then(()=> setTimeout(hide, Math.max(0, 1600-(performance.now()-t0))));
+  setTimeout(hide, 5000);
+})();
 </script>
 </body>
 </html>
