@@ -125,6 +125,23 @@ body{
 .btn.share{background:linear-gradient(180deg,#25d366,#128c4a);box-shadow:0 5px 0 #0b6b37;display:inline-flex;align-items:center;gap:8px}
 .btn.share:active{box-shadow:0 2px 0 #0b6b37}
 .btn.share svg{width:22px;height:22px}
+.words.picha{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 10px;padding:8px 10px 10px}
+.words.picha span{display:flex;flex-direction:column;align-items:center;min-width:3.6em;padding:2px 4px;border-radius:12px;background:rgba(255,255,255,.55)}
+.words.picha span b{font-size:2rem;line-height:1.15;font-weight:400}
+.words.picha span i{font-style:normal;font-size:.72rem;letter-spacing:.05em;visibility:hidden;color:#15803d}
+.words.picha span.found{background:rgba(34,197,94,.18)}
+.words.picha span.found i{visibility:visible}
+.words.picha span.found::after{display:none}
+.coin-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);color:#fff;font:900 1rem "Nunito",sans-serif;padding:5px 14px 5px 8px;border-radius:999px;border:2px solid rgba(255,255,255,.7)}
+.coin{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b0,#f6c21c 45%,#c98a06);box-shadow:inset 0 -2px 0 rgba(0,0,0,.2);display:inline-block}
+#menu .coin-pill{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));left:14px;z-index:7}
+#menu.dim .coin-pill{display:none}
+.hint-btn .cost{display:inline-flex;align-items:center;gap:3px;font-size:.85rem}
+.hint-btn .coin{width:15px;height:15px}
+.win-coins{display:inline-flex;align-items:center;gap:6px;font:900 1.1rem "Nunito",sans-serif;color:#fff;background:rgba(0,0,0,.3);padding:5px 14px;border-radius:999px}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:30;pointer-events:none;border-radius:2px}
+html.lite .overlay,html.lite .sheet,html.lite .levels,html.lite .tabbar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.lite .overlay{background:rgba(20,8,40,.82)!important}
 .cap.gold{background:#f5b301!important;animation:goldfade .9s ease forwards}
 @keyframes goldfade{0%{opacity:.95}60%{opacity:.95}100%{opacity:0}}
 .sheet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(20,8,40,.6);backdrop-filter:blur(3px)}
@@ -370,7 +387,7 @@ body{
   </section>
   <div class="board-wrap" id="boardWrap">
     <div class="bubble-slot"><div class="bubble" id="bubble"></div>
-      <button class="hint-btn" id="hintBtn" aria-label="Kidokezo">💡 <span id="hintLeft">3</span></button></div>
+      <button class="hint-btn" id="hintBtn" aria-label="Kidokezo">💡 <span class="cost"><span class="coin"></span>25</span></button></div>
     <div class="board" id="board">
       <div class="board-inner" id="inner">
         <div class="caps" id="caps"></div>
@@ -383,6 +400,7 @@ body{
   <div class="field" id="field" role="img" aria-label="Tafuta Neno"></div>
   <button class="sound-btn" id="soundBtn" aria-label="Zima sauti">🔊</button>
   <button class="music-btn" id="musicBtnMenu" aria-label="Zima muziki">🎵</button>
+  <div class="coin-pill" aria-label="Sarafu"><span class="coin"></span><span data-coins>100</span></div>
   <canvas class="globe" id="globe" aria-label="Tufe la maneno ya Kiswahili. Lizungushe kwa kidole, gusa neno kuona kundi lake."></canvas>
   <div class="pane pane-home" data-pane="home">
     <div class="greet" id="greet">Habari!</div>
@@ -414,6 +432,7 @@ body{
     <div class="win-stats" id="winText">Umepata maneno yote.</div>
     <div class="prog"><div class="track"><div class="fill" id="progFill"></div></div><span class="gift">🎁</span></div>
     <div class="win-stats" id="progText"></div>
+    <div class="win-coins" id="winCoins"><span class="coin"></span><span id="winCoinsTxt">+10</span></div>
     <button class="btn" id="nextBtn">Kiwango kinachofuata</button>
     <button class="btn share" id="shareBtn"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.6.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>Shiriki</button>
   </div>
@@ -714,7 +733,7 @@ const MIX_WORDS="ZEITUNI MANJANO HAYA AYA UKOA KOA KUA KUO SHIA|ASI SAI SIA NDIY
 
 const D4=[[0,1],[1,0],[1,1],[-1,1]], D6=D4.concat([[0,-1],[-1,0]]), D8=D6.concat([[-1,-1],[1,-1]]);
 /* ---------- Methali (Swahili proverbs): fill-in-the-blank levels — level 7, then every 5th level ---------- */
-const METHALI=["Haba na haba hujaza kibaba", "Pole pole ndio mwendo", "Haraka haraka haina baraka", "Penye nia pana njia", "Usipoziba ufa utajenga ukuta", "Kidole kimoja hakivunji chawa", "Mchelea mwana kulia hulia yeye", "Asiyesikia la mkuu huvunjika guu", "Mgeni njoo mwenyeji apone", "Akili ni nywele kila mtu ana zake", "Bandu bandu huisha gogo", "Mtaka cha mvunguni sharti ainame", "Asiyefunzwa na mamaye hufunzwa na ulimwengu", "Fimbo ya mbali haiui nyoka", "Umoja ni nguvu utengano ni udhaifu", "Dalili ya mvua ni mawingu", "Mwenda pole hajikwai", "Chovya chovya humaliza buyu la asali", "Mchagua jembe si mkulima", "Mwenye macho haambiwi tazama", "Usione vyaelea vimeundwa", "Kila ndege huruka na mbawa zake", "Mvumilivu hula mbivu", "Samaki mkunje angali mbichi", "Jogoo la shamba haliwiki mjini", "Hakuna marefu yasiyo na ncha", "Wapiganapo tembo nyasi huumia", "Kupotea njia ndiko kujua njia", "Ahadi ni deni", "Kawia ufike", "Mtoto umleavyo ndivyo akuavyo", "Simba mwenda kimya ndiye mla nyama", "Nyumba njema si mlango", "Heri kujikwaa kidole kuliko kujikwaa ulimi", "Mpanda ngazi hushuka", "Ukupigao ndio ukufunzao", "Elimu ni bahari", "Mchumia juani hulia kivulini", "Akipenda chongo huita kengeza", "Kizuri chajiuza kibaya chajitembeza", "Mtu ni watu", "Damu nzito kuliko maji", "Mti mkuu ukigwa wana wa ndege huyumba", "Siku za mwizi ni arobaini"];
+const METHALI=["Haba na haba hujaza kibaba", "Pole pole ndio mwendo", "Haraka haraka haina baraka", "Penye nia pana njia", "Usipoziba ufa utajenga ukuta", "Kidole kimoja hakivunji chawa", "Mchelea mwana kulia hulia yeye", "Asiyesikia la mkuu huvunjika guu", "Mgeni njoo mwenyeji apone", "Akili ni nywele kila mtu ana zake", "Bandu bandu huisha gogo", "Mtaka cha mvunguni sharti ainame", "Asiyefunzwa na mamaye hufunzwa na ulimwengu", "Fimbo ya mbali haiui nyoka", "Umoja ni nguvu utengano ni udhaifu", "Dalili ya mvua ni mawingu", "Mwenda pole hajikwai", "Chovya chovya humaliza buyu la asali", "Mchagua jembe si mkulima", "Mwenye macho haambiwi tazama", "Usione vyaelea vimeundwa", "Kila ndege huruka na mbawa zake", "Mvumilivu hula mbivu", "Samaki mkunje angali mbichi", "Jogoo la shamba haliwiki mjini", "Hakuna marefu yasiyo na ncha", "Wapiganapo tembo nyasi huumia", "Kupotea njia ndiko kujua njia", "Ahadi ni deni", "Kawia ufike", "Mtoto umleavyo ndivyo akuavyo", "Simba mwenda kimya ndiye mla nyama", "Nyumba njema si mlango", "Heri kujikwaa kidole kuliko kujikwaa ulimi", "Mpanda ngazi hushuka", "Ukupigao ndio ukufunzao", "Elimu ni bahari", "Mchumia juani hulia kivulini", "Akipenda chongo huita kengeza", "Kizuri chajiuza kibaya chajitembeza", "Mtu ni watu", "Damu nzito kuliko maji", "Mti mkuu ukigwa wana wa ndege huyumba", "Siku za mwizi ni arobaini", "Mwenye kovu usidhani kapoa", "Mkono mmoja haulei mwana", "Mti hawendi ila kwa nyenzo", "Fadhila za punda ni mateke", "Mtoto wa nyoka ni nyoka", "Mcheza hawi kiwete ngoma yataka matao", "Tamaa mbele mauti nyuma", "Mtaka yote hukosa yote", "Mpiga ngumi ukuta huumiza mkonowe", "Njia ya mwongo ni fupi", "Kuishi kwingi ni kuona mengi", "Hasira hasara", "Subira huvuta heri", "Akufaaye kwa dhiki ndiye rafiki", "Usisafiri kwa nyota ya mwenzio", "Lila na fila hazitangamani", "Mzigo wa mwenzio ni kanda la usufi"];
 const METHALI_PER_LEVEL=3;
 function methaliBlanks(k, cycle){
   const text=METHALI[k%METHALI.length], toks=text.toUpperCase().split(" ");
@@ -732,17 +751,28 @@ function methaliLevel(m, dirs){
   while(letters>size*size*0.5 && size<8) size++;
   return {size, cat:"METHALI", color:"#b45309", dirs, words, methali:{series}};
 }
+/* ---------- Picha (picture) levels: emojis instead of written words — level 15, then every 10 levels ---------- */
+const PICHA=[["WANYAMA", [["🦁", "SIMBA"], ["🐘", "TEMBO"], ["🐆", "CHUI"], ["🦏", "FARU"], ["🐊", "MAMBA"], ["🐍", "NYOKA"], ["🐒", "TUMBILI"], ["🦍", "SOKWE"], ["🐢", "KOBE"], ["🐇", "SUNGURA"], ["🐸", "CHURA"], ["🦇", "POPO"]]], ["MIFUGO", [["🐕", "MBWA"], ["🐈", "PAKA"], ["🐓", "JOGOO"], ["🐔", "KUKU"], ["🐐", "MBUZI"], ["🐑", "KONDOO"], ["🐖", "NGURUWE"], ["🐫", "NGAMIA"], ["🐎", "FARASI"], ["🦆", "BATA"]]], ["BAHARI", [["🐟", "SAMAKI"], ["🐙", "PWEZA"], ["🦀", "KAA"], ["🦈", "PAPA"], ["🐋", "NYANGUMI"], ["🐬", "POMBOO"], ["🌊", "BAHARI"], ["⛵", "JAHAZI"], ["🚢", "MELI"], ["🐚", "KOMBE"]]], ["WADUDU", [["🐝", "NYUKI"], ["🦋", "KIPEPEO"], ["🐜", "SISIMIZI"], ["🕷", "BUIBUI"], ["🐌", "KONOKONO"], ["🦂", "NGE"], ["🦉", "BUNDI"], ["🐦", "NDEGE"]]], ["CHAKULA", [["🍌", "NDIZI"], ["🍍", "NANASI"], ["🍊", "CHUNGWA"], ["🍋", "LIMAU"], ["🍉", "TIKITI"], ["🍇", "ZABIBU"], ["🍎", "TUFAHA"], ["🍅", "NYANYA"], ["🥕", "KAROTI"], ["🌽", "MAHINDI"], ["🥔", "VIAZI"], ["🍞", "MKATE"], ["🥚", "YAI"], ["🥛", "MAZIWA"], ["☕", "KAHAWA"], ["🍵", "CHAI"], ["🍚", "WALI"], ["🍯", "ASALI"]]], ["NYUMBANI", [["📚", "KITABU"], ["✏", "PENSELI"], ["🔑", "UFUNGUO"], ["⏰", "SAA"], ["📱", "SIMU"], ["💻", "KOMPYUTA"], ["📺", "RUNINGA"], ["📻", "REDIO"], ["📷", "KAMERA"], ["🚪", "MLANGO"], ["🛏", "KITANDA"], ["🔦", "TOCHI"]]], ["MAVAZI", [["👓", "MIWANI"], ["👕", "SHATI"], ["👗", "GAUNI"], ["👟", "VIATU"], ["🎩", "KOFIA"], ["💍", "PETE"], ["👜", "MKOBA"], ["☂", "MWAVULI"]]], ["MICHEZO", [["⚽", "MPIRA"], ["🥁", "NGOMA"], ["🎸", "GITAA"], ["🏆", "KOMBE"], ["🥇", "MEDALI"], ["🎁", "ZAWADI"], ["🎈", "PUTO"]]], ["USAFIRI", [["🚗", "GARI"], ["🚌", "BASI"], ["🚲", "BAISKELI"], ["🏍", "PIKIPIKI"], ["🚂", "TRENI"], ["✈", "NDEGE"], ["🚕", "TEKSI"]]], ["ANGA", [["🌞", "JUA"], ["🌙", "MWEZI"], ["⭐", "NYOTA"], ["☁", "WINGU"], ["🌧", "MVUA"], ["🔥", "MOTO"], ["💧", "MAJI"], ["⛰", "MLIMA"], ["🌳", "MTI"], ["🌸", "UA"], ["🌈", "UPINDE"], ["❄", "BARAFU"]]], ["MWILI", [["👁", "JICHO"], ["👂", "SIKIO"], ["👃", "PUA"], ["👄", "MDOMO"], ["✋", "MKONO"], ["❤", "MOYO"], ["🧠", "UBONGO"]]]];
+function pichaLevel(q, dirs){
+  const [cat,row]=PICHA[q%PICHA.length], cyc=Math.floor(q/PICHA.length), R=rng(5501+q*97);
+  const pool=[...row]; for(let i=pool.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const pick=pool.slice(0,Math.min(6+(cyc>0?1:0),pool.length));
+  const words=pick.map(x=>x[1]), letters=words.reduce((a,w)=>a+w.length,0), size=letters>34?8:7;
+  return {size, cat:'PICHA · '+cat, color:'#0e7490', dirs, words, picha:Object.fromEntries(pick.map(x=>[x[1],x[0]]))};
+}
 /* ---------- Orodha (real-life lists with checkboxes): level 10, then every 10 levels ---------- */
-const ORODHA=[["ORODHA YA SOKONI", "🛒", "#0f766e", "NYANYA VITUNGUU MCHELE MAFUTA SUKARI CHUMVI NDIZI MAYAI"], ["MAPISHI YA PILAU", "🍲", "#c2410c", "MCHELE NYAMA KITUNGUU VIAZI MAFUTA CHUMVI BIZARI ILIKI"], ["FUTARI YA RAMADHANI", "🌙", "#4338ca", "TENDE UJI SAMBUSA BAJIA MANDAZI CHAI MATUNDA MHOGO"], ["SAFARI YA SERENGETI", "🦒", "#a16207", "KAMERA MAJI KOFIA RAMANI DARUBINI CHAKULA TIKETI MKOBA"], ["MKOBA WA SHULE", "🎒", "#1d4ed8", "KITABU DAFTARI KALAMU PENSELI RULA KIFUTIO RAMANI KAMUSI"], ["MAANDALIZI YA HARUSI", "💍", "#be185d", "PETE KEKI MAUA NGOMA ZAWADI GAUNI SUTI WAGENI"], ["SIKUKUU YA IDD", "🕌", "#047857", "KANZU BAIBUI PILAU BIRIANI HALUA ZAWADI MANUKATO WAGENI"], ["CHAI YA ASUBUHI", "☕", "#92400e", "CHAI MAZIWA SUKARI MKATE SIAGI MANDAZI MAYAI ASALI"], ["SIKU YA UFUKWENI", "🏖️", "#0891b2", "TAULO MAJI KOFIA MPIRA MIWANI MWAVULI NDOO KAPTULA"], ["KUSAFISHA NYUMBA", "🧹", "#7c3aed", "UFAGIO NDOO SABUNI MAJI KITAMBAA DIRISHA SAKAFU TAKATAKA"], ["KAZI YA SHAMBANI", "🌱", "#15803d", "JEMBE PANGA MBEGU MBOLEA MAJI NDOO KOFIA MAHINDI"], ["SIKUKUU YA KRISMASI", "🎄", "#b91c1c", "MTI ZAWADI KEKI PILAU NYIMBO NGUO FAMILIA TAA"], ["SAFARI YA BASI", "🚌", "#b91c1c", "TIKETI BEGI PESA SIMU MAJI CHAKULA KITI DEREVA"], ["SIKU YA KUZALIWA", "🎂", "#db2777", "KEKI MISHUMAA ZAWADI MAPUTO MUZIKI MARAFIKI SODA PIPI"], ["MATUNDA YA SOKONI", "🍍", "#ea580c", "EMBE NANASI PAPAI NDIZI TIKITI CHUNGWA PERA NAZI"]];
+const ORODHA=[["ORODHA YA SOKONI", "🛒", "#0f766e", "NYANYA VITUNGUU MCHELE MAFUTA SUKARI CHUMVI NDIZI MAYAI"], ["MAPISHI YA PILAU", "🍲", "#c2410c", "MCHELE NYAMA KITUNGUU VIAZI MAFUTA CHUMVI BIZARI ILIKI"], ["FUTARI YA RAMADHANI", "🌙", "#4338ca", "TENDE UJI SAMBUSA BAJIA MANDAZI CHAI MATUNDA MHOGO"], ["SAFARI YA SERENGETI", "🦒", "#a16207", "KAMERA MAJI KOFIA RAMANI DARUBINI CHAKULA TIKETI MKOBA"], ["MKOBA WA SHULE", "🎒", "#1d4ed8", "KITABU DAFTARI KALAMU PENSELI RULA KIFUTIO RAMANI KAMUSI"], ["MAANDALIZI YA HARUSI", "💍", "#be185d", "PETE KEKI MAUA NGOMA ZAWADI GAUNI SUTI WAGENI"], ["SIKUKUU YA IDD", "🕌", "#047857", "KANZU BAIBUI PILAU BIRIANI HALUA ZAWADI MANUKATO WAGENI"], ["CHAI YA ASUBUHI", "☕", "#92400e", "CHAI MAZIWA SUKARI MKATE SIAGI MANDAZI MAYAI ASALI"], ["SIKU YA UFUKWENI", "🏖️", "#0891b2", "TAULO MAJI KOFIA MPIRA MIWANI MWAVULI NDOO KAPTULA"], ["KUSAFISHA NYUMBA", "🧹", "#7c3aed", "UFAGIO NDOO SABUNI MAJI KITAMBAA DIRISHA SAKAFU TAKATAKA"], ["KAZI YA SHAMBANI", "🌱", "#15803d", "JEMBE PANGA MBEGU MBOLEA MAJI NDOO KOFIA MAHINDI"], ["SIKUKUU YA KRISMASI", "🎄", "#b91c1c", "MTI ZAWADI KEKI PILAU NYIMBO NGUO FAMILIA TAA"], ["SAFARI YA BASI", "🚌", "#b91c1c", "TIKETI BEGI PESA SIMU MAJI CHAKULA KITI DEREVA"], ["SIKU YA KUZALIWA", "🎂", "#db2777", "KEKI MISHUMAA ZAWADI MAPUTO MUZIKI MARAFIKI SODA PIPI"], ["MATUNDA YA SOKONI", "🍍", "#ea580c", "EMBE NANASI PAPAI NDIZI TIKITI CHUNGWA PERA NAZI"], ["MPIRA WA MIGUU", "⚽", "#16a34a", "MPIRA GOLI KIPA REFA TIMU JEZI FILIMBI UWANJA"], ["SOKO LA SAMAKI", "🐟", "#0369a1", "SAMAKI PWEZA DAGAA NGISI KAA PAPA CHEWA SANGARA"], ["MAPISHI YA UGALI", "🍽️", "#a16207", "UNGA MAJI SUFURIA MWIKO MOTO MBOGA NYAMA CHUMVI"], ["KWENYE BENKI", "🏦", "#334155", "PESA KADI RISITI FOMU KALAMU FOLENI AKIBA SAINI"], ["KWA DAKTARI", "🏥", "#dc2626", "DAKTARI NESI DAWA SINDANO KITANDA HOMA JOTO KADI"], ["SAFARI YA ZANZIBAR", "🌴", "#0d9488", "BOTI TIKETI KAMERA KOFIA MIWANI TAULO PESA RAMANI"], ["VYOMBO VYA JIKONI", "🍳", "#c2410c", "SUFURIA SAHANI KIKOMBE KIJIKO UMA KISU BAKULI BIRIKA"], ["BUSTANI YA MAUA", "🌺", "#be185d", "MAUA WARIDI MBEGU UDONGO MAJI NDOO JEMBE MTI"], ["KUPANDA KILIMANJARO", "🏔️", "#475569", "VIATU KOTI MAJI RAMANI KOFIA HEMA TOCHI FIMBO"], ["SIKU YA MVUA", "☔", "#1d4ed8", "MWAVULI KOTI BUTI MAWINGU RADI TOPE MAJI BARIDI"]];
 function orodhaLevel(o, dirs){
   const [title,emoji,color,ws]=ORODHA[o%ORODHA.length], words=ws.split(' ');
   const letters=words.reduce((a,w)=>a+w.length,0), size= letters>40 ? 9 : 8;
   return {size, cat:title+' '+emoji, color, dirs, words, orodha:true};
 }
-(()=>{ const out=[]; let m=0, o=0;
+(()=>{ const out=[]; let m=0, o=0, q=0;
   LEVELS.forEach(Lv=>{ const n=out.length+1;
     if(n>=7 && (n-7)%5===0){ out.push(methaliLevel(m, n<=15?D4:n<=40?D6:D8)); m+=METHALI_PER_LEVEL; }
     else if(n>=10 && n%10===0){ out.push(orodhaLevel(o, n<=40?D6:D8)); o++; }
+    // Picha levels are switched off until they get proper illustrations instead of emojis:
+    // else if(n>=15 && n%10===5){ out.push(pichaLevel(q, n<=40?D4:D6)); q++; }
     out.push(Lv); });
   LEVELS.length=0; out.forEach(x=>LEVELS.push(x)); })();
 LEVELS[3].scene='kiwango4';   // 4th level: player photo
@@ -982,11 +1012,14 @@ function startLevel(custom){
   generate();
   setScene(L.scene, L.color);
   $('levelLbl').textContent= mode==='daily' ? 'Kila Siku' : 'Kiwango '+(levelIdx+1);
-  $('catTitle').textContent=L.cat;
+  $('catTitle').textContent= L.cat==='MCHANGANYIKO' ? 'CHANGAMOTO 🏆' : L.cat;
   $('category').style.setProperty('--cat',L.color);
   $('words').classList.toggle('methali', !!L.methali);
   $('words').classList.toggle('orodha', !!L.orodha);
-  if(L.methali){ methCur=0; renderMethali(); } else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
+  $('words').classList.toggle('picha', !!L.picha);
+  if(L.methali){ methCur=0; renderMethali(); }
+  else if(L.picha){ $('words').innerHTML=words.map((w,i)=>`<span id="w${i}"><b>${L.picha[w.w]}</b><i>${w.w}</i></span>`).join(''); }
+  else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
   gridEl.style.gridTemplateColumns=`repeat(${size},1fr)`;
   gridEl.style.gridTemplateRows=`repeat(${size},1fr)`;
   gridEl.innerHTML='';
@@ -995,7 +1028,7 @@ function startLevel(custom){
     d.dataset.r=r; d.dataset.c=c; gridEl.appendChild(d);
   }
   capsEl.innerHTML=''; updateCount(); fitBoard();
-  hintsLeft=3; $('hintLeft').textContent=hintsLeft; $('hintBtn').disabled=false; levelBonus=0;
+  $('hintBtn').disabled=false; levelBonus=0; maybeIntro();
   stopHand(); if(mode==='level' && levelIdx===0) setTimeout(startHand,400);
 }
 function updateCount(){$('countLbl').textContent=foundCount+'/'+words.length}
@@ -1259,7 +1292,7 @@ function saveDaily(){ try{ localStorage.setItem('tn_daily',JSON.stringify([...da
 function streak(){ const d=new Date(); if(!dailyDone.has(dkey(d))) d.setDate(d.getDate()-1); let n=0; while(dailyDone.has(dkey(d))){ n++; d.setDate(d.getDate()-1); } return n; }
 function dailyLevelFor(key){
   const seed=[...key].reduce((h,ch)=>Math.imul(h^ch.charCodeAt(0),16777619)>>>0,2166136261), R=rng(seed);
-  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha);
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha && !Lv.picha);
   const cats=[...new Set(themed.map(Lv=>Lv.cat))], cat=cats[Math.floor(R()*cats.length)];
   const pool=[...new Set(themed.filter(Lv=>Lv.cat===cat).flatMap(Lv=>Lv.words))].filter(w=>w.length<=8);
   for(let i=pool.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
@@ -1291,7 +1324,7 @@ function dailyCardHTML(icon){
            : '<button class="btn" data-daily style="margin-top:10px">Cheza fumbo la leo</button>'}`;
 }
 function showDailyWin(){
-  $('winQuote').hidden=true;
+  $('winQuote').hidden=true; addCoins(25); $('winCoinsTxt').textContent=`+25  ·  ${coins.toLocaleString('sw-TZ')}`;
   dailyDone.add(dailyKey); saveDaily(); const st=streak();
   $('winText').textContent='Fumbo la leo limekamilika!';
   $('medalNum').textContent=st; $('medal').querySelector('small').textContent='SIKU MFULULIZO';
@@ -1343,6 +1376,41 @@ async function shareNow(text){
 }
 $('shareBtn').addEventListener('click',()=>shareNow(shareText()));
 
+/* ---------- Lite mode for low-end phones (common in Tanzania): no blur, lighter globe, fewer particles ---------- */
+const LITE = (navigator.deviceMemory && navigator.deviceMemory<=2) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4);
+if(LITE) document.documentElement.classList.add('lite');
+
+/* ---------- Coins: earned by playing, spent on hints ---------- */
+const HINT_COST=25;
+let coins=100; try{ const c=parseInt(localStorage.getItem('tn_coins'),10); if(c>=0) coins=c; }catch(_){}
+function saveCoins(){ try{ localStorage.setItem('tn_coins',String(coins)); }catch(_){} renderCoins(); }
+function renderCoins(){ document.querySelectorAll('[data-coins]').forEach(e=>e.textContent=coins.toLocaleString('sw-TZ')); }
+function addCoins(n){ coins+=n; saveCoins(); }
+
+/* ---------- Confetti on the win screen ---------- */
+function confetti(){
+  const cols=['#f2385a','#ff8a1f','#22c55e','#2f80ed','#a855f7','#facc15'], n=LITE?24:60;
+  for(let i=0;i<n;i++){ const c=document.createElement('div'); c.className='confetti'; c.style.left=(Math.random()*100)+'vw'; c.style.background=cols[i%cols.length];
+    document.body.appendChild(c); const dx=(Math.random()-.5)*160, rot=Math.random()*720;
+    c.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:`translate(${dx}px,${innerHeight+40}px) rotate(${rot}deg)`,opacity:.9}],
+      {duration:1600+Math.random()*1400,delay:Math.random()*400,easing:'cubic-bezier(.2,.6,.4,1)'}).onfinish=()=>c.remove(); }
+}
+
+/* ---------- First-time explanations for the special level types ---------- */
+const INTRO={
+  methali:['📜 METHALI','Kila kiwango hiki kina <b>methali 3</b>. Tafuta neno linalokosekana kwenye gridi ili kukamilisha methali. Ukimaliza moja, inayofuata itatokea!'],
+  orodha:['✅ ORODHA','Tafuta <b>vitu vyote</b> vilivyo kwenye orodha. Kila neno utakalopata litawekwa alama ✓.'],
+  picha:['🖼️ PICHA','Hakuna maneno yaliyoandikwa! <b>Angalia picha</b>, fikiria jina lake kwa Kiswahili, kisha ulitafute kwenye gridi.'],
+  changamoto:['🏆 CHANGAMOTO','Hongera, umefika kwenye <b>viwango vya changamoto</b>! Maneno hapa ni magumu zaidi na si ya kawaida. Tumia vidokezo 💡 ukikwama.']
+};
+function levelType(){ return L.methali?'methali':L.orodha?'orodha':L.picha?'picha':L.cat==='MCHANGANYIKO'?'changamoto':null; }
+function maybeIntro(){
+  if(mode!=='level') return; const t=levelType(); if(!t) return;
+  let seen={}; try{ seen=JSON.parse(localStorage.getItem('tn_intro')||'{}'); }catch(_){}
+  if(seen[t]) return; seen[t]=1; try{ localStorage.setItem('tn_intro',JSON.stringify(seen)); }catch(_){}
+  const [h,txt]=INTRO[t]; setTimeout(()=>showSheet(`<h3>${h}</h3><p>${txt}</p><button class="btn" data-close>Sawa!</button>`),350);
+}
+
 /* ---------- Praise popup when a word is found ---------- */
 const PRAISE=['Vizuri!','Safi!','Hodari!','Bomba!','Nzuri sana!','Umeweza!','Kazi nzuri!','Shwari!','Poa sana!','Hongera!'];
 const PRAISE_BIG=['Ajabu!','Safi sana!','Wewe ni bingwa!','Kipaji!'];
@@ -1369,7 +1437,7 @@ function renderBonusCount(){ $('bonusCount').textContent = bonus.size ? bonus.si
 let toastT; function toast(msg,gold){ const t=$('toast'); t.textContent=msg; t.classList.toggle('gold',!!gold); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1600); }
 function addBonus(w){
   const first = bonus.size===0;
-  bonus.add(w); levelBonus++; saveBonus(); renderBonusCount();
+  bonus.add(w); levelBonus++; saveBonus(); renderBonusCount(); addCoins(2);
   if(navigator.vibrate) try{navigator.vibrate([20,40,20])}catch(_){}
   if(first) showSheet(`<h3>NENO LA ZIADA ⭐</h3><p>Umepata <b>${w}</b> — neno halisi ambalo halipo kwenye orodha!<br>Maneno ya ziada huhifadhiwa kwenye nyota iliyo juu.</p><button class="btn" data-close>Sawa!</button>`);
   else toast(`Neno la ziada: ${w} ⭐`, true);
@@ -1384,12 +1452,12 @@ $('bonusBtn').addEventListener('click',()=>{
 let hintCell=null;
 function clearHint(){ if(hintCell){ hintCell.classList.remove('hint'); hintCell=null; } }
 $('hintBtn').addEventListener('click',()=>{
-  if(hintsLeft<=0) return;
   const left=words.filter(w=>!w.found); if(!left.length) return;
+  if(coins<HINT_COST){ sfx.wrong(); toast(`Huna sarafu za kutosha (${HINT_COST} 🪙). Maliza viwango upate zaidi!`); return; }
   clearHint();
   const w=left[Math.floor(Math.random()*left.length)];
   hintCell=cellEl(w.cells[0][0],w.cells[0][1]); hintCell.classList.add('hint'); sfx.hint();
-  hintsLeft--; $('hintLeft').textContent=hintsLeft; if(hintsLeft<=0) $('hintBtn').disabled=true;
+  addCoins(-HINT_COST); toast(`−${HINT_COST} 🪙  ·  Umebaki na ${coins}`);
 });
 let handEl=null, handAnim=null;
 function startHand(){
@@ -1408,6 +1476,7 @@ board.addEventListener('pointerdown',()=>{ if(handEl) handEl.style.visibility='h
 board.addEventListener('pointerup',()=>{ if(handEl) handEl.style.visibility='visible'; },true);
 renderBonusCount();
 setTimeout(()=>setSound(soundOn),0);
+renderCoins();
 
 /* ---------- Progress (saved on this device) ---------- */
 let unlocked=1; // number of levels opened
@@ -1417,7 +1486,9 @@ function saveProgress(){ try{ localStorage.setItem('tn_unlocked',String(unlocked
 /* ---------- Win ---------- */
 let methaliOwned=new Set(); try{ methaliOwned=new Set(JSON.parse(localStorage.getItem('tn_methali')||'[]')); }catch(_){}
 function showWin(){
+  confetti();
   if(mode==='daily') return showDailyWin();
+  { const earn = L.methali||L.orodha||L.picha ? 15 : 10; addCoins(earn); $('winCoinsTxt').textContent=`+${earn}  ·  ${coins.toLocaleString('sw-TZ')}`; }
   const q=$('winQuote'); q.hidden=!L.methali;
   if(L.methali){ clearTimeout(methTimer); q.innerHTML=L.methali.series.map(x=>'“'+x.text+'.”').join('<br>'); L.methali.series.forEach(x=>methaliOwned.add(x.k)); try{ localStorage.setItem('tn_methali',JSON.stringify([...methaliOwned])); }catch(_){} }
   const last=levelIdx===LEVELS.length-1;
@@ -1499,10 +1570,10 @@ const G={cv:null,ctx:null,items:[],M:[1,0,0,0,1,0,0,0,1],vx:0,vy:0,drag:false,lx
   calm: window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches};
 function globeInit(){
   G.cv=$('globe'); G.ctx=G.cv.getContext('2d');
-  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha), pool=[];
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha && !Lv.picha), pool=[];
   themed.forEach(Lv=>Lv.words.forEach(w=>{ if(w.length>=3&&w.length<=7) pool.push([w,Lv.cat,Lv.color]); }));
   for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-  const N=Math.min(48,pool.length), golden=Math.PI*(3-Math.sqrt(5));
+  const N=Math.min(LITE?30:48,pool.length), golden=Math.PI*(3-Math.sqrt(5));
   G.items=pool.slice(0,N).map(([w,cat,col],i)=>{ const y=1-2*(i+.5)/N, r=Math.sqrt(1-y*y), t=golden*i;
     return {w,cat,col,p:[Math.cos(t)*r,y,Math.sin(t)*r],pop:0,sx:0,sy:0,z:0}; });
   G.vx=0.0016; G.vy=0.0042;
@@ -1526,6 +1597,7 @@ function globeTap(e){
 }
 function globeFrame(t){
   G.raf=requestAnimationFrame(globeFrame);
+  if(LITE){ G.skip=!G.skip; if(G.skip) return; }   // ~30 fps on weak phones
   const cv=G.cv, dpr=Math.min(2,window.devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight;
   if(!w||!h) return;
   if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); }
