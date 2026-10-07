@@ -916,7 +916,7 @@ board.addEventListener('pointerup',endSel);
 board.addEventListener('pointercancel',endSel);
 
 /* ---------- Sound (Neno's sounds + soft synthesized game tones) ---------- */
-const SND={music:"sounds/menu-music.mp3", menu:"sounds/menu.mp3", back:"sounds/back.mp3", select:"sounds/select.mp3"};
+const SND={music:"sounds/menu-music.mp3", game:"sounds/game-music.mp3", menu:"sounds/menu.mp3", back:"sounds/back.mp3", select:"sounds/select.mp3"};
 let soundOn=true; try{ soundOn = localStorage.getItem('tn_sound')!=='0'; }catch(_){}
 let actx=null; const clips={}; let music=null, wantMusic=false;
 function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(_){} } if(actx&&actx.state==='suspended') actx.resume().catch(()=>{}); }
@@ -932,12 +932,16 @@ const sfx={
   hint:()=>{ ensureAudio(); tone(1046.5,.18,'sine',0,.12); tone(1318.5,.22,'sine',.1,.10); },
   win:()=>{ ensureAudio(); [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,.24,'triangle',i*.12,.15)); }
 };
-function musicEl(){ if(!music){ music=new Audio(SND.music); music.loop=true; music.volume=.35; } return music; }
-function playMusic(){ wantMusic=true; if(!soundOn) return; musicEl().play().catch(()=>{}); }
-function stopMusic(){ wantMusic=false; if(music) music.pause(); }
+// two calm ambient tracks: one for the menu, a softer one while playing
+const tracks={}; let wantTrack='music';
+function trackEl(k){ if(!tracks[k]){ const a=new Audio(SND[k]); a.loop=true; a.volume= k==='game' ? .16 : .3; tracks[k]=a; } return tracks[k]; }
+function playMusic(k){ k=k||'music'; wantTrack=k; wantMusic=true;
+  Object.keys(tracks).forEach(x=>{ if(x!==k) tracks[x].pause(); });
+  if(!soundOn) return; music=trackEl(k); music.play().catch(()=>{}); }
+function stopMusic(){ wantMusic=false; Object.values(tracks).forEach(a=>a.pause()); }
 function setSound(on){ soundOn=on; try{ localStorage.setItem('tn_sound',on?'1':'0'); }catch(_){}
   document.querySelectorAll('.sound-btn').forEach(b=>{ b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-label', on?'Zima sauti':'Washa sauti'); });
-  if(!on && music) music.pause(); else if(on && wantMusic) playMusic(); }
+  if(!on) Object.values(tracks).forEach(a=>a.pause()); else if(wantMusic) playMusic(wantTrack); }
 // browsers only allow sound after the first touch: start the menu music then
 document.addEventListener('pointerdown',()=>{ ensureAudio(); if(wantMusic && soundOn && music && music.paused) music.play().catch(()=>{}); },true);
 
@@ -1049,7 +1053,7 @@ function startDaily(){
   globeStop();
   dailyKey=dkey(new Date()); const Lv=dailyLevelFor(dailyKey); dailySeed=100000+(Lv.seed%900000);
   mode='daily';
-  $('menu').classList.remove('show'); stopMusic();
+  $('menu').classList.remove('show'); playMusic('game');
   document.querySelector('.app').style.visibility='visible';
   startLevel(Lv); requestAnimationFrame(fitBoard);
 }
@@ -1279,7 +1283,7 @@ function showMenu(tab){
 }
 function startGame(idx){
   levelIdx=idx; mode='level'; globeStop();
-  $('menu').classList.remove('show'); stopMusic();
+  $('menu').classList.remove('show'); playMusic('game');
   document.querySelector('.app').style.visibility='visible';
   startLevel(); requestAnimationFrame(fitBoard);
 }
