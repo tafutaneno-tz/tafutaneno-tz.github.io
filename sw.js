@@ -1,6 +1,6 @@
 // Tafuta Neno service worker
 // index.html: network first (updates show immediately), images, sounds & icons: cache first.
-const CACHE = 'tafuta-neno-v3';
+const CACHE = 'tafuta-neno-v4';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
