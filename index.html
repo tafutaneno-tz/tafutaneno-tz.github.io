@@ -33,8 +33,128 @@ body{
 }
 #scene{position:fixed;inset:0;z-index:0;overflow:hidden}
 #scene img{width:100%;height:100%;object-fit:cover;display:block}
+#scene img.bg-focus{position:absolute;max-width:none;object-fit:fill}
+#scene .grad{position:absolute;inset:0}
+#scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#menu.dim .sound-btn{display:none}
+.pane-home{pointer-events:none}.pane-home>*{pointer-events:auto}
+.globe{position:absolute;left:0;right:0;top:calc(4% + env(safe-area-inset-top,0px));height:62%;width:100%;z-index:3;touch-action:none;cursor:grab}
+#menu.dim .globe{display:none}
+.globe-hint{position:absolute;left:0;right:0;top:calc(64% + 2px);z-index:3;text-align:center;color:#fff;font:900 .85rem "Nunito",sans-serif;opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35);pointer-events:none}
+#menu.dim .globe-hint{display:none}
+.sound-btn{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:7;width:46px;height:46px;border-radius:50%;
+  border:3px solid #fff;background:rgba(0,0,0,.25);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.icon-btn{position:relative;width:46px;height:46px;border-radius:50%;border:3px solid #fff;cursor:pointer;padding:0;
+  background:linear-gradient(180deg,#ffd34d,#f59e0b);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 0 #b45309,0 6px 14px rgba(0,0,0,.35)}
+.icon-btn svg{width:24px;height:24px}
+.icon-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #b45309}
+.badge{position:absolute;top:-6px;right:-8px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;background:#e11d48;color:#fff;
+  font:900 .75rem/22px "Nunito",sans-serif;text-align:center;border:2px solid #fff}
+.badge:empty{display:none}
+.bubble-slot{position:relative;width:100%}
+.hint-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:3px solid #fff;border-radius:999px;cursor:pointer;
+  background:linear-gradient(180deg,#38bdf8,#0369a1);color:#fff;font:900 1rem "Nunito",sans-serif;padding:6px 12px 6px 10px;
+  display:flex;align-items:center;gap:4px;box-shadow:0 4px 0 #075985,0 6px 12px rgba(0,0,0,.3)}
+.hint-btn:active{transform:translateY(calc(-50% + 2px));box-shadow:0 2px 0 #075985}
+.hint-btn:disabled{filter:grayscale(1);opacity:.6;cursor:default}
+.cell.hint::after{content:"";position:absolute;inset:8%;border-radius:50%;border:4px solid #f59e0b;animation:hintpulse .8s ease-in-out infinite}
+@keyframes hintpulse{0%,100%{transform:scale(.85);opacity:1}50%{transform:scale(1.1);opacity:.5}}
+.hand{position:absolute;z-index:3;pointer-events:none;font-size:var(--hs,40px);line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));transform:translate(-20%,-10%)}
+.toast{position:fixed;left:50%;bottom:calc(30px + var(--ad-h) + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:8;opacity:0;
+  background:#fff;color:#120b24;font:900 1.05rem "Nunito",sans-serif;padding:12px 20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);
+  transition:opacity .2s,transform .2s;pointer-events:none;text-align:center;max-width:86vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.gold{background:linear-gradient(180deg,#fff7d1,#ffe08a)}
+.cap.bad{background:#ef4444!important;animation:capshake .45s ease, capfade .25s ease .45s forwards}
+@keyframes capshake{0%,100%{translate:0 0}15%{translate:-9px 0}30%{translate:8px 0}45%{translate:-6px 0}60%{translate:5px 0}75%{translate:-3px 0}}
+@keyframes capfade{to{opacity:0}}
+.cell.shake{animation:lettershake .45s ease}
+@keyframes lettershake{0%,100%{transform:none}15%{transform:translateX(-9px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.cell.grow{animation:lettergrow .42s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d,0s)}
+@keyframes lettergrow{0%{transform:scale(1)}45%{transform:scale(1.45)}100%{transform:scale(1)}}
+.cap.okcap{animation:capglow .5s ease}
+@keyframes capglow{0%{filter:brightness(1)}40%{filter:brightness(1.35) saturate(1.2)}100%{filter:none}}
+.words span.just{animation:wordpop .5s cubic-bezier(.3,1.6,.5,1)}
+.words span{position:relative}
+.words span.found{text-decoration:none!important}
+.words span.found::after{content:"";position:absolute;left:-3px;right:-3px;top:52%;height:3px;border-radius:2px;background:rgba(29,22,48,.75);
+  transform-origin:left center;animation:strike .35s ease .15s both}
+@keyframes strike{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes wordpop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.words span{display:inline-block}
+.fly{position:fixed;z-index:20;pointer-events:none;color:#fff;font:900 1.15rem "Nunito",sans-serif;letter-spacing:.06em;
+  padding:6px 16px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.35);white-space:nowrap;transform:translate(-50%,-50%)}
+.stamps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 4px}
+.stamp{border:0;cursor:pointer;padding:7px;border-radius:2px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2));
+  background:radial-gradient(circle at 6px 6px,transparent 3.6px,#fff 4px) -6px -6px/12px 12px}   /* scalloped stamp edge */
+.stamp .in{outline:2px dashed rgba(255,255,255,.55);outline-offset:-5px}
+.stamp .in{aspect-ratio:3/4;border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;padding:4px}
+.stamp .em{font-size:2rem;line-height:1}
+.stamp .nm{font:900 .62rem "Nunito",sans-serif;letter-spacing:.03em;text-align:center;line-height:1.1}
+.stamp.locked .in{background:#e9e3f2!important;color:#8d83a0}
+.stamp.locked .em{filter:grayscale(1);opacity:.35}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:12px 0 4px}
+.cal span{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font:900 .8rem "Nunito",sans-serif;background:#f1ecf8;color:#8d83a0}
+.cal span.done{background:#22c55e;color:#fff}
+.cal span.today{outline:3px solid #f59e0b}
+.cal span.blank{background:none}
+.streak{display:inline-flex;align-items:center;gap:6px;background:#fff1e6;color:#c2410c;border-radius:999px;padding:5px 14px;font-weight:900}
+.cap.gold{background:#f5b301!important;animation:goldfade .9s ease forwards}
+@keyframes goldfade{0%{opacity:.95}60%{opacity:.95}100%{opacity:0}}
+.sheet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(20,8,40,.6);backdrop-filter:blur(3px)}
+.sheet.show{display:flex}
+.sheet-card{background:#fff;color:#120b24;border-radius:26px;padding:22px;width:min(88vw,360px);max-height:76vh;overflow:auto;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:rise .3s ease}
+.sheet-card h3{margin:0 0 8px;font:800 1.5rem "Baloo 2",sans-serif;color:#d97706}
+.sheet-card p{margin:0 0 16px;font-weight:800;line-height:1.4}
+.bonus-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:16px}
+.bonus-list span{background:#fff4cc;border-radius:999px;padding:4px 10px;font-weight:900}
+/* win screen */
+.overlay{background:rgba(20,8,40,.35)!important;backdrop-filter:blur(10px) saturate(1.2)!important;-webkit-backdrop-filter:blur(10px)}
+.win{background:none!important;box-shadow:none!important;color:#fff;display:flex;flex-direction:column;align-items:center;gap:18px}
+.ribbon{position:relative;background:linear-gradient(180deg,#ff6a3d,#e8411f);color:#fff;font:800 2rem "Baloo 2",sans-serif;padding:6px 40px;
+  box-shadow:0 6px 16px rgba(0,0,0,.3);animation:rise .35s ease}
+.ribbon::before,.ribbon::after{content:"";position:absolute;top:10px;width:26px;height:100%;background:#b8300f;z-index:-1}
+.ribbon::before{left:-18px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,40% 50%)}
+.ribbon::after{right:-18px;clip-path:polygon(0 0,100% 0,60% 50%,100% 100%,0 100%)}
+.medal{width:150px;height:150px;border-radius:50%;background:conic-gradient(#22c55e var(--p,0%),rgba(255,255,255,.35) 0);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);transition:--p .8s}
+.medal>div{width:124px;height:124px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#120b24}
+.medal b{font:800 2.4rem/1 "Baloo 2",sans-serif;color:#e8411f}
+.medal small{font-weight:900;font-size:.8rem;color:#6b6380}
+.prog{width:min(80vw,300px);display:flex;align-items:center;gap:8px}
+.prog .track{flex:1;height:18px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;border:2px solid #fff}
+.prog .fill{height:100%;background:linear-gradient(90deg,#ffb300,#ff6a3d);width:0;transition:width .8s ease}
+.prog .gift{font-size:1.8rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.win-stats{font-weight:900;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 #scene .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.25))}
-#menu{background:linear-gradient(165deg,#ff8a1f 0%,#f2385a 52%,#7d1d78 100%);justify-content:flex-end;padding-bottom:13vh}
+#menu{background:linear-gradient(165deg,#ff8a1f 0%,#f2385a 52%,#7d1d78 100%);padding:0}
+#menu .field{transition:opacity .25s}
+#menu.dim .field{opacity:.28}
+#menu.dim .pill,#menu.dim .lt.hi{visibility:hidden}
+.pane{position:absolute;left:12px;right:12px;top:calc(16px + env(safe-area-inset-top,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
+  display:none;flex-direction:column;align-items:center;justify-content:center;z-index:4}
+.pane.show{display:flex}
+.pane-home{justify-content:flex-end;gap:16px;padding-bottom:18px}
+.greet{color:#fff;font-weight:900;font-size:1.2rem;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.7);
+  padding:6px 18px;border-radius:999px;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.pcard{width:min(100%,400px);max-height:100%;overflow:auto;background:var(--card);border-radius:26px;box-shadow:var(--shadow);
+  padding:22px 20px 24px;text-align:center;animation:rise .25s ease}
+.pcard h2{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.7rem;margin:0 0 12px;color:var(--ink)}
+.pcard p{font-size:1.15rem;font-weight:800;margin:10px 0 20px;line-height:1.35}
+.pcard .big-ico{width:96px;height:96px;margin:4px auto 0;display:block}
+.pcard .btn{font-size:1.3rem}
+.tabbar{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;align-items:flex-end;gap:4px;
+  padding:0 8px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(56,10,58,.88);backdrop-filter:blur(6px);
+  border-top:1px solid rgba(255,255,255,.18)}
+.tab{flex:1;position:relative;border:0;background:none;cursor:pointer;color:rgba(255,255,255,.8);
+  display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 4px;border-radius:18px;
+  font-family:"Nunito",sans-serif;font-weight:900;font-size:.78rem;transition:transform .15s,background .15s}
+.tab svg{width:38px;height:38px;display:block}
+.tab.active{background:#fff;color:#e0245e;transform:translateY(-12px);box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.tab:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.tab .lock{position:absolute;top:4px;right:calc(50% - 26px);width:18px;height:18px;border-radius:50%;background:#3b2a8f;
+  display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid #fff}
 .field{position:absolute;inset:0;overflow:hidden}
 .lt{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:900;
   color:rgba(255,255,255,.2);line-height:1}
@@ -50,8 +170,10 @@ body{
 .app{
   position:relative; z-index:1; height:100%;
   display:flex; flex-direction:column; align-items:center;
-  padding:10px 8px 12px; gap:10px; max-width:600px; margin:0 auto;
+  padding:10px 8px calc(12px + var(--ad-h)); gap:10px; max-width:600px; margin:0 auto;
 }
+:root{--ad-h:58px}              /* space kept free for a banner ad (Google's standard banner is 50 dp tall) */
+.ad-slot{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);height:var(--ad-h);z-index:2;pointer-events:none}
 .topbar{width:100%;display:flex;justify-content:space-between;align-items:center}
 .level{
   font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.05rem;color:#fff;
@@ -60,7 +182,7 @@ body{
 .score{font-family:"Baloo 2",sans-serif;font-weight:800;color:#fff;font-size:1.05rem;
   background:rgba(0,0,0,.28);padding:4px 14px;border-radius:999px}
 .category{
-  width:100%; background:var(--card-soft); border-radius:22px; overflow:hidden;
+  width:100%; background:rgba(246,241,255,.68); border-radius:22px; overflow:hidden;
   box-shadow:var(--shadow);
 }
 .category h1{
@@ -69,8 +191,8 @@ body{
   padding:6px 10px 2px; background:var(--cat,#16a34a);
 }
 .words{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 16px;padding:8px 12px 10px}
-.words span{font-weight:900;font-size:1.25rem;letter-spacing:.02em;transition:color .3s, opacity .3s}
-.words span.found{color:rgba(29,22,48,.4);text-decoration:line-through;text-decoration-thickness:2px}
+.words span{font-weight:900;font-size:1.25rem;letter-spacing:.02em;text-shadow:0 0 2px #fff,0 0 4px rgba(255,255,255,.7);transition:color .3s, opacity .3s}
+.words span.found{color:rgba(29,22,48,.5);text-shadow:none;text-decoration:line-through;text-decoration-thickness:2px}
 .bubble-slot{height:44px;display:flex;align-items:center;justify-content:center}
 .bubble{
   font-family:"Nunito",sans-serif;font-weight:900;font-size:1.5rem;letter-spacing:.18em;
@@ -81,7 +203,7 @@ body{
 .board-wrap{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px}
 .board{
   position:relative; aspect-ratio:1/1; flex:none;
-  background:var(--card); border-radius:26px; box-shadow:var(--shadow);
+  background:rgba(255,255,255,.58); border-radius:26px; box-shadow:var(--shadow);
   padding:2%; touch-action:none;
 }
 .board-inner{position:relative;width:100%;height:100%}
@@ -99,9 +221,10 @@ body{
 .cell{
   display:flex;align-items:center;justify-content:center;
   font-weight:900;color:var(--ink);line-height:1;position:relative;z-index:1;
+  text-shadow:0 0 2px #fff,0 0 4px rgba(255,255,255,.75);
   transition:color .15s;
 }
-.cell.on{color:#fff}
+.cell.on{color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.45)}
 .overlay{
   position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;
   background:rgba(20,8,40,.55);backdrop-filter:blur(3px);
@@ -123,9 +246,13 @@ body{
 .btn:focus-visible{outline:3px solid #2f80ed;outline-offset:3px}
 /* ---------- Menu ---------- */
 .home-btn{
-  width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
-  background:rgba(0,0,0,.28);color:#fff;font-size:1.25rem;display:flex;align-items:center;justify-content:center;
+  width:46px;height:46px;border-radius:50%;border:3px solid #fff;cursor:pointer;padding:0;
+  background:linear-gradient(180deg,#ff8a1f,#f2385a);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 0 #a3164a,0 6px 14px rgba(0,0,0,.35);
 }
+.home-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #a3164a,0 3px 8px rgba(0,0,0,.3)}
+.home-btn svg{width:24px;height:24px;display:block}
 .home-btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .topbar .left{display:flex;align-items:center;gap:8px}
 .menu{
@@ -163,17 +290,17 @@ body{
 .levels.show{display:flex}
 .levels-card{background:var(--card);border-radius:28px;padding:20px 22px 24px;width:min(88vw,360px);box-shadow:var(--shadow);animation:rise .3s ease}
 .levels-card h2{font-family:"Baloo 2",sans-serif;font-weight:800;margin:0 0 14px;text-align:center;font-size:1.6rem}
-.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
 .lvl{
   aspect-ratio:1/1;border:0;border-radius:18px;cursor:pointer;color:#fff;
-  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.6rem;line-height:1;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.4rem;line-height:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;overflow:hidden;
 }
-.lvl small{font-family:"Nunito",sans-serif;font-size:.62rem;font-weight:900;opacity:.9}
+.lvl small{font-family:"Nunito",sans-serif;font-size:.45rem;font-weight:900;opacity:.9}
 .lvl:disabled{background:#d9d2e6!important;color:#8d83a0;cursor:default}
 .lvl:focus-visible{outline:3px solid #2f80ed;outline-offset:2px}
 .close-row{text-align:center}
-@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} .lt.hi{opacity:1!important} .pill{transform:none!important} .tile{opacity:1} }
 </style>
 </head>
 <body>
@@ -181,7 +308,8 @@ body{
 <main class="app">
   <div class="topbar">
     <span class="left">
-      <button class="home-btn" id="homeBtn" aria-label="Rudi kwenye menyu">⌂</button>
+      <button class="home-btn" id="homeBtn" aria-label="Rudi kwenye menyu"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 3.2 2.6 11.3a1 1 0 0 0 1.3 1.5L5 11.9V20a1 1 0 0 0 1 1h4.5v-6h3v6H18a1 1 0 0 0 1-1v-8.1l1.1.9a1 1 0 0 0 1.3-1.5Z"/></svg></button>
+      <button class="icon-btn" id="bonusBtn" aria-label="Maneno ya ziada"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg><span class="badge" id="bonusCount"></span></button>
       <span class="level" id="levelLbl">Kiwango 1</span>
     </span>
     <span class="score" id="countLbl">0/0</span>
@@ -191,7 +319,8 @@ body{
     <div class="words" id="words"></div>
   </section>
   <div class="board-wrap" id="boardWrap">
-    <div class="bubble-slot"><div class="bubble" id="bubble"></div></div>
+    <div class="bubble-slot"><div class="bubble" id="bubble"></div>
+      <button class="hint-btn" id="hintBtn" aria-label="Kidokezo">💡 <span id="hintLeft">3</span></button></div>
     <div class="board" id="board">
       <div class="board-inner" id="inner">
         <div class="caps" id="caps"></div>
@@ -202,52 +331,402 @@ body{
 </main>
 <section class="menu" id="menu">
   <div class="field" id="field" role="img" aria-label="Tafuta Neno"></div>
-  <div class="menu-actions">
-    <button class="btn big" id="playBtn">Cheza<small id="playSub">Kiwango 1</small></button>
-    <button class="btn alt" id="levelsBtn">Viwango</button>
+  <button class="sound-btn" id="soundBtn" aria-label="Zima sauti">🔊</button>
+  <canvas class="globe" id="globe" aria-label="Tufe la maneno ya Kiswahili. Lizungushe kwa kidole, gusa neno kuona kundi lake."></canvas>
+  <div class="pane pane-home" data-pane="home">
+    <div class="greet" id="greet">Habari!</div>
+    <div class="menu-actions">
+      <button class="btn big" id="playBtn">Cheza<small id="playSub">Kiwango 1</small></button>
+    </div>
   </div>
+  <div class="pane" data-pane="levels">
+    <div class="pcard"><h2>Viwango</h2><div class="level-grid" id="levelGrid"></div></div>
+  </div>
+  <div class="pane" data-pane="daily">
+    <div class="pcard" id="dailyCard"></div>
+  </div>
+  <div class="pane" data-pane="collect">
+    <div class="pcard" id="collectCard"></div>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Menyu">
+    <button class="tab" data-tab="daily"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="11" width="34" height="30" rx="6" fill="#fff7ed" stroke="#ef4444" stroke-width="2.5"/><path d="M6 16a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v4H6z" fill="#ef4444"/><rect x="14" y="5" width="4" height="10" rx="2" fill="#7c2d12"/><rect x="30" y="5" width="4" height="10" rx="2" fill="#7c2d12"/><text x="24" y="37" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="15" fill="#e0245e">1</text></svg>Kila Siku</button>
+    <button class="tab active" data-tab="home"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 22v18a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V22L24 10z" fill="#fff4e6"/><path d="M24 5 3 23l3 3L24 11l18 15 3-3z" fill="#f2385a"/><rect x="19" y="29" width="10" height="13" rx="3" fill="#ff8a1f"/></svg>Nyumbani</button>
+    <button class="tab" data-tab="levels"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="17" height="17" rx="5" fill="#22c55e"/><rect x="26" y="5" width="17" height="17" rx="5" fill="#0ea5c6"/><rect x="5" y="26" width="17" height="17" rx="5" fill="#ff8a1f"/><rect x="26" y="26" width="17" height="17" rx="5" fill="#a855f7"/></svg>Viwango</button>
+    <button class="tab" data-tab="collect"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 6h30v36H9z" fill="#fde68a" stroke="#fff" stroke-width="3" stroke-dasharray="3 3"/><rect x="13" y="10" width="22" height="20" rx="2" fill="#0ea5c6"/><path d="M13 30l7-9 5 6 4-4 6 7z" fill="#15803d"/><circle cx="29" cy="15" r="3" fill="#fde047"/><rect x="15" y="33" width="18" height="4" rx="2" fill="#b45309"/></svg>Mkusanyiko</button>
+  </nav>
 </section>
-<div class="levels" id="levels">
-  <div class="levels-card">
-    <h2>Viwango</h2>
-    <div class="level-grid" id="levelGrid"></div>
-    <div class="close-row"><button class="btn alt" id="closeLevels" style="width:auto;padding:8px 26px">Funga</button></div>
-  </div>
-</div>
 <div class="overlay" id="overlay">
   <div class="win">
-    <h2>Hongera!</h2>
-    <p id="winText">Umepata maneno yote.</p>
-    <button class="btn" id="nextBtn">Endelea</button>
+    <div class="ribbon">Hongera!</div>
+    <div class="medal" id="medal"><div><b id="medalNum">0</b><small>MANENO</small></div></div>
+    <div class="win-stats" id="winText">Umepata maneno yote.</div>
+    <div class="prog"><div class="track"><div class="fill" id="progFill"></div></div><span class="gift">🎁</span></div>
+    <div class="win-stats" id="progText"></div>
+    <button class="btn" id="nextBtn">Kiwango kinachofuata</button>
   </div>
 </div>
+<div class="toast" id="toast"></div>
+<div class="ad-slot" id="adSlot" aria-hidden="true"></div>
+<div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
-  {size:6,  scene:'kiwango1', cat:'WANYAMA', color:'#16a34a',
-   dirs:[[0,1],[1,0]],
-   words:['SIMBA','TWIGA','TEMBO','PAKA','KUKU']},
-  {size:8,  scene:'bahari', cat:'BAHARI', color:'#0891b2',
-   dirs:[[0,1],[1,0],[1,1]],
-   words:['BAHARI','SAMAKI','MCHANGA','JAHAZI','PWEZA','NAZI','KAA']},
-  {size:8, scene:'chakula', cat:'CHAKULA', color:'#c2410c',
-   dirs:[[0,1],[1,0],[1,1],[-1,1]],
-   words:['UGALI','WALI','CHAPATI','MAHARAGE','NDIZI','EMBE','CHAI','MKATE','PILAU']}
+  {"size":4,"scene":"kiwango1","cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1]],"words":["PAKA","KUKU","MBWA","PAA"]},
+  {"size":5,"scene":"kiwango2","cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1]],"words":["DAU","KAA","KASA","KOME","PAPA","WAVU"]},
+  {"size":6,"scene":"kiwango3","cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1]],"words":["UJI","YAI","WALI","SUPU","CHAI","KEKI"]},
+  {"size":6,"cat":"FAMILIA","color":"#db2777","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["MKE","MAMA","BABA","KAKA","DADA","BIBI"]},
+  {"size":6,"cat":"MATUNDA","color":"#ea580c","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["EMBE","NAZI","PERA","DAFU","NDIZI","PAPAI"]},
+  {"size":7,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["KICHWA","MKONO","MGUU","JICHO","MACHO","PUA","MDOMO"]},
+  {"size":7,"cat":"NDEGE","color":"#0284c7","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["TAI","KUNGURU","KASUKU","NJIWA","BUNDI","MBUNI","TAUSI"]},
+  {"size":7,"cat":"RANGI","color":"#e11d48","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["NJANO","KIJANI","BLUU","NYEUSI","NYEUPE","KAHAWIA"]},
+  {"size":7,"cat":"MIFUGO","color":"#65a30d","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["MBUZI","KONDOO","NGURUWE","PUNDA","NGAMIA","FARASI"]},
+  {"size":7,"cat":"NAMBA","color":"#4f46e5","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["MOJA","MBILI","TATU","NNE","TANO","SITA","SABA"]},
+  {"size":7,"cat":"MBOGA","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["NYANYA","KABICHI","KAROTI","MCHICHA","BAMIA","VIAZI"]},
+  {"size":7,"cat":"WADUDU","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["NYUKI","MBU","NZI","MCHWA","KIPEPEO","PANZI","MENDE"]},
+  {"size":7,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["SHATI","SURUALI","GAUNI","SKETI","KOFIA","VIATU","KIATU"]},
+  {"size":7,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["MEZA","KITI","KITANDA","MLANGO","DIRISHA","UKUTA","TAA"]},
+  {"size":7,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1]],"words":["JUMANNE","IJUMAA","SIKU","WIKI","MWEZI","MWAKA","LEO"]},
+  {"size":8,"cat":"JIKONI","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SUFURIA","SAHANI","KIKOMBE","KIJIKO","UMA","KISU","BAKULI","CHUPA"]},
+  {"size":8,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["GARI","BASI","DALADALA","BAJAJI","PIKIPIKI","BAISKELI","TRENI","GIA"]},
+  {"size":8,"cat":"SALAMU","color":"#0d9488","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["HABARI","JAMBO","SHIKAMOO","MARAHABA","KARIBU","ASANTE","POLE","POA"]},
+  {"size":8,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["DAKTARI","MWALIMU","MKULIMA","FUNDI","MPISHI","ASKARI","POLISI"]},
+  {"size":8,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SHULE","DARASA","KITABU","DAFTARI","KALAMU","PENSELI","UBAO","CHAKI"]},
+  {"size":8,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["JUA","MVUA","UPEPO","WINGU","MAWINGU","RADI","NGURUMO","BARAFU"]},
+  {"size":8,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["MPIRA","SOKA","GOLI","UWANJA","TIMU","KOCHA","REFA","KOMBE"]},
+  {"size":8,"cat":"MIJI","color":"#b91c1c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["ARUSHA","MOSHI","DODOMA","MWANZA","IRINGA","MBEYA","TABORA","KIGOMA"]},
+  {"size":8,"cat":"HISIA","color":"#c026d3","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["FURAHA","HUZUNI","HASIRA","HOFU","UPENDO","AMANI","WASIWASI","AIBU"]},
+  {"size":8,"cat":"MUZIKI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["NGOMA","GITAA","KINANDA","ZEZE","MARIMBA","WIMBO","NYIMBO","BENDI"]},
+  {"size":8,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["MTI","MITI","MAUA","JANI","MAJANI","MZIZI","TAWI","MBEGU"]},
+  {"size":8,"cat":"NCHI","color":"#0e7490","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["KENYA","UGANDA","RWANDA","BURUNDI","MISRI","MALAWI","ZAMBIA","KONGO"]},
+  {"size":8,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SOKO","DUKA","PESA","SHILINGI","BEI","MNUNUZI","MUUZAJI","CHENJI"]},
+  {"size":8,"cat":"TEKNOLOJIA","color":"#334155","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SIMU","KOMPYUTA","MTANDAO","BETRI","CHAJA","KAMERA","SKRINI","PICHA"]},
+  {"size":8,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["ACHA","ANDIKA","AMKA","ANZA","ANGALIA","ANGUKA","BEBA","CHEKA"]},
+  {"size":8,"cat":"SIFA","color":"#a21caf","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["BORA","CHAFU","BICHI","CHACHE","DOGO","DHAIFU","FUPI","HODARI"]},
+  {"size":8,"cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SIMBA","TEMBO","TWIGA","CHUI","FISI","FARU","KIBOKO","NYATI"]},
+  {"size":8,"cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["PWANI","NANGA","TANGA","MVUVI","BAHARI","MAWIMBI","MCHANGA","JAHAZI"]},
+  {"size":8,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["UGALI","PILAU","CHAPATI","MKATE","MANDAZI","SAMBUSA","BIRIANI"]},
+  {"size":8,"cat":"FAMILIA","color":"#db2777","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["BABU","MJOMBA","SHANGAZI","BINAMU","MTOTO","WATOTO","MUME","MJUKUU"]},
+  {"size":8,"cat":"MATUNDA","color":"#ea580c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["NANASI","CHUNGWA","LIMAU","TIKITI","ZABIBU","PEASI","TUFAHA","TENDE"]},
+  {"size":8,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["SIKIO","MENO","ULIMI","NYWELE","SHINGO","BEGA","KIFUA","TUMBO"]},
+  {"size":8,"cat":"NDEGE","color":"#0284c7","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["KORONGO","SHOMORO","MWEWE","KIPANGA","KANGA","KWALE","HUA","BATA"]},
+  {"size":8,"cat":"RANGI","color":"#e11d48","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["NYEKUNDU","ZAMBARAU","KIJIVU","PINKI","DHAHABU","FEDHA","RANGI"]},
+  {"size":8,"cat":"MIFUGO","color":"#65a30d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]],"words":["NDAMA","BEBERU","MAZIWA","ZIZI","MALISHO","FAHALI","MAKSAI"]},
+  {"size":8,"cat":"NAMBA","color":"#4f46e5","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NANE","TISA","KUMI","ISHIRINI","AROBAINI","HAMSINI","SITINI","SABINI","MIA"]},
+  {"size":8,"cat":"MBOGA","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KITUNGUU","MBAAZI","KUNDE","PILIPILI","SUKUMA","KISAMVU","MBOGA","BOGA"]},
+  {"size":8,"cat":"WADUDU","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SISIMIZI","KUPE","CHAWA","KUNGUNI","BUIBUI","NGE","JONGOO","NZIGE","SIAFU"]},
+  {"size":8,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SOKSI","KITENGE","KANZU","KOTI","MKANDA","HIJABU","BAIBUI","SWETA","NGUO"]},
+  {"size":8,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["CHUMBA","SAKAFU","KABATI","KIOO","MTO","BLANKETI","SHUKA","GODORO","PAZIA"]},
+  {"size":8,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JUMATATU","JUMATANO","ALHAMISI","JUMAMOSI","JUMAPILI","JANA","KESHO"]},
+  {"size":8,"cat":"JIKONI","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JIKO","MKAA","KUNI","KIBERITI","BIRIKA","CHUJIO","MWIKO","KINU","MCHI"]},
+  {"size":8,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MELI","BOTI","TEKSI","LORI","BODABODA","BARABARA","KITUO","DEREVA","ABIRIA"]},
+  {"size":8,"cat":"SALAMU","color":"#0d9488","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KWAHERI","SAWA","NZURI","SALAMA","SALAMU","HUJAMBO","SIJAMBO","MAMBO"]},
+  {"size":8,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NESI","MUUGUZI","MHANDISI","MSHONAJI","SEREMALA","RUBANI"]},
+  {"size":8,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["RULA","MTIHANI","SOMO","HESABU","BEGI","MKOBA","MAKTABA","KENGELE","ALAMA"]},
+  {"size":8,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JOTO","BARIDI","UKUNGU","NYOTA","ANGA","DHORUBA","KIMBUNGA","UMANDE","VULI"]},
+  {"size":8,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MECHI","KIKAPU","RIADHA","MBIO","NGUMI","DRAFTI","BAO","KARATA","SHABIKI"]},
+  {"size":8,"cat":"MIJI","color":"#b91c1c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MTWARA","LINDI","SINGIDA","MOROGORO","MUSOMA","BUKOBA","SONGEA","PEMBA"]},
+  {"size":8,"cat":"HISIA","color":"#c026d3","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FAHARI","WIVU","HURUMA","MAJONZI","KICHEKO","RAHA","SHAUKU","CHUKI","HAMU"]},
+  {"size":8,"cat":"MUZIKI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TAARAB","BONGO","SINGELI","KWAYA","SAUTI","DANSI","MDUNDO","KIBAO","MSANII"]},
+  {"size":8,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NYASI","MWEMBE","MNAZI","MBUYU","MPAPAI","MPUNGA","SHAMBA","JEMBE","PANGA"]},
+  {"size":8,"cat":"NCHI","color":"#0e7490","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SUDANI","GHANA","NIJERIA","SOMALIA","ETHIOPIA","ANGOLA","NAMIBIA","TOGO"]},
+  {"size":8,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["RISITI","MZANI","BIDHAA","FAIDA","HASARA","DENI","AKAUNTI","BANKI","BAJETI"]},
+  {"size":8,"cat":"TEKNOLOJIA","color":"#334155","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["UJUMBE","BARUA","INTANETI","VIDEO","TOVUTI","NENOSIRI","ANTENA","DATA"]},
+  {"size":8,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["CHEZA","CHORA","CHAGUA","CHUKUA","CHOMA","CHEMSHA","CHIMBA","CHUNGA","ENDA"]},
+  {"size":8,"cat":"SIFA","color":"#a21caf","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["HURU","IMARA","JASIRI","KAMILI","KALI","KAVU","KIDOGO","KIMYA","KUBWA"]},
+  {"size":8,"cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SWALA","NYANI","SOKWE","TUMBILI","MAMBA","NYOKA","KOBE","SUNGURA","NGIRI"]},
+  {"size":8,"cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NGALAWA","MASHUA","KISIWA","BANDARI","NYAVU","NDOANO","UFUKWE","KASIA"]},
+  {"size":8,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["CHIPSI","MCHUZI","NYAMA","MAYAI","MTORI","MSHIKAKI","VITUMBUA","SUKARI"]},
+  {"size":8,"cat":"FAMILIA","color":"#db2777","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["WAZAZI","NDUGU","MPWA","SHEMEJI","MKWE","PACHA","BINTI","BWANA","AHALI"]},
+  {"size":8,"cat":"MATUNDA","color":"#ea580c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FENESI","STAFELI","TOPETOPE","BUNGO","NDIMU","MABUYU","APRIKOTI","PICHI"]},
+  {"size":8,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MGONGO","KIDOLE","GOTI","KISIGINO","UNYAYO","KUCHA","NGOZI","DAMU","MOYO"]},
+  {"size":8,"cat":"NDEGE","color":"#0284c7","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["CHIRIKU","KOZI","JOGOO","FLAMINGO","NDEGE","SHAKWE"]},
+  {"size":8,"cat":"MBOGA","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NJEGERE","MAHINDI","MUHOGO","TANGO","BROKOLI","ASPARAGA","HARAGE"]},
+  {"size":8,"cat":"WADUDU","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NYENJE","FUNZA","KIWAVI","KIROBOTO","KONOKONO","MDUDU","MNYOO","NONDO"]},
+  {"size":8,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KAPTULA","KILEMBA","MKUFU","PETE","HERENI","MTANDIO","BLAUZI","BUTI","JOHO"]},
+  {"size":8,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ZULIA","NDOO","UFAGIO","KOCHI","FRIJI","UFUNGUO","KUFULI","CHOO","BAFU"]},
+  {"size":8,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ASUBUHI","MCHANA","JIONI","USIKU","SAA","DAKIKA","JUZI","ALFAJIRI","AGOSTI"]},
+  {"size":8,"cat":"JIKONI","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KIKAANGO","CHUNGU","JAGI","GLASI","SINIA","DEBE","CHOMBO","GILASI","KARAI"]},
+  {"size":8,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TIKETI","SAFARI","NAULI","MAFUTA","DARAJA","BEHEWA","BREKI","BENZINI"]},
+  {"size":8,"cat":"SALAMU","color":"#0d9488","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SHWARI","HODI","KARIBUNI","ASANTENI","SAMAHANI","HONGERA","KUMRADHI"]},
+  {"size":8,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MLINZI","KINYOZI","MWIMBAJI","HAKIMU","WAKILI","KARANI","MHUDUMU","DOBI"]},
+  {"size":8,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ZOEZI","JIBU","SWALI","RAMANI","KAMUSI","HADITHI","ALFABETI","ALJEBRA"]},
+  {"size":8,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KIANGAZI","MASIKA","SAYARI","DARUBINI","DUNIA","GIZA","HEWA","GHARIKA"]},
+  {"size":8,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["USHINDI","ZAWADI","MEDALI","FILIMBI","JEZI","BINGWA","BONDIA","GOLIKIPA"]},
+  {"size":8,"cat":"MIJI","color":"#b91c1c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ZANZIBAR","MAFIA","BAGAMOYO","PANGANI","KILWA","GEITA","NJOMBE","KATAVI"]},
+  {"size":8,"cat":"HISIA","color":"#c026d3","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KINYONGO","MAPENZI","MAJUTO","MAUMIVU","MASHAKA","MSHANGAO","MSHTUKO"]},
+  {"size":8,"cat":"MUZIKI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["REDIO","TAMASHA","ZUMARI","KAYAMBA","ALBAMU","BANJO","DISKO","FIDLA"]},
+  {"size":8,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["UDONGO","MBOLEA","KISIMA","ALIZETI","BUSTANI","BONDE","GUGU","KICHAKA"]},
+  {"size":8,"cat":"NCHI","color":"#0e7490","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MALI","CHAD","MSUMBIJI","BOTSWANA","CHINA","INDIA","MAREKANI","URUSI"]},
+  {"size":8,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["BIASHARA","ANKARA","DOLA","FAINI","GHARAMA","HISA","HUNDI","GHALA","HAZINA"]},
+  {"size":8,"cat":"TEKNOLOJIA","color":"#334155","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["DISKI","FAKSI","FAILI","FOTOKOPI","INJINI","KIIBODI","MASHINE","LENZI"]},
+  {"size":8,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["AGIZA","AMINI","BADILI","CHELEWA","ELEWA","ELEZA","FAGIA","FANYA","FICHA"]},
+  {"size":8,"cat":"SIFA","color":"#a21caf","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["LAINI","KONGWE","KUUKUU","MBAYA","MPYA","MREFU","MPOLE","MREMBO","MVIVU"]},
+  {"size":8,"cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["DUMA","MBWEHA","POPO","MJUSI","KINYONGA","PANYA","NYUMBU","POFU","KONGONI"]},
+  {"size":8,"cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MWAMBA","CHUMVI","MWANI","CHAZA","CHEWA","DAGAA","GHUBA","JODARI","KAMBARE"]},
+  {"size":8,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ASALI","SIAGI","BISKUTI","ANDAZI","BAJIA","HALUA","ILIKI","JIBINI","JUISI"]},
+  {"size":8,"cat":"FAMILIA","color":"#db2777","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JAMAA","JIRANI","KIJANA","MCHUMBA","MJANE","MSICHANA","MVULANA","MWANA"]},
+  {"size":8,"cat":"MATUNDA","color":"#ea580c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KOROSHO","KUNAZI","PLAMU","RASIBERI","STROBERI","TUFAA","TUNDA","UKWAJU"]},
+  {"size":8,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["INI","FIGO","MFUPA","USO","KIDEVU","FUVU","JINO","KIFUNDO","KIGANJA"]},
+  {"size":8,"cat":"JIKONI","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KISAHANI","KIFUNIKO","KAANGO","KOPO","KOLEO","MAKAA","MTUNGI","MKEBE"]},
+  {"size":8,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["EROPLENI","FERI","DIZELI","GURUDUMU","KATAPILA","MOTOKAA"]},
+  {"size":8,"cat":"SALAMU","color":"#0d9488","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MABRUKI","SHUKURU","WASALAMU"]},
+  {"size":8,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["AFISA","BAHARIA","BALOZI","BAWABU","DALALI","CHIFU","DIWANI","GAVANA"]},
+  {"size":9,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["BIOLOJIA","ATLASI","DAWATI","DESKI","DIPLOMA","ELIMU","FIZIKIA","FASIHI","HISTORIA"]},
+  {"size":9,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JUPITA","KIMONDO","KASKAZI","KIPUPWE","KIVULI","KIZA","MACHWEO","MACHEO","MBINGU","NURU"]},
+  {"size":9,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["DIMBA","FAINALI","DOMINO","JUDO","KANDANDA","KABUMBU","KIPA","KADI","KIPENGA","KRIKETI"]},
+  {"size":9,"cat":"MIJI","color":"#b91c1c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SIMIYU","MANYARA","KAHAMA","BABATI","MJI","MKOA","UNGUJA","WILAYA"]},
+  {"size":9,"cat":"HISIA","color":"#c026d3","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["PENDO","SIMANZI","TABASAMU","TAMAA","TUMAINI","UCHUNGU","UCHOVU","WOGA","UPWEKE"]},
+  {"size":9,"cat":"MUZIKI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KASETI","KINUBI","KIITIKIO","MUZIKI","MTUNZI","MSONDO","NGONJERA","PIANO","RUMBA"]},
+  {"size":9,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KILIMO","KIJITI","KISIKI","KITALU","KUTI","MAVUNO","MCHE","MCHUNGWA","MDIMU","MFENESI"]},
+  {"size":8,"cat":"NCHI","color":"#0e7490","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["UTURUKI","UFARANSA","TANZANIA"]},
+  {"size":9,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FORODHA","HELA","KAMPUNI","KAUNTA","KIPATO","KIOSKI","KODI","MALIPO","MAUZO","MAPATO"]},
+  {"size":9,"cat":"TEKNOLOJIA","color":"#334155","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MONITA","MTAMBO","MOTA","PRINTA","PROJEKTA","PROGRAMU","RIMOTI","RUNINGA","PLAGI","WAYA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FIKA","FIKIRI","FUA","FUATA","FUGA","FUNGA","FUNGUA","FUNIKA","FUNDISHA","FURAHIA"]},
+  {"size":9,"cat":"SIFA","color":"#a21caf","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MGUMU","MKALI","MWEREVU","MTULIVU","NDEFU","NDOGO","NENE","NYINGI","NZITO","RAHISI"]},
+  {"size":9,"cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["DIKIDIKI","TANDALA","DUBU","KANGARUU","KIMA","KENGE","KIFARU","KINDI","KULUNGU","KUDU"]},
+  {"size":9,"cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KOLEKOLE","MERIKEBU","MTUMBWI","MWAMBAO","MKONDO","NAHODHA","NGISI","NYANGUMI","ZIWA"]},
+  {"size":9,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KAHAWA","KABABU","KARANGA","KAIMATI","KASHATA","KAKAO","KINYWAJI","KARAFUU","MCHELE"]},
+  {"size":9,"cat":"FAMILIA","color":"#db2777","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MWANAMKE","MZAZI","MZEE","NDOA","RAFIKI","WANANDOA","WAKWE","WIFI","WIZANI","YATIMA"]},
+  {"size":9,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["BANGILI","BUKTA","GLOVU","HELMETI","JAKETI","KAFTANI","KIKOI","KAPTURA","KITAMBAA"]},
+  {"size":9,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["BARAZA","BANDA","BOMBA","BALBU","BENCHI","BESENI","BEMBEA","GHOROFA","GETI","GEREJI"]},
+  {"size":9,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ADHUHURI","ALASIRI","APRILI","DESEMBA","FEBRUARI","JANUARI","JULAI","JUNI","KALENDA"]},
+  {"size":6,"cat":"JIKONI","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NYUNGU","STOVU","TANURI","VYOMBO"]},
+  {"size":9,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MINIBASI","MOTABOTI","MSAFIRI","MSAFARA","NJIA","PETROLI","PASIPOTI","RELI","SKUTA"]},
+  {"size":9,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MNADA","MKOPO","MTAJI","MSHAHARA","MTEJA","MNUNUAJI","MIZANI","NOTI","SARAFU","PAUNI"]},
+  {"size":8,"cat":"TEKNOLOJIA","color":"#334155","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SATALITI","ROBOTA","STIMA","UMEME"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FUTA","GAWA","GEUKA","GONGA","GUSA","HAMIA","IGIZA","HUDUMIA","IMBA","INGIA"]},
+  {"size":9,"cat":"SIFA","color":"#a21caf","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SAFI","PANA","TAMU","TAYARI","TUPU","TULIVU","WAZI","ZURI"]},
+  {"size":9,"cat":"WANYAMA","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MBOGO","MBAWALA","MBEGA","MNYAMA","NDOVU","NYEGERE","NGEDERE","NGWENA"]},
+  {"size":9,"cat":"BAHARI","color":"#0891b2","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NGUVA","POMBOO","PWEZA","SAMAKI","SANGARA","NDOANA","UVUVI","WIMBI"]},
+  {"size":9,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KITUMBUA","MAKARONI","MAJI","KITOWEO","MASALA","NJUGU","PIPI","PUDINI","POSHO","SALADI"]},
+  {"size":9,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["FENI","FANICHA","DARI","JOKOFU","JAMVI","KITASA","KIBANDA","KIYOYOZI","KORIDO","LANGO"]},
+  {"size":9,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KARNE","KRISMASI","MEI","MUDA","NOVEMBA","OKTOBA","SEPTEMBA","SEKUNDE","SASA","SIKUKUU"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["INUA","ISHI","ITA","JARIBU","JAZA","JENGA","JIFUNZA","KAANGA","KAGUA","KAMATA"]},
+  {"size":9,"cat":"NAMBA","color":"#4f46e5","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TISINI","ELFU","LAKI","MILIONI","SIFURI","ARUBAINI","BILIONI","MAMIA","MAELFU","MAKUMI"]},
+  {"size":9,"cat":"MBOGA","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KIAZI","MBATATA","MAWELE","MTAMA","NAFAKA","SPINACHI","VITUNGUU","UYOGA"]},
+  {"size":9,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KIZIBAO","LESO","MAVAZI","MIWANI","MSHIPI","PAJAMA","POCHI","STOKINGI","SUTI","SLIPA"]},
+  {"size":9,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MSHUMAA","MKEKA","MSWAKI","MFAGIO","MWAVULI","MSUMARI","MSUMENO","NYUMBA","NYUMBANI"]},
+  {"size":6,"cat":"SIKU","color":"#0f766e","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TAREHE","WAKATI","ZAMANI"]},
+  {"size":9,"cat":"USAFIRI","color":"#2563eb","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["STESHENI","STENDI","TAIRI","TRAFIKI","TREKTA","TRELA","TROLI","SPIDI"]},
+  {"size":9,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["JAJI","JEMADARI","JENERALI","KAMANDA","KAPTENI","KATIBU","INJINIA","INSPEKTA","MLEZI"]},
+  {"size":9,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["HISABATI","HERUFI","INSHA","JIOMETRI","JIOLOJIA","KARATASI","KIDATO","KEMIA","LUGHA"]},
+  {"size":9,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MAFURIKO","MANYUNYU","MAJIRA","MWANGA","MNGURUMO","ROKETI","THELUJI","TUFANI","UKAME"]},
+  {"size":9,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KLABU","LIGI","LUDO","MASUMBWI","MCHEZAJI","MCHEZO","MSHINDI","MSHABIKI","MRUKAJI"]},
+  {"size":7,"cat":"MUZIKI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SANTURI","SINEMA","STUDIO","STEJI","UIMBAJI"]},
+  {"size":9,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MGOMBA","MKONGE","MKARAFUU","MKOROSHO","MLIMAO","MNANASI","MPERA","MSTAFELI","MTENDE"]},
+  {"size":9,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KINYWA","KIKWAPA","KISOGO","KIUNO","KIWIKO","KITOVU","KOO","KOPE","KWAPA","MAPAFU"]},
+  {"size":9,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MASOMO","MAABARA","MTAALA","MSAMIATI","MWANDIKO","MSTARI","NENO","NOMINO","RATIBA"]},
+  {"size":9,"cat":"ANGA","color":"#0369a1","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TETEMEKO","UPINDE","UWINGU","VOLKANO","UNYEVU","VUMBI"]},
+  {"size":9,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NETIBOLI","OLIMPIKI","PENALTI","RAGBI","RAUNDI","POINTI","SARAKASI","TENISI","SPOTI"]},
+  {"size":9,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MASIKIO","MATUMBO","MASHAVU","MIGUU","MIDOMO","MIFUPA","MISULI","MSHIPA","MWILI","NDEVU"]},
+  {"size":9,"cat":"NAMBA","color":"#4f46e5","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NAMBA","PILI","TARAKIMU","TRILIONI","THELUTHI","THUMNI","ZIRO"]},
+  {"size":9,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MTINI","MKWAJU","MUWA","MSITU","MMEA","MKUYU","MVULE","MPINGO","MZABIBU","MZEITUNI"]},
+  {"size":9,"cat":"SOKONI","color":"#a16207","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SENTI","THAMANI","UCHUMI","USHURU","VOCHA","WAKALA"]},
+  {"size":9,"cat":"BUSTANI","color":"#15803d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["PAMBA","SHOKA","WARIDI","YASMINI","ZAO","UKULIMA"]},
+  {"size":9,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SARUFI","SAYANSI","SENTENSI","RIWAYA","PENSILI","SHAHADA","SILABASI","SHAIRI","WINO"]},
+  {"size":8,"cat":"MICHEZO","color":"#16a34a","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TUZO","VOLIBOLI","ULINGO","VUVUZELA"]},
+  {"size":8,"cat":"MAVAZI","color":"#be185d","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["USHANGA","YUNIFOMU","VAZI","WIGI","VELI"]},
+  {"size":9,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NGAZI","PAIPU","NYUNDO","SANDUKU","SEBULE","ROSHANI","PASI","SABUNI","PIPA","SOFA"]},
+  {"size":9,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SINKI","STULI","TOFALI","TAULO","STOO","TANKI","SWICHI","SOKETI","SPONJI","TOCHI"]},
+  {"size":9,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KIBARUA","KIONGOZI","KAMISHNA","KONDAKTA","MCHORAJI","MALENGA","MBUNGE","MAKANIKA"]},
+  {"size":9,"cat":"SHULE","color":"#1d4ed8","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TAHAJIA","TAFSIRI","SINONIMU","SUMAKU","VOKALI","ZUOLOJIA"]},
+  {"size":9,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MCHUUZI","MFAMASIA","MFUGAJI","MGANGA","MHADHIRI","MHARIRI","MHASIBU","MHUNZI","MEYA"]},
+  {"size":7,"cat":"NYUMBANI","color":"#b45309","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["UKUMBI","VERANDA","UZIO","WEMBE","UWANI"]},
+  {"size":9,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MJENZI","MKAGUZI","MKUFUNZI","MKUTUBI","MSAIDIZI","MSHAURI","MSHAIRI","MTAFITI"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KANYAGA","KATA","KATAA","KAUSHA","KIMBIA","KIMBILIA","KARIBIA","KUBALI","KUMBUKA","LALA"]},
+  {"size":9,"cat":"CHAKULA","color":"#c2410c","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SAMLI","SEMBE","SODA","SOSEJI","STEKI","TAMBI","SIMSIM","UNGA","VANILA","ZAFARANI"]},
+  {"size":9,"cat":"MWILI","color":"#9333ea","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["PAJA","PAFU","NYONGA","TAYA","UBONGO","UBAVU","UKUCHA","UNYUSI"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KUNJA","KUSANYA","LAMBA","LETA","LIA","LIMA","LINDA","LIPA","LISHA","KWEPA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KWEA","KOROGA","KOHOA","KOSEA","MALIZA","KULA","KUNYWA","KUSOMA","KUANDIKA","KUIMBA"]},
+  {"size":9,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["MTAALAMU","MWINDAJI","MWOKAJI","MSUSI","MENEJA","MESENJA","OFISA","PROFESA","RAIS"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KUCHEZA","KUOGELEA","KUPIKA","KUSAFIRI","KUTEMBEA","KUSHINDA","KUKIMBIA","KULALA"]},
+  {"size":6,"cat":"KAZI","color":"#7c3aed","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["NAIBU","TABIBU","WAZIRI"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["KUOGA","KUONA","MIMINA","MWAGA","MULIKA","MENYA","NUNUA","NYAMAZA","NYOOSHA","NYWA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["OGA","OGELEA","OGOPA","OKA","OKOA","OKOTA","OMBA","ONA","ONDOKA","ONGEA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ONGEZA","ONJA","ONYESHA","OSHA","OTA","PANDA","PATA","PELEKA","PENDA","PIGA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["PIKA","PIMA","PITA","POKEA","PONA","PUMZIKA","RUDI","RUKA","SAFIRI","SAFISHA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SAHAU","SAIDIA","SALIMU","SEMA","NGOJA","SHIKA","SHINDA","SHONA","SIKIA","SIKILIZA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["SIMAMA","SIMULIA","SOMA","SUKA","SUBIRI","SUGUA","TAFUTA","TAJA","TAMBUA","TANGAZA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["TAZAMA","TEMBEA","TOA","TOKA","TUMA","TUMIA","TUNZA","TUPA","ULIZA","UNDA"]},
+  {"size":9,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["VAA","VUKA","VUNA","VUNJA","VUTA","WASHA","WEKA","WINDA","ZUIA","ZUNGUMZA"]},
+  {"size":6,"cat":"VITENDO","color":"#475569","dirs":[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],"words":["ZURU","VUA","UZA"]}
 ];
+// ---- Mchanganyiko (mixed): every remaining clean word from Neno's pool, 8x8, all directions ----
+const MIX_WORDS="USUBI WADUDU ZEITUNI UKOO VIJANA MANJANO UWANI SPIDI|ULINGO VUVUZELA WILAYA WOGA UPWEKE VUA UZA HAYA AYA|UKOA KOA KUA KUO SHIA ASI HAI SAI SIA|NDIYO NDIO SIJUI ISI SUI NIRU NUI UZI MBAO|ILANI AINI LINI ILA ILI INA BIDAA BADA BAA|BIA DAI JAAZA JAA UMOJA MJA LAKTI KATI KILA|LIKA LITA UHAJI HAJI HIJA JAHI JIHA JIUA KIAMA|AKIA AMIA KAMA UTUME TUME UUME MTU UTE CHAMA|HAMA MCHA AMA CHOMO CHO MOO OMO KINOO KONI|SHURA RUSA SHUA SURA USHA HAU TEMSI MESI SETI|SIME VIZURI VIRU HAPANA HAPA APA MATATA MTATA MATA|MTAA IKABU IRABU KAURI RUKIA BAKI HAKUNA UANA AUA|UNA HAIBA ABRA ARIA BARI HARA HARI NAOMBA AMBAO|MBANO AMBA BANO MNO MAOMBI BIMA MOMA KUSEMA MSUKA|SEKUA SMAKU KEMA SINUA NIBU NUSA UANI ULANGA ALA|GUA LAU FUWELE UWELE ULE RITADI TARI ARI MAASIA|AMISA MASIA SAMAI SIMA IMA UFUFUO FUO WAADHI DAWA|DHAA HADI ADI WAA METALI MTALE IMLA LAMI LEMA|ISLAMU ALIMU MAULI MSULI MLAU UHUNZI UHUNI UUNZI HUNI|IZU NAKIRI INIKA KAINI KARII KINAI ARKI SILIMU ISIMU|SULI TARIKA AKARI ARIKA ATIKA KIRAA RIAKA KUFURU RUKUU|FURU KUFU KURU UKUU FUU MATIKO KIAMO KIOTA KOTIA|MKATO MKOTA TAMKO HUTUBU UBUTU BUTU TUBU BUU HUU|UTU KARIMA AMARI AMKIA IKAMA KAMIA KIYAMA WAIDHI AHIDI|DHII HIDI WADI WAHI AHERI EKARI KERIA AKHI HAKI|ZIRAILI LIRA LIZI ZARI ZILA UPAGANI ANGUA NGAPI PANIA|PANUA PINGU UPOTOVU POTOVU TOVU UOTO UOVU UVOO PUO|KINGAJA ANGIKA AKINA JANGA JINGA KANJA KINGA UISLAMU|UALIMU LAUMU MKRISTO KORTI KROSI MKOSI MTOKI KIMO KOSI|BANIANI BANIA IBANA NABII AINA ANIA BINI MLOKOLE KOMEO|KOLE KOMO MEKO MLEO MMASIYA MASIYA ASIYA BASHIRI BRASHI|HASIRI RISHAI SABIHI SIRIBA UBATIZO BATIZO ATIBU TIABU|TIBUA TUBIA UBOZI UZITO TAKBIRA BAKARI KABARI KATIBA|KITARA UKAFIRI FAKIRI FIKIRA KAFIRI KAFURI ARIFU ITIKADI|ITIKIA AKIDI ITIKA KAIDI KITIA DIKI UPOTEVU POTEVU UPETO|UPEVU UPOTE PETU PEVU POTE UKRISTO KRISTO TUKIO UKOSI|USITO AMANIA MAISHA SAMANI AMANA AMSHA KUSAIDIA KIASI ADUI|KASI UBASHIRI HARUSI SAHIBU SHAIBU BISHA JONGOMEO MJENGO|JENGO NGOME GOME NJOO TANASARI SITARA ANASA SANAA NARI|AJILI JILIO AILI ALOI ALOO JALI OILI MWISLAMU MLIMAU|IMAMU MLIWA USALAMA LAWAMA MSWALA MUWALA AALAM FATAHA|FATIHA ALFIA HADAA LADHA TAALA DAFI NINI IDI UTAJIRI|TAJIRI UAJIRI UITAJI ULAITI UTALII HALIJOTO LAITI TOHOA|HALI HATI HILO ENENZA TENGEA ZENGEA ENEZA TANGE TEGEA|TENGA TENGE ANGE CHAVUA HAMAMU HAMUMA HAMUMI MCHAMA MCHUMI|ACHIA VAMIA MKUNGU UKUNGA UMANGU UZUNGU KANGU KUUZA MUNGU|NGUMU MLINDAJI DAINAMO JIANDAA JINAMIA MALINDI MANJALI|AMONIA JAMALI MADINI APRONI PARETO TOPASI TORATI ATERI|PONEA POSTA AALI ALI UNJU JUU YAPI PIA EHUA|INZA IZA NAI NIA MIE MSI SIE GOYA AGO|GAO OYA ZOEA OZA ZOA SUNZU NUSU MLEI VUJA|REMBA REA NDULI DUNI NDUI VYOGA VYAO YAO NGEGU|VYENU YENU BUKA KIA MDENI GHANI GANI HANI IGA|MTEMI MLIMO MLIO MLI MLO TAABU ATUA AUTA BAUA|BUTA IMI MUI NYATA NATA NYAA NTA KAME MAKI|MKIA UJOLI UJIO ULIO JIO BOKOA BAKO SACHI HASI|ISHA SIHA SHENG SOMBA AMBO BOMA MSOA FUKUO FUKO|UFUO BEMBA BABE MBA MEA FUKAA AFUA AKUA FAKA|FUKA GWASE SEGA WAGE GAE GEA GWA SPAKI KAPI|KISA PAKI ENGA ENZA GONA NGAO UZOAJI UJAZI JOZI|UZAO SERAJI RASI SERA MLASA ALAA MASA SALA MASIRA|MSIRA RAMIA RASMI MATUKO KUTOA KAMO KUTA TOMA BRADHA|ARDHA DHARA UDHIKA KADHI KUDA ZABUNI ZANI DAZENI TABIRI|TABII IBIA IBRA RIBA TIBA MUDIRI UMRI HAYATI HATA|MZIAVU AZIMU MVIZA UZIMA UMIA FASIRI SAIRI SIFIA FIRI|RAFI KIBAVU IBUKA KIBUA BAVU FYONGO ONYO ROZARI ZIRA|RAI RIA KIWETE KETE KETI KITE KIWE TEKE CHANUO|CHANO CHUNA CHAO CHOA CHUA NCHA UTONEO NOTE TONE|UTEO TEO RAZINI ZIRAI NIRA CHACHI CHA HAIHAI HAHA|HII MUUMBA MUAMU MUMBU UMBUA BUMU UBUA UMBA HITIMU|MITU MTII UTII HUI CHANYA CHANA CHAA KIFUTA FUKIA|FUTIA KITUA TIFUA MAKAME MKAMA MMAKA MKWARE KAMWE KARWE|KWARE MWEKA MWERA KERA REHEMU REE MBUKWA KAMBU KUWA|KWA USHAURI RUHUSA USHARI SHARI SHIRA SHURU SURIA MDAKALE|DAKA DEKA KADA KALE LAKA KIMOMBO MKOMBO KIOMO MBOKO|MKOO LIPISHA HALISI ASILI SAILI SILIA NYAMBUA NAMUA NYUMA|UNYAA YUMBA KEMKEMU UKE BORONGO RONGO ROBO SHABAHA HASA|SHAA SAKANYA KAYA SANA MASAIBU SIMBUA AMIBA BASUA BUMIA|KIDUNYA KIUNDA AKIDU INUKA KIDAU KINDA NYIKA THAWABU|BUTWAA BAHAU BATUA BUTAA HABTA HATUA UBAWA MIKWALA AKWAMI|AMWALI KALIMA MAKALI MAKIWA MALKIA AWALI VUNJIFU UJUVI|VUNJU JIFU JIVU MSHUMBI MSUMBI MSIMU HIBU MBIU SIBU|BUI TUNDUIA TUNDIA TAUNI TINDA TUNDU UDUNI UCHACHE CHACHU|CHECHA CHUCHA CHEUA CHEU TENDETI TETE TINE UONGOZI UZINGO|ZINGUO NGUZI NGUZO OZONI UGONI UDOKOZI DOKOZI UOKOZI DUIZO|UKOZI DIKO DOZI DUZI JUBILII BILI BULI MTATAGO GOTAMA|TOTAMA MTAGO OTAMA AOTA GOMA MNAZAA NYAMAA MAANA MANYA|MANZA MNYAA SALIMIA MAILI MALAI KISHERIA SHIRIKA ASHIKI|KESHIA KISIRA SHAKII KUYEYUKA KUKUA KUUA YAKE EKA UKA|UYA KUELEKEA KUELEA ELEKA UKALE ELEA KELE ANDAMANA ADANA|MADA NANA KITIBEGI BEKI BETI TARATIBU TAURATI RATIBU ARUBA|TABIA SAKARIKA KIRAKA KIRASA KISAKA SAKARA AKIKA UVUNJAJI|JUNJU UUAJI JINA UTENGAJI UTEGAJI ENGUA NGUTA NJUGA|UPEKECHO UHEKE UKOPE CHEO CHUO PEKE PEKU UCHE MVUNJIKO|MVUNJO KUMVI MKUNO MNUKO MVUKO UPINDAJI PINDUA UPINDA|JINAI PANDU PINDA MAHUTUTI TUHUMA MAUTI TUMAI TUTIA|UKENGEZA KENGEUA EZEKA GEUZA ALWATANI LIWATA TAWALA|WATANI LAANA LAANI LINTA WANIA KIBAJUNI BAJUNI INJIKA|INUKIA JANIBU JIKUNA JINAKI KIBUJA MASILAHI MASLAHI|MSAHILI SHAMILI SHIMALI ALISHA ALMASI PIMAJOTO JITOMA|MPAJI MPATO MPITO MPOTO MTAPO POMOA MSAMBALE MALEBA MLAMBA|MSAMBA LEMAA LEMBA MBALE ASHUHURI HUISHA SHAURI USHURI|ARSHI DOMOKAYA DAMKA DOKOA KODOA KOMAA KOMOA MAKAO|MUKHTARI HARIMU IHRAMU KIMATU RAHIMU TUMIKA URATHI HUMRA|MEGAWATI AMETA EGAMA GAMTI GAWIA GWATA MAIGE TOHARIKA|AKTHARI ATHARI HARITA HATARI KAHARI KAHATI KARIHA|DUNDUMIO DUDUMI MUUNDI MUUNDO DUNDU MDONI MUNDU KIYUNANI|KANUNI YAKINI NUKIA MASHIKO MAKOSI MKOSHA HAMIO KISHA|KOSHA CHAKULA KIHALUA ACHIKA KLACHI KUACHA AKALI UOKOAJI|KUONJA NYOKOA NYOOKA IJAYO KANJI KINYO CHONGA CHANI NGANO|MCHANGO CHAJIO CHANJO CHINJA MCHAGO MJANGO MJINGA BENKI|BENI BESI BOSO KESI NAYE NENA NYEA YEYE TAARABU|BATARA BUSARA RUTUBA TABURU MHARITA NATHARI HAMIRA MORITA|KATOLIKI ATOMIKI KAMILIO KITAMLI AMIKTO TEPETEPE UPEPE|UPETE UTEPE UTETE PEPE PUTE SHARUBU USUHUBA BUBURU HARUBU|HUSURU RUHUSU SUHUBA BUSHA ASHIRIA HASAISI ASIRIA HAJIRI|HARIJA HARIJI ISHARA MVULI UMIMI UVIVU UVULI UVUMI|BASILIKA SHABIKIA AIBISHA BILASHI HALAIKI KASHABI|SABILIA SHABAKI SHAKILI CHOZI HICHO HEZI HIZO MZIO KINGISA|KISANGA KANISA KATANI KIANGA KISAGA KITANA SAGIKA|BASHASHA BAHASHA BAHASA HASHUA SAHABA SHUSHA UBASHA ASUSA|TISHIO URITHI UTISHO RITHI SHOTI SHUTI THORI TISHU|UBABIAJI BAMBIKA BABUKA BAMBUA BIABIA MBUAJI APUA PAUA|PUPA KEEKEE KINGANGA AKANIA KIGAGA AGANA DANGANYA NDIGANA|JAGINA GANDI NYANA KIHEMBE CHEMBE KEBEHI CHEKI KEKEE CHEE|KAIMANI KIJAMII KIMIANI KIMWANI KIWANJA MWAKANI MAKINI|MAJILISI MSIKIAJI JISIKIA KILIMIA MSAJILI JALIZI JAMILI|JILISI LIKIZA LUTENI MITENI MNDIMU MNDULE MODELI MTINDI|MTINDO ULINDI DEULI ITILO NYENYERE NYUNYU VYENYE NYEVU|UNENE UNUNU NUNE AMINISHO MANGISI MHISANI MIGHANI MNASIHI|MSIGANO NIMONIA NISHANI SIMANGO CHANGO UKARARA KAKARA|KAUKAU KURUKA KURURA ARAKA KAKAU KARAA KARUA KAUKA KUKAA|RAKAA UALISAJI GHALIBU GHILIBU UBAHILI ULAGHAI USAJILI|ALIJUA BAHILI BALASI SAW MZO UGO FUZU SENEA IKA|KAI AMU BUA WATU AILA FIWA FIA SUA BUDA|HOZA HAO DOA ODA DUGI DUI UDI ZUBU UVIA|IVA UVI VIA SITI TII TITI HOTA TAO FOLA|LAO LOA OLA OANA NOA HALA SUGU GUU UMBU|YAYA YAA HOWA WAO UPWA PAU ILE UMUA UTATU|TUTA TUTU TUA UTA ZAZI ZIMA DUGU TINI BIN|AGIZO ZIGA MGENI DINGI AYALI BIMBA MNUNA UGA KINGO|NGOI UTASA STUA TASA MISS SHOGA SAGO UPOSI SIO|MKIWA KIWA MAWI WIKA UYAYA VINYA NYA NYETA TENA|ZUNGA BEMBE PIGIA PIGI ULEZI ONGOA NGOA UMMA SHAUA|UJUSI MLIZI MKAJA ULEDI MLAMU MLA KAMBO UBINI PWEKE|MBUTA MATU TABU UTOTO UTO JAMBA DOVUO OVU VUO|SISTA TASI AKIKI KAKI KIKI BANA BAWA NAWA WABA|WANA AHADI ADHA ADIA TAFU ZINAA AAZI DHIKI HIKI|DONDA DODA DONA JANJA JAJA NJAA DINDA INDA NADI|NDI FOKEA FOKA DONEA DOEA ZILE EZI CHIRA NYOFU|FUNO HAJJA HAJA JAHA DAMA MANA MDAA MNAA UTOSI|SUTO TOSI TUSI ITO ZAINI ZINI KOPOA KOPA OPOA|PAKO MZIGO ZIO MWAGO GAWO MGAO MGOA MWAO KILIO|KOLI SURI UNESI SINE SUNI NSI KAZIA KAZA KAZI|JIMBO MBI UPERA EPUA PARU PURA EPA MWIMA MWIA|WIMA AMI KANI KINA NJITI JINI JITI NTI MKUU|KUU WAZA AFIKI FIKIA BIKIRA BIRI BANDIA UKURA KURA|URU UTWANA TANU TUNA TWAA MAKUZI AKILI KIALI TAMIA|NUNUZA UZUA CHANDO HANDO KITO KITU KIVO LEGEVU KOMAZA|AMZA AZMA OMBE BANATI JEFULE MKEMBE ALMARI KUWADI MTUNDU|DUMU SIKI UTUNDU AMRI MRAU RIMA UHAI UPAMBA UBAPA|AMUA BATULI BALI BILA KIMADA DAKIA KAIDA KIADA MDAKI|SHIBA UASHI NYONYA ONYA LIVU UTI DEKEZA GULAMU GUMA|MWANAO OAMA NUSURA RUSU HIMILA HILI MLIA SHEMVI KIKERO|KERO KIKE KIKO KORE REKI UAJUZA AJUZA JAZUA JUZU|NYATUA TANUA UTAYA ANUA UOZAJI UJAZO JAZI GAWADI WADIA|GADI GIDA BIKIRI KAIMU KIAMU KIMAU KUMTA NGEU USUNGO|GUSU NGUU UNGO MALEZI MAEZI LIZA KAPERA KAPA KARA|PAKE PARA KEKETA KETA TEKA ALHAJI AJALI AJILA JALIA|FIRAKA KAIFA KIFAA KIGEGO KIGOE GEGO GOGI UJOMBA JUMBA|JUMBO MJUBA KIJUSI KISIU JISU KISI HERI KIGOLI GAGULO|GOGA LOGA UOGA HAWARA HAWAA HAWA AWA RIJALI AJIRI|JARI JIRA MAHARI HAIMA MIRAA CHALIA CHALI LICHA KINENA|INNA NANI SARAKA SAKA KIBIBI TAFUNA FAUNA AKRABA BAKAA|KAABA HALILI ILAHI LILIA HILA ANIKA KANIA KIANA UGUMBA|GUBUA GUMBA GUMBU MBUGA BUGA USURIA ARUSI RAUSI SURUA|URAIS ANDAMA ANDAA MAADA MANDA FAHAMU MAFA MFAA ZIDIWA|ZAIDI DIZI WIZI ZIDI TALAKA MDONO MSONO SONDO ONDO|SODO FICHUO UCHI FIO IFU KALIA LIMKA JESHI FAMILIA|MLAFI MLIFI FALI KIIMA KAJI WANAUME AWAMU MUWAA NEMA|ARIHAMI MAHIRI AHIRI UKEMBWA BAMKWE UKAMBE BWEKA MTUKUTU|KUTUTU TUKUTU KUTU TUKU KUUMENI KIUME UKUNI KIU BIMDOGO|BODI UDEKAJI DEUA JADI CHOKORA CHOROA CHARO CHOKO KOCHO|POTOSHA POTOA SHOTO TOPOA HAPO HOTO POSA TAPO MHALILI|HILALI LILAHI MTIRIRI TIRIRI MWANAWE UNAJISI JINSIA|NAJISI USANII ANISI JINSI UKAPERA KUPAA PAKUA PARUA PAUKA|UPARA MLAWITI LAWITI MTALII TAWILI UMALKIA AALIMU AMUALI|KUWADIA ADUA SHARIFU FURAHI FUSAHI FUSIA RUFAI MBELEKO|MBEKO MBELE TONGOZA NGOTO GOTA GOZO KIDOTIA ITIKO KIDOA|DOTA ONDOKEA KANDE KANDO KENDA KONDE ONDOA CHOKOZI HOKO|BIARUSI USIRI TAABANI BITANA RAMBUZA MRABA ZUBAA MARA|ADINASI SANDA MALAU ALAU ZINGIZI NGIZI UBAKAJI AJABU AKIBA|IJABU KIJAA UBIKIRA KIBURI RAKIBU RIKABU MFARUKU FARUMU|FUMUKA FURUKA AMURU FUMKA KAUMU MFURU MKEKETO MTEKE KETO|KOTE MTEO CHARAZA ZARAA HAZA VALISHA SAHALI SILAHA AHASI|VALIA CHIRIWA CHIRWA HIARI RIAHI CHWA JAMIA MSAJI MSIGA|SAGAI SIGAA UFAHAMU MAAFUU FUMUA MAFUA KIBUMBU KUMBI BUBU|BUKU KIMU ZALISHA SHAZIA AZALI CHUDERE CHE CHUCHIA CHICHA|MTALAKA MAKALA MKATAA MTALAA CHUCHIO HOI KIBUNJU KUJIBU|BUNJU BUNI MZINIFU ZINIFU UFIZI FUMI FUZI MINI DHAKARI|ARDHIA DAHARI DHIRAA HAIDRA IDHARA KADARI KIOKOTE KIKOTO|TOKEO BIKIZEE KIZEE KIBE ZEBE TOWASHI HOSTIA TWISHA STAHI|STAWI TISHA MALAIKA ALIKA MNASABA NASABA SAMBAA AMBAA|UBELEKO BLOKU KELBU UBELE BEKU BEUO KEBO MSHENGA MHENGA|MANGE SENGA GEMA RUMENYA NYERA MUYE NAMU KIMWANA KAMANI|MAKANI KANWA KIMANZI ZIMIKA IKIZA IMANI UANAUME CHIRIKA|HAKIRI BEMBEZI MBEZI BEBE KAMBI MBALI KASHABU BAKUA BASHA|JIZALIA JALIZA JILAZA AJIZI UHAWARA UWARA MNAVU MAVA|HOSTELI HOTELI LISHE SLETI HESI HETI JITANUA JINATA NATIJA|JUANA JUNAA JUNTA NJUTI TANIA MUAMALA MAALUM ALAMU ULAMA|GHASIA GASHI GHAZI HIANA SHANA KUZALIWA ALIKUWA KULIA|KISUKUMI KISUMU MKIKI MKUKI BWAMDOGO GOMBOA GOBOA MBAGO|BADO GODA MAHAZAMU HAZAMA ENDEKEZA BURIANI RAUNIA|JANAJIKE JENI BARUBARU BURURA BURU KILEMBWE KIWELE KWEMBE|EMBWE KWELI CHAMKANO CHOKAA MAHOKA CHAKA KOANA KONA|MZIWANDA MDWANZI AZIMA DAIMA HARIBIFU BIHI OMBOLEZA BOMLA|LAMBO OMBEA BEZA JAMIIANA JANAA KIZUIZUI KIZUIZI UZUIZI|ZUZU JINAMIZI JAMII JIMAI MAIZI GUBIGUBI UGUBI BUGI BUGU|GUBI JIFUNGUA JUNGUIA UFUGAJI FUNGIA JIUNGA UFINGA UFUAJI|UFUNGA CHOMBEZA MACHEZO CHAMBO CHEMBA CHOBEA CHOMEA HAMBE|MWANANGU UNGANA UWANGA MNANA MAMAJUSI MAJUSI MAUAJI MASUA|UTONDOTI UTOTONI NDOTO TINDO TONDO DOTI WADINASI SAWIDI|ASADI ASIDI SAWIA MJAMZITO MJIMA MTIMA MTOZI MZIMA|KIKOJOZI KOIKOI KOJOZI KIZIO JOKO MATUMATU MATATU TUTUMA|MTUTU TATUA TAUMU UJOMBANI UOMBAJI MAJUNI MBANJO MBINJA|JIZOAZOA ZOZA MACHI NCHI KADINALI KANDILI LAINIKA KALIDI|KANADI KANALI KIDANI NAKIDI KIKANZA KANIKI KAYAKI KIKAZA|KINAYA KANZA NYIZA MFUMO MUUMO DUME FOMU FUDU MFUO|JIKUNJA UJANE TAMBAZI AZIMIA ZIMIA ABAKUSI UKABILA KABISA|KUBULI CHECHEA HAMALI LAZIMA MEMBA MMBEA NEMBE WAMBA|MAKUBWA KAUMWA KUMBWA KWAMBA KWAMUA MWENZAKE MKWEME|MWENZA WEKEZA EMEWA KEMEA BOMOKO KOMBEO BOMBO KOMBO KOMOO|MBOJO ANZALI GINIZA INGIZA LANGUA ULAINI ULANZI ULINZI|ULIZIA NYESHA NYOSHA SONYA HAYO HUSISHA SULUHIA SHASHI|SHISHA SHUSHU SUHULA AUSHI MASALIA MASIALA MAWAGA AMALI|AJENDA MUUNDA UNDAMA ADAMU DUMAA JIKETUA JIKUTA KITUKA|KUTEKA ETUKA KIKAE ELEZEA LEMBEA ZEMBEA LEMEA MBABE RIHANI|RUHANI UHAINI HAINI HAULI AHAMARU CHAKURA CHARUKA KACHARA|MAKUCHA ACHAMA AKRAMA CHARUA HARAMU ANEMIA KAUKIA KUAMKA|MKAKAU UKEMIA FARANGA FARANGI KIRANGA AFRIKA MOFIMU KIFUO|MFUKO MJIKO MJUME MKEMI ALISEMA LALISHA HATIMA MAHALI|MALALE MLISHA KANYAGIO KINGAMA KINYAGO KIWANGO MGAWANO|DUBWANA MAABUDU BADAMU MBAWAA UWANDA CHANGU PANCHA UCHAGA|PAGAA UINGIAJI INGILIA JANGILI INJILI UIGAJI UJINGA|MWAMANA MKIMWA NADHIFU NIDHAMU DOHANI FONIMU FUNDIA|HADIMU MAUDHI MBIRAMBI MIMBARI AMBARI BAMBAM MBAMIA|MRAMBA RIARIA KENGEE KIENGE SENENE NYEGE SINGE GESI NYIE|MRANAHA MUAMANA MNARA NYONGOA DONGOA MAUNGO MBANGO MONYOA|MUONGO NDONGA NGONDO UGOMBA SHIBANA BARASI HARABU NAHARI|ALAMINA MWAHALI ALHANI HALALI HALANI HANALI HAWALA LAHANI|DONDOA MDONDO UDENDA DENDA DONDO DONOA KINGWANA MWANGANI|ANGAMIA ANGUKIA KWANGUA MUAWANA ARAKNIDA SAKARANI|KAWAIDA KIWANDA ANDASA DAKAWA DAWARI ELEKEZA ELEKEZI|ELEMEWA KIMELEA MELEZI KAMBAMTI MIMINIKA ADIMIKA AMINIKA|BAIDIKA BANDIKA KIMANDA KITAMBI GENDAEKA MANEMANE|KENGEWA MAWENGE MKWENDE MWENGEA NEEMEKA NGWANDA ANGEMA|EGEMEA ENENDA BINGIRIA KIBIRITI KINAGIRI KITIMIRI|MARIKITI MBINGIRI MKINGIRI KICHAANI KICHANJA KIJAMBIA|MHAMIAJI AJINABI BAINIKA CHANIKA CHIMBIA JAMBIKA|FUMUKANA KUFUNGIA MKUNGUMA MUUNGAMA UAMINIFU UBAINIFU|UKINAIFU AMFIBIA UGHUSHI JASISI JASUSI SAHIHI SAJILI ZAA|LEA EDA PIGO BUYE SORA NEPI DEDE LEPE DOLI|MKOI NTWE ROHO JORA SUSU WICHO NGONO BEBESA DUPA|JIA MAYA NGWA TARA TEGO GOT SIHI RUI ZABA|UKWE KEU WEU PAO KOPLO MTEMA HEMA SONYO UGUMU|GHILA RAUKA AUKA MBIYA MBIA STIMU MIMI UKORA KARO|KURO PINDU DIPU ALIA ATOMU ROVYO OVYO VYOO TUTWE|WETU KONDO KODO MTALA UZUKA NJE MGOLI PENGO NGOE|MKAZA MAKA USEJA WASIA SIWA WASA ASA KAULI MTULE|TULE MFIWA MGONI NOMI MEJA ABUDU DUBA DOEDOE BUNGUU|BUNGU GUBU MREMBE SABASI BEBEKA MSONZI NZIO SIMO TOKOTA|KATO MSUKUO MSUKO SUMU MSO RILADI DRILI DILA KAPANI|PANKA MSHONA MNASO HOMA SONA USAILI LASI UASI MRASHI|FAHUWA FUWA WAFU AFA AFU KIUNZA KANZI KINZA NUIZA|UZANI UTADI UTANI PATISI PITIA TAPELI PALE PATE PETA|MPANDO DAMPO MANDO PONDA DOPA KUBAZA BAKA SIJIKO KISIO|KIAGA KISAA WAJIBU AJIBU BWIA IBUA MWANDE DEMA WEMA|ITISHA ISHIA SIAHI NYAFUA AFYA VYANGU VUNGA YANGU GUNA|NYAU ALBAKI BALIA KABLA KIPETO KIPEO STEPLA SETLA UZEMBE|UZEE ZEBU BEWA FUFUTA FUFUA FUTUA UFUTA FUTU CHOSHA|HASHO ACHANA DHURIA ARDHI UDHIA MAVYAA AVYA VYAA UHURU|HUSU SHUU KAWIA KIMWA MZISHI MSIZI SHIZI HISI HIZI|ZIHI PONDEA PANDE MCHEJA IDHINI DINI HINI JALIKO SALUA|SUALA TALIKI ALIKI ATILI KIILA TWESHA MITARA MTARA MVYELE|MLE KUUKENI TOROSHA SHORO TOSHA HARO MANII MTAGUSO MGUSO|MSAGO DHALIMU ADHIMU ILHAMU MUHALI DHULI MAADAMU JINASUA|SAUNA GINGISA GINGI KOKOMEA MKOKA MKOKO OMEKA SOKONDO|UNYANYA RAKADHA HARAKA KADHAA MCHIMVI HIVI MTUKUFU MFU|GUMBIZI BIZIMU MNUNI HAMILI LISHIA MASIHI MLISHI WEMBEZI|ZIMWE IBILISI BISI BOLPENI NOELI LEBO LINE NELI NOBE|FICHAMA CHAFI UTESAJI USITA UTAJI UTEJA FUNGUZA UNGUZA|FUNGU FUNUA FEDHEHI HEDHI MHARUMA MRAMA AJMAINA MITHILI|HIMILI KIBINYO BOI PARANGE NGARA PANGE PENGA RENGA SHILAMU|HASIMU MKUPUZI KUZIMU MPUUZI KIZUU MKUPI PUMZI ZIPU|FOMAIKA KOMAFI MAKOFI JIUZULU JUZUU UJUZI UZULU ZULU|MTETEZI TEZI ZETI FUMANIA NAUMI UFISADI FISADI FIDUA FUADI|KIBONGE JANABI KIVYERE NGARIBA KITUKUU KITUKU UKUTI|TAAHIRA HATIA TARAA ATIA SHABIHI MAGENDO MGANDO DANGO|DONGE GANDO GONDA GONEA LANDANA LANDA ADAA JIPODOA MAARUSI|MEMSAPU MPEA PUMA PUSA PELEKEA PEKEE ELA PISHANA PASHIA|HANSA UNYUMBA BUYU NAFUU MTANZIKO MTANZI NZAIKO MAONI MKAZI MNUNO|USOMI INSI UMIO UFUPISHO UPOFU FOSI SHUO SIFU MIONGONI KITAFUNO|KONTUA TUKANO FONTI HUZUNIKA KIHANU KUHANI KUINUA KUZUIA TAKADAMU|TAMAUKA DATAMA AMKUA DAKUA BWABWAJA BAWABA BWAWA AJAA WAWA TAKABALI|KABAILA TAABIKA TAALAKI ABTALI KABILA KITALA MAZIDADI MADADI MIDADI|ADIDI AMIDI IDADI MAUMBUFU FUMBUA BUFUU FUMBA FUMBU KIAMBATO KITAMBO|KOMBATI TAMBIKA TAMBIKO AMBIKA KAMATI SEMEZANA MSANA NEEMA NGONGOTI|GONGO NGOGO NONGO TONGO BIMKUBWA BAWIBU BUMBWI KABIBU UKAMBI UKEWENZA|KENUA KWENU UWEZA ZEEKA CHUKULIA CHUKU HULKA IKULU UGINGISI SIGI|ENGAENGA NGENGA GANGA GANGE GENGE ENEA KIKALIO KATILI KITAKO KIPAKASA|KAKASI PAKASA PASAKA SPIKA JIKOKOTA MAHARIMU USHEMEJI SEHEMU USEMI|USHEI FUMANIZI UMAIZI BIDIISHA BAIDI BIDII DASI KUELEWA CHEKEA CHEKWA|HEKALU KUCHWA KWACHE MLOHASI MBULIA MLISHO JIONEA LIPUA PITUA TUPIA|UPATI CHACHA JIOKOA KIONJO KONYOA UNYAJI AMBISHA AMBULIA BAHAIMU|MUMUNYA KUNYUA MKIMYA NYUKUA NYUUKA UKAIMU UKIMYA KOKONOA PONYOKA|NYOPOA KOKOA NOKOA CHATA CHOTA THAMA KIMBILIO KILIMBO LIMBIKO KIIMBO|KILIMI KIZIBO LIKIZO MLIMBIKO MMILIKI UDIWANI UWALII LITMASI SALITI|USHIMBA BAHIMU DHAHIRI DHIHAKI DHIHIRI DHIKIRI HADHIRI IKIRAHI|KARIDHI RIDHIKA ADHIRI ONEKANA ONANA FUNDIKA KASHIFU KUSUDIA UDHAIFU|USUKANI SHATA STAHA HASUA KIMRIMA MTABIRI TIMIRIA BATIKI KIKOMO|KIKOPO MKOPI UKOKO CHARANGA CHAGAWA NGARAWA CHAGAA CHANGA HANGWE|AHERA ASHERATI MASIHEWA TARAWEHI AMRISHA HAMRAWI MARASHI MHASIWA|TAWISHA AWESIA MBELENI MBWENDE MWELEDI BEDENI BWENDE MBINDE MLEMBE|NDWELE NEMEDI MHALIFU MSHAUFU UHALIFU MFUAUJI UAMIAJI UAMUAJI|UFUMAJI UNAJIMU INAMIA KISIRANI MSHIRIKA MSHIRIKI IKISARI KISHINA|MKASIRI PINDUKIA KAKINDU KIKUNDI KIKUNDU PINDIKA PINDUKA KANAMA|KWANZA NAKAMA NAKAWA CHANJA HANJA TAABISHA BUSHATI BAATHI BAHATI|BUATHI BUSATI JAHABU JISIBU MANDHARI MWARANDA NADHARIA MARINDA|WAAIDHA BAMBANYA UANAMAJI MAAJABU UNYAMBI AJABIA BAYANI MAKOMBA|BAZOKA MAMOJA MCHECHE MJO YEPI SETA KILO AUNI NUIA PUNA|NEPA PAYA GWIA YULE KALA TOHE DUTU TOJA FUGO KIGA|KOVU TAGA AGA PLAU TOVI KANO PAKU TAKO AGAA BUKI|UKI LOMA VITA SUFU UFU VUMA GUTA FODA KEUA EUA|FAJA FAA KOKO RUBA MOTO KUNDI TEBO YAKO WALA BUDI|MLASO GAMBA VUGA MZOGA UPOGO LUVEA MTEGO DIFU CHATU KWATO|WAKO RONDO DORO KONJE NDEZI ENZI DISA ADA KIGWE NYATO|NYOA TAYO FUNGO GOFU PUMBU BUPU PUMU KIMBA USIRA CHOKA|HOKA VUGUA UGUA VUUA TIMUA MITA MTAI BOJO UGAVU MRAA|TAMA MKOJO WEUPE BABUA BUBA BAIRI NGAWA GANA NAGA VAMA|MHASI HAMI MISA MINDI MWOGA CHALE TELKI KILE TELI KOMBA|KOMA ARUFU FURA RAFU AYALE YALE KIINI MIMBA NGOSI SOGI|SONI LIWA KAMBA KABA SENSA SESA UWAYO WAYO WOYA GEMUA|GAMU UGEA PUFYA FYUA PUYA UPYA JOSHO DHUHA AKA KADHA|HAKA DALKI DALI RIMBA GUMIO GUMI MUO USASI SUSA SUSI|USIA UGEMA MRIBA MGEMO MHORO DENGE MWIRO MORI WEZA BURE|UKWATO TOKWA KWANGA WANGA KIDIRI GUTUKA KUTUA GUTU UPEMBE PEMBE|MTAMBA FUTUZA FUUZA DACHIA KIKUTO KOKI ALBINO BAKAYA KIJIMO KIMIO|MBWIJI BIWI LIJAMU JUMLA MIUJA UJIMA ULAJI GEGEDU UGEGE GUDE|HUKA HUKU SOJI KAFARA FARA MUNYU MAFASA MAAFA MSAFA SAFA|SILIKA AKISI TAMARI KIHILI KARASA KIBOFU BOFU KIFO KIFU KOFI|KUTUZI MHANGA GHAMA HAMNA NGAMA CHAGO HONGA UNYOFU TAMVUA TUAMA|VUATA SARARA SARA MBWAWA AMWA WENGA NAGE NEGA MBUNGU CHUCHU|UCHU KIBETE UNYOYA USINGA AUNSI SINGA SINGU IBARA BUHUMU HUMU|MUHU SHITUA HIUTA SHUTA KIDARI KIDUSI KUSI PELELE LELE KIBUDU|KIDU KIPAKU KIUKA KUPIA IPUA KAPU LUMBWI MUWI UWI MGWIZI|MWIZI ZIMWI OGESHA SOGEA SOGA SAFIHI FISHA FIHI CHAFUA KAFILA|FALKA JIRIWA JIRI NYONYO NYONO UTAMBI MKUNGE KUNGE WIBARI ABIRI|MGUNGA GUNGA MSHUKO HUKO KITAYA KIHORI HORI UNYASI KIDUTU SARUJI|UJARI GUGUMU KIUMBE MWENGO WENGO GOWE UZALIO ULIZO ULOZI FUKUZA|KAUZU UKAFU KUFA RAIA SIFA SANAMU ZARNIKI SUNGUA UNGUA GURU|UGWE KIWAMBO KIAMBO MAWIO KALASHA HALASA FURUSHA HARUFU SHAUFU RAUFU|DINOSAU USODAI NDUSI KURUPUA KUPUA KUPA PURU KINYESI MFARIKA MAKRI|MAPINDI MPINI MHUSIKA HUSIKA KASIMU MAKSI MARSHI SHIRAA JITU TAJI|TIGA KIPINDI KIPI DRAGONI DORIA NDAGO RINDA RONDA NYAMAFU MCHANJO|HOJA MLAWATU MWATA WALAU MTEGAJI NDONGOA DONDORO MARADHI HAMDIA|RIDHAA ULAWITI LIWATI AMBIA AMBUA KIMBURU KIRUU MBIRU MBUKU MTUMBA|UTAMBO TAMBO MAZALIO MALAZI MLOZI MUUNGO MGUNO NGURU RUNGU URUMO|CHOTARA TOHARA DHABIHU ADHIBU ADIBU DHIBA HADHI ABDI UNONAJI TANDAA|TANDA MWASHI LIMKI BEBESHA SEBEHA KUNGU NUKUU UUNGU GLUU MAFICHO|FICHO BALAA WAAMA HINZIRI HIRIZI HIRI RIHI KIGONO NGOKO KONGORO|KONGOO KOONGO GOKO KOGO MBARAPI NYWESHA NYESA NYWEA NESA SENA|SHAKIZA HASIKA KASHA VINJARI BADANI BAINDA BANIKA ABADI UGONJWA|SINDANO NDANI MAFUSHO SHUMA HOMU MBARIKA KAMARI KIBAMA ADHINIA ADHINI|AIDHA DAINI DHANA DHANI MSURURU SURURU MURU NGURUMA GRAMU MURUA|UGEMAJI UAJEMI LINGA GALI MKANDAA NADAMA KIGINGI BIOGESI BOGI BOSI|FIMBI TIMBI FIGU FUJA MWAMIZI KILINGO KINGIO LINGO KILOAKA KIKOA|KIPUNGU PUNGU PUGI INSAFU POLEPOLE PEPO HAYAWANI WAHYI YAANI BARAGUMU|MAARUBU MBURUGA BAGUA ZERUZERU UPONDAJI UPAJI NGUCHIRO CHUNGIO CHUNI|GHURI HINO CHUNGURU MNUNGURI NUNGU KINGUGWA GWAGU KWANI UCHINJIO|CHINI INCHI YAVUYAVU MADOADOA MCHUBUKO CHUBUKO MCHUKUO BUCHU CHUMO|CHUMU KUMBO BOMU MUJARABU BURUMA RAJABU RAJAMU BUJUA KICHANA KAHINI|KICHAA NIKAHA MNINGA GUMIA MANGI MINYA UHIFADHI HAFIDHI HIFADHI DHIFA|FAIDI FIDIA HOMONIMU HOMONI MHUNI MUONO HONI HUMO KILIHAFU HALIFU|HILAKI KALIFU LAHIKI UKILIA ULAIKI PORAPORA POPOA POPA PORA RAPA|KONGOSHO HONGO ARMADILO MORALI DALIA IDARA UNANUAJI JANNA NANUA NJANA|UJANA BELEWASI SWILA BAWE TURUTURU KINOKERA KIKORA KIKORE KOKENI|KICHECHE CHECHE KURUPUKA PURUKA KUPAU PUUKA MALIMATI LIMATIA MATLAI|AMILI ISTISKAA KITASI TIKISA WARIA MIHIRABU HIRIMU MILIKI BAKTERIA|BRAKETI KARETI RAKETI ARIFIA FALIJI FARIJI AJARI MWADHINI DHAMINI|AWIDHI MADHII MHAINI TAHIYATU UTATA UWINDAJI HAIBRIDI BADIRI RIDHIA|KITEMBWE KIMETE MTWIKE BWETE MAJARINI RAJIMI REHANI PUKUCHUA UCHUKU|CHURA JIVIKA IKIRARI KARIRI NYARI KUHUSU PUKUSA KICHA USHUNGI HUSUNI|NUHUSI UTUNGO SHOGI TUNGO TUSUI TUNGULE KIGUTU KUNUTI KUUNGE NGELI|ENDEA FUNDA NDERE RUNDA UREDA DURA ANUWAI WIANA MKUPUO UPUMUO|KUPUU MKUKU MRUKO PUKU CHALO KUAMINI VINZUKA KIUNZI KIVAZI KUZIMA|MTUMWA MWAMBI TAMIMU TIMAMU TUMBWI MWAMI ANUKA UKANO UKOKA NENEPA|SHEPE HEPA KAMONGO KOMANGO MKOROGO KONGOA KOROMA ADHABU MADAHA DAHUA|KINARA TARIKI JIKALIA HISANI IHSANI TAALAMU TAALUMA MATALE MATEGU|UTAGAA SISISI SISI ITALIKI TAUFIKI KILIFI LATIFU BUMBURA UMBUKA BUKUA|UKOMBE UREMBO FUMBO KUUME GHARIMIA BAGHAMI GHAIRI HAWILI UNDAMANA|MAWANDA MWANANA UANAPWA DAWAMU MANAWA MAPANA MNANAA ATAMIA BACHA|CHATI KIWI KIWEWE KWETA TETEA KURUNGE MKENGE MRENGU UBUNGE UKEMBE|KIMORI MNYIRI MNYO HUKUMU KUSURU MRUSHO ALUMINI MAADILI MAALUNI|MPINDIA ALUMNI AULADI MBAWAZI BAMIZA LIAMBA LIWAZA MACHINGA MUCHANGA|UANANCHI CHANGIA MCHUNGA GAHAMU GUCHIA MAANGUKO GOMBANA KOMANGA|UKAANGO ANGUKO BANGUA CHEKECHE UCHECHEA BOLINGO MBINGO MARISAWA|ASFARI MASAFA NAFASI KAMANDOO MWONDOKO ONDOKANA KOWANA MAKWAO MAWANO|MKANDO MANAMBA NGWAMBA BANGWA BWANGA MABANO MCHINJA MCHINJO CHINJO|KIWINDU LUNDIKA MKAWINI AMBUKIZA JAZIBIKA UAMBUAJI UJAMBAZI JAMBAZI|JIKAMUA JUMUIKA KIBAAZI LINGANUA KINUNGU KUNGUIA LINGANA DONDOKA|KONDOMU KUPENDA MAPOKEO PONDEKA ENDAPO JIVUNIA KUNJIKA VUMAIKA|KIBANIKO KIBANIO KIBINDO KIDONDA KIDONDO SINDIKA BIKINI DADISI|DINDIA DODOKI DODOSI NSO VUGO VUVI BAFE GOJO NEVA JIKE|BUJE JOYO UBOHO NUNDU GARAGARA LOLA FULI PAPI NUNA KWAA|WARI KUVU UKU VUU PWEA PEA PWA WINA WIA KOTA|KANU KOKA KUKA SAISI UHABA WENZI FINGO MTUME TORI BAFTA|TAIFA KIOJA KOJA BANZA ZANA UZUZI ADIMU BURAA BARA BURA|RABA SANII SINI PENA MZAWA ZAMA URODA RODA FYUKA KITA|TUNGU TUNU FANA KULE MNADI MANI URADI DIRA DUIA TEGA|MZUZU DUNGA PISHA PISA MWINA KIDHI MSASI NUNDA MGEMA NYARA|SIGA MSAKO KOSA DALJI MBUGI KULAU CHONGO GUBITI BITI TIBU|UVUNDO VUNDO HAFIFU GURURU ZELA MAJADI FYANDA GALIMU JUBURU NATI|CHUMWI KITUTU HOHOSA HOHO SOO ALLAH LALIA JERUHI JEURI JADILI|ADILI UPEMBO POMBE UMBO UPEO HARIRI KIRIHI DARIJI MAJILI MJALI|AMBATA MBATA MTABA TAMBA KIGODA DAGO PAPURA HURAFA RUFAA KIKUKU|FARISI ADHANA PARURA RARUA PARAMA KAMSA RANCHI NACHI MIFUGO NDENGE|UCHA MRUMBA UMRA ZERIBA BERA REZA SAMADI CHUKIA KUCHI HATAMU|HATIBU UBATI ZIMAMU MZIMU MKONGA KONGA MANGO MNOGA GOKA MGUMIO|KUNTU BOMBWE OMBWE MKUNGA KUNGA EPUSHA KIRADI SHALI TITIKA TITIA|INADI KUTOSHA KUOSHA UTAKO UTUKUFU NDAKI CHOPOKA MTAIMBO TIMBA BATO|WONGOFU UONGO FARISHI PUNGUZA PUNGUA PUUZA UGUZA UPAU MPUNGUO MLEGEVU|MADHARA DRAMA ARIDHI WELEDI DELE MEDE POROMOA MRAO OMOA BWAKURA|AKRABU BWAKUA MSUTANO MASUTO MASUO MNATO NOMA UAJENTI AJENTI TANJI|ASILANI LISANI UVUNAJI JIVUNA JAIVU STAHILI SAHILI STAILI TISHIA|MAANANI MANANI NAIMA ULALAVI AULA UKOROFI KOROFI FURI FURO KENGA|FIDHULI DHILI ULIFI DUFI SUSUWAA SUASUA USASA USAWA UWASA MKAKATI|KATIKA MTIKISO TIKISO MISKI ULEMAVU UMALE LUVA MAVU MPAPURO CHAKAPU|CHAPUA PACHUA CHAPA KACHA NYONYOA NNYA NONA NONO MSABAKA KASAMA|SAKAMA SITIARI AIRISI SIRATI SITIRI ZARAMBO KANYA NYAKA GAYA SHUNDWA|KIZIMBA MJELEDI KIJIBWA BWIKIA IKIWA KIBIA UCHINJO UFARISI SARIFU|BAGHALA MAAMUMA AMAA UASILI MCHAJI CHAJI MHINA RENGE DEGE GERE|MAMALIA MLIMA MARUFAA FARUMA FURAMA AMARA MTAFARA KIHARARA HARARA|SINASINA SAMBAMBA MAANISHA SHUPALIA DUNDUIZA ZIDUA DADU ANAGRAMU|FUNGULIA FULANI FAULU TAMANIKA MANATI MTAANI FARASILA RISALA SALIA|VYOVYOTE YOYOTE VETO OTE MLOLONGO MVUNGUNI MVUNGU VIGUMU NGUVU|CHICHITA CHICHI KUBALIKA KABULI KALIBU KILABU ZINGATIO INGIZO ZINGIA|ZINGIO IGIZO FIFILIZA FIFIA FIILI FIFI FILA MATILABA TAAMALI MATBAA|TAMBAA KICHOKOO MBWAKOKO BOKOKA BOMOKA KOMBOA BOKWA BOMOA KOKWA|JAMIDI KANDA NGEDA MCHUNAJI JAHIMU UCHAJI CHUMA SWALISHA UJANGILI|GUNIA PATIKANA KITAPA PAKANA PAKATA PATANA BATOBATO BOBOTA BOBO|TAARADHI SIKITIKO MSIKITI KIKOSI TIMIA UPAUKAJI UAKUAJI UAPAJI|UKUAJI KUJUA UKAYA SHALIKI ISTIARA TARISHI ATHIRI HAJATI MAJAKA|MKANJU UJAMAA ALAMSIKI SALIMIKA AKISAMI TAABINI TABAINI AIBIKA|BATINI MAZIGAZI MIZANIA MAZIGA MZINGA ANGUSHA HUSIANA ANGUSA GUSANA|HANUNI NGISHA AFIKIANA FANIKIWA AKIFIA FANAKA KAFANI KAFINI NIFAKI|MJINI GOROMWE MRONGE MRONGO MWONGO BONGE GOBWE MBONO MKOMA MNAMO|CHUNGIA SHAKIRI SHAMIRI SHIRIKI KOTMIRI KIMAKO KIRIMU KUTOKA MKAKAMO|KIHAMI MKUCHA BABAIKA UAKIAJI BABAKA ALIFU FINGA AMINISHA INAMISHA|MTAPISHA AINISHA MAPISHI MITAANI KINAISHA SHINDANA SHINDANI|SHINDIKA ANDISHI HANDAKI GONGANA OANISHA SHONANA NGOSHI SHONGA|IMBISHA MBISHI MSIBA KINYUNYA NYANYUKA NYANYIA NYANYUA KINANA KINYAA|KIYUYU KASINO MSUANI WAZIMU BABAISHA USHABABI USHABAKI BASBASI|SHABABI SHABUKA SHUBAKA KINYUMBA MLIMBUKO MNYAMBUO NYUKLIA BAKOLI|BULINA KABONI SHAHAWA CHAPWA RASHIA PASHA LAINISHA AJILANI JISAHAU|JISHAUA TAHASUSI UTISHAJI HAWAIJI SITISHA TAASISI UHITAJI WEZEKANA|INAWEZA KWENYE KWENZI AVIZA MSUNGO UGOMBO WAGONJWA ONGONGA GAOGAO|WANGWA LUSU TELE TEGU ZUUMU UNONO SHUME WITIRI UFA DUSA|NOGA TOMO TANI KAWA DAKU BUZA ZUA BAI IBA SAZA|GOLE MEGA SELI MBWEU MBWE TOWEA OTEA TOWE WOTE MWIKU|ULAFI SHIBE UBUGE GUBE TEUKA ULEVI VILE LUJA MSETO TOGWA|TOGA BWALO MBUGE BUGE KWIRU KUWI ZIKA SAUMU UPORO UPO|GRISI SIRI SHIDA WINDO WODI KILEO UDOHO HUO HOMOA UMERO|UROHO DISHI TONGE NDOVI BUGIA CHIZI CHEUO KIAPO KOPI LEUKA|EKUA LAKE BATI UZILE PALIA MMEGO HEMEA SONGA ALPU BUDAA|DABU JIMBI UBIVU NYOFOA FYOA VUMI MSAADA VISHUO HASADA MALAJI|TOROLI KOGA KARAMU KURUGO KUMBWE KWEU TOKOSA KOSOA SOKOA LAVANI|FUTURU TUFU KAKATA TAKA CHOKOA SONONA SONOA LOLOMA MOLA ZALBIA|LAZIA VILASI VILIA UTUMBO KIPORO KORO PORI BARIYO BORI BOYA|VONGEA NOGEA FALUDA FALAU ALFU LIMBUA LIMBA LUMBA KAPILE JUKUMU|JUMU KUJU MJUU MUKU BWAKIA KIWAA WAKIA KALORI KOLA PIJINI|PINI IPI ROPOKA MFUNGO MNOFU AJWARI AJIRA IJARA MIKIKI HONYOA|KANA KISUSU USUSI KIWILI WILI UTABWA BWATA TABUA MABAKI JIKONI|BAITI HEMERA PANDIA DAPIA RONDEA NDARO UPEPEO PUKUTE CHUJUA WALE|MUOGO MLENDA UANGA WANGU AGUA MWONJO MWONO MYUGWA YUGWA UMWA|JURAWA ACHARI UBWABWA KIWETO WITO MAPISI GOGOMOA MACHAZA RAMBITA|MBARI DUDUMIA BUSAA BOROHOA SAKI CHUBUWA CHUBUA BUCHA FORONYA FORA|UCHAPWA TEBWERE WANGO JIZOEZA JISEMEA MAKOMBO KOBOA KUKUMIA UMUKA|UJITI KISHUPI KUHISI KUISHI KUPI SHUMARI KISUTUO KISUTU SHARABU|RABSHA KACHORI CHOKI KOKOMOA OKOKA KIHUNZI ZINKI SUKUTUA SUKUTU SUKUA|KATU KIBWIKO BWIKO KIKWI ULALAJI JALALI VIMBIWA MWIBA MWIVI WAMBI|JIBWAGA BWAGA GAJA MAAKULI MKILUA UKAAJI UJAKA NDEME NDEWE UPIKAJI|KIPAJI KIPIA JIPU VIMBIZI MBIZI MVI UKARIMU KOMUNYO MNOKO UKOMO|KIMBOYA MIKOBA KANTINI KITANI AMBROSI MBASI SAMBO FAKAMIA UNYWAJI|UWINJA JUYA KILALIO KALILI FUKARA FAUKA KAFUA MAVUMBO MVUMO VUMBA|VUMBO KIPANDE KACHIRI ULITIMA ROMBEZA MBERA MBOZA ZOMEA CHAPIA|FININGI CHOCHEA CHOCHA MGAHAWA MAHARAGE GHERA UTUVU STAFTAHI SAHIFA|SHAFTI BATABATA TAATAA UNYOKOZI MARIGEDI ADMERI GAIDI GREDI MERI|TAMUTAMU RIKORIKO UKOMBAJI CHAPUKIA CHIPUKA NAKISI UANDISHI DUNISHA|NISHAI TEKETEKE KIFUU KARINA MLANDANO ROJOROJO ORORO ROJO MCHEGAMO|CHEGA KISIBITI KIBISI TIKI TOLATOLA TOTOA TALO TOLA HAMIROJO JOHARI|HIJRA MHOJI MRIJA HARADALI DAHALIA HALIDA UANDAAJI AJUADI MCHEMSHO|MHEMO KATAKATA KAAKAA TAKATA ULAANIFU LAANIFU FULANA TABARUKU BATUKA|BURUTA KABURU KURUBA KURUTA MAARUFU UFUKARA MSHINDIO MSHINDO MHINDI|SHIMO FIRIGISI KUINGIA LAKINI FATIKA KIRUSI RAMISI SARATANI SANJARI|TARAJIA ANSARI NASARA KIFUTIO KINAIFU UNAFIKI FITINA FUTIKA KATONI|USISI CHOCHOLE CHOCHO CHULE LOHO KIUNGO UKINGO GEUKO GULIO KENGO|MACHICHA CHACHIA TAAMULI ALITOA KOAKOA SHOKOA INGAWA TANZIA TWANGA|TWINGA MSANDALI SANDALI SILINDA ENDESHA MSAHA LITANIA MILENIA MALETI|MAKABURI CHAKARI MHARABU HAMAKI CHONJO FULIFULI UFIFI ULILI NINYI|GOVI BABATAA BABATA TAWA HILIKI SEKINI SIKINI KESHI SKELI SHURUTI|TURUSI DOOTENI KILENDO KILINDO KITENDO KIDOTO KILETI KITONE KOLONI|DEKIO ASILIMIA KIBUHUTI KUSUBIRI USHIRIKI BUSHUTI KITHIRI SHUBIRI|ADHIRIKA BAIDHATI HARIBIKA KIBATARI AHIRIKA ARIDHIA BADHIRI BADIRIA|BIDHORI KIDURUSI KUSUDIO BUHURI BURUDI BUSURI HUBIRI RANGAITO|MANGATI MARINGO MASANGO MATANGO MITONGO SANGOMA AMBATIKA BARAMAKI|JARABATI KARABATI KIAMBATA TAKABARI TARIJAMA KARABAI MAKAMU UGANGA|UKAMBA MANGILI AKILILI KALILIA BWAMBWA AFIKISHA AKIFISHA FILISIKA|SHAJIIKA UALIKAJI ALIKUJA FIKISHA KUTUMIA MITHAKI TUMIKIA CHEMKA|CHEMUA GEUKIA HEKIMA CHACHUA CHAVUO HAMANIKA KINAMASI KISAMAKI|SANAMAKI CHIKWAYA KWAMISHA SHAMIANA PINGILI PIAPIA TUI PURE SORO HERO|DEGI MATE MVURE KIGEGEZI PEPA ZIGO LIGA JAMU MUA LAPA|MNENI MWEGA PEKUA UWAZI KWATA SAINI MLETE AJEMI BUNGA ZINDA|RASTA ZINZA UYEYE KAMUA PATENA KISAWE BEJI TIJA ZIAKA RIBIZA|MASAZO SAZO KIROJA HAWAJI SIBIKO KEREKA KUKIRI UKIRI RASULI DHILA|MASITO TOASI MOSI BABUZI ZIBUA TAWAZA TWAZA UKOMBA KUMBA NASA|NYOTOA TONYA WAFIKI IFAKI KIFAI TOBOA TOBO TORA NYAUKA RUMANI|MRINA BAYANA TATIZA PEPETA PEPEA UBWANA BANUA MAANGA KITANO PAROKO|BAZAZI ZIBA ZEESHA HEZA SEZA PAPURI PIRU PURI VUNANA MDOEZI|DOEZI DEZO SILESI MBEUZI SADAKA SAADA KUPONI UKOPI PONI KOLEZA|FUTARI DANZI NDAZA ZIADA KIHEBA KIDOMO MKODI DOMO JIFUNZE USIKIVU|MTAKATO MTAKA TAMKA KUNDAVI KIDUVA DUVI KIDINYA YADI UKASUKU KUKUSA|KUSA MWOKOZI ZOOM PURURUA PURURA MWINAMO MWIMO BORESHA SERO SOBA|PINDIPO MFUJAJI JUMA SAMBIZA UASKOFU UFUSKA FUSKA UFUKO UFUSO MAFUNZO|MFANO MOZA SHUTUMU TUHUMU MSUTU ASIRA UPORAJI UJIRA MRATIBU MRAIBU|BATRI TALKINI NAKILI USHAIBU CHAPUZA CHUZA KAKATUA KUKATA KUTAKA|KATUA KAUTA USKAUTI SKAUTI SKATI MPOTEVU MTOVU MVUTO DHILIFU ZINDUKA|DUKIZA ZINDUA MUNKARI KARIMU KURANI MARUNI NYAUSHA SHANUA NAHAU NASUA|DESTURI SUDI UPAPASA FARADHI MATANDU STAHABU SHEHA MASURUFU URAUFU|FURSA KAMILIKA MCHAFUZI MCHAI SEMINARI FASILI CHICHIRI KIDOKEZO|DOKEZO DEKO KEDI KIBALI SABILI SUKUMIZA KUUMIZA UAMUZI MAKINIKA|UTENGUZI UGEUZI UTENZI UTEUZI UZINGE TINGE UGENI MTAMBAJI JAMATI|JAMBIA SOKOMOKO MGUNDUZI MIZUNGU DUMUZI MDUNZI MZUNGU UGUNDI DUNGU|GUNDI KITUTUMI MTITI UVUNDIVU UDUVI VIVU MLUNGULA LANGU LUNGA|CHAMBELE BALEHE CHELEA MLAANIFU FILAMU ASTEASTE STATA TATA TESA|MLALAHOI UDHANIFU FUNDUA HUNUDI UFUNDI ULENGAJI JENGUA SHIBISHA|KISEBEHO KUTIBU KUTUMA TAMBUU MCHAKURO CHAMKO CHAURO MCHURO KIPALIZI|PALIZI PILIZA UAGIZAJI JIZUIA AGUZI ZIGIA MCHUMAJI MCHAPALO MCHAPO|LAMA PIKINIKI EKARISTI STAKIRI TAKSIRI KARISI KASIRI THUBUTU UTUKUTU|KUBUHU SIMANGA ISHIWA MSWANO MWASHO WAHSHI WASILI TEKEWA BWETA FATANI|FATUMA FUATIA TAMANI TEKUA KIBUNZI KURUNZI BINURU RUBUNI BUNZI|PESHENI PENI TAPISHA KOROMEO MAHONYO BURUDAI RUDISHA UHASIBU USAHIBU|BELELE MLELE LALAMA KIKAUSHO KUSIKIA HAKIKI KASIKI BIPI CHENGUA|CHONGEA ICHENGU UCHANGO AHUENI CHAGUO AHIRISHA ASIGHARI BISHARA|HARASHI HARISHA HASHIRI SAGHIRI GAWANYA UGAWAJI JANGWA NYUMBUA|KIKOTANA KIDONGE KIKANDE KITENGO TANDIKO UHALALI JALALA JAMALA|SHAABAN HAMASA HASAMA NASAHA TUBWIKIA ITABIRI KABWIRI KIMBARI|KIRIMBA KIRIMBI TAKWIMU KUSIMAMA MHASHAMU HAMISHA MKAMASI CHONGOE|MASHOBO MASHONO MSHONGO CHENGO CHOGOE CHONGE GOMBEA MAPEMA MKOMWE|MWAMKO ASILISHA ASUMINI MNENAJI MUUJIZA UFANISI UNAMUZI USEMAJI|ADRENALI BAHAMELI BEHEDANI MAHAMELI ABEDARI BANDALI BENDERA DHAMANI|DHAMIRA HENDELI FUNGANYA KUANGUKA KUNYAKUA YAKINIFU FIKINYA KIKUNGU|KUFANYA ZIA YESU META MMEO MOFA COVER MROHO BONDO BOFLO|LEJA UDOGO HOMBO NYUZI URARI SKULI ZAANA DHIMA BRELI MKUO|SUFURI SUFI MWISHO SWI KUJA ASHARA KORIJA SHABU BEUA HEBU|HUBA ELFENI FELI BERU TIMIZA MAITI DHUMNA MDAU NAMBARI WASTANI|MSALABA NUMERAL MWITU MAKISIO KIFUASI SUFII KOKOTOA KOKOTA KOKOTO|KOTO GWAYA HALILIA ILHALI NILI FATASHI SHIFTA JIGAMBA GIMBA ZIDISHA|HASIDI SAIZI SHAZI DATIA TOMBOLA LOMBA MLOTO KIZINGO KUONGEZA KUOZA|REJAREJA REREJA REJEA DESIMALI DAMISI MLADI MTAKWIMU KUTWA MKOKOTOO|JUMLISHO JOSHI MJOLI MARADUFU MARDUFU DAFRAU MDUARA TASBIHI SABAHI|SITAHA KOROKORO KORORO KIBAFUTE KITUFE BETUA EDAHA KARABINI BARIKIA|ORODHA HANITHI ETHILI TAHINI MUSHTARA SHAASHAA MASHATA UHASAMA MVAO|LUFUFU UPUNGUFU WANO YETU WALII MWIVU CHENI MWERE BOZI KONZI|PONZA POZA MVIKO NGEJA MJUZI MTEMO PUNJA KAWI HAMDI TOPI|UMOTO UZAWA NUNGE KIPISI ZABADI UJEURI USUMBA SUMBA BUSU MPEMBA|POROJO POJO DUWAZA WAZUA HOJAJI TAFIRI CHUKWA CHAWU DABIRI BIDI|HIZAYA ZAHA EKSELI DADISA HASHUO SUGURU USUGU MEGUA TEGUA TEMUA|ANDISI KABAKA MMANGA KIPEUO FANI ZEBAKI KIGAWO GAWIO KAGO BINAFSI|UWEKEVU TAFRIJA MJARARI JARARI DIKTETA TAKI UAFRIKA UKARIA UFYAMBO|MBUYO UDAMISI BEMBEJA MBEJA KIKWAZO KWAZI NDARIRE YAMKINI YAMINI|PAKAZIA MTIBUKO UMITO UTIKO TABAKA MTALIKI MALIKI MFILISI MBINUKO|MNUKIO MBINU MBONI MJADALA JALADA JAALA KANTARA KATARA KANTA UZOHALI|ZOHALI SANZUKA KUANZA SANZUA KANSA UPARARA PARARA MATAKWA MAKWA|VUVUMUA KIKWARU KURWA UKIWA UWARI MAZONGE MGOZA MZEGA CHURUSI SIMBIKO|BOKSI REFUSHA FUSHA RUSHA FUSA PUNYETO UPENYO PUNYE UNYEO ABTATHI|KITANZU TANZI JALBE JELA LEBA KAMASI KAMISI MAKASI POLISEMI MARIJANI|BATILIFU BATILI MARUERUE MTAMBUKA MAKTABU TAMBUKA BRIGEDIA BRIGEDI|GREDA MTETEO TARADHIA TAAHARI KATIKIRO KITORIA MCHAPAJI USHUHUDA|HUSUDA HUSUDU RUDISHIA SHARIDI UHASIDI URAHISI USHAIRI UDHIBITI|DHIBITI MWAMBATA HELELEZA USUMBUFU SUMBUFU USUBU USUFU UKUNJUFU|KUNJUFU TULIZANA TALIZA TANZUA TULIZA DIRADIRA RADIDI DARA DHAMIRIA|DHAMIRI FUFUMAVU FUMVU FUMA MAFU NYANYASA ASAA MILIONEA JUMLISHA|JULISHA MKARATI TAKRIMA UTANGA SINYAA TISTI USITU USUSU MPAMBANO|MAPAMBO PAMBANA PAMBANO AMBAPO KITINI CHIMBUA CHUMBIA MCHIMBA CHAMBI|MTEGEAJI TEGEMEA MATEGE EGEMA UFANIFU CHONGEZI UGONEZI CHEUZI GONEZI|FOROTA FOTOA POSTI MSANI LALAIKA URASIMU WEWE MNAFIKI KIANIO BIBO|KITIVO KITUMASA KAPUTA KAPUTI KUPIMA MFUNGUO JIKOSHA JISOMEA KOMESHA|KOPESHA MIPASHO MKOSAJI KOPESA SHAWISHI HISISHA KASISI KISASI|MANTIKI MKUTANO MTANUKO MAHUBIRI DIRHAMU FARIDHI MDUBIRA MDUBIRI|KIINGIZI KIZINGA MPAKIZI KIPINI MPANZI PENDEKA PENDEZA DEKANI JENEZA|PENDEA BARASATI TAASHIRA TABAHARI AATHARI HASHASHI HASHISHI|HIMAHIMA SASISHA SIMAMIA KIRI PUNGUFU UBIA MZIA JOYA DAA HINA|KUYU MTURA TURA MGUDE MKIZI NGOLE BULUU REWA UZURI WEUSI|UGABA SHABA KOLEA KRIMU HOKI TONGA ADESI DESA MPAKO DENGU|MVIRU LAUNI KILUA GRIFE KOCHE WANJA MPESI PWAJU NDERI MANJA|KIPWE MEMBE NINGA USI CHIGI UKUKWI NDUARA DUARA NADRA RANDA|RADA MNANDI JIVULI MSEMBE MKESHA HEMKA KESHA SERENA SARE TARAZO|BORIBO MSWELE MSEWE BIZARI SATINI YAKUTI TAYU MDADI MIADI NGUNJA|GANZI BERAMU MBURA GANETI TANGI TINGA HALIBU KASABU FULUSI USUFI|USULI NGOGWE KIFUKA MKUMBI MALELE MLALE MSINDI KISWA KWASI MWASI|UNGAMO GUANO KINEGA KIGAE KWECHE SHUNDI FUMBWE FUME TONGWA GWATO|NYOMVI TOMOKO MNYIMBI MNIMBI MNYIMI MBINI FUKUNDI UKINDU NDIFU UDIFU|MTILILI UBAGUZI GUBIA BENA CHOKIRO KIHORO ZAIBAKI BAKIZA FIFISHA|MCHOVYO MCHOYO CHUJUKA KOHO BUNGALA BANGU KINEGWA KWINA MWALAMU|EROSOLI RESI SELO SOLI KWAJUKA JUKWAA KILIMA JAMDANI WEKUNDU UKUNDE|UNDU NYAMIZI ABYADHI BAADHI HIDAYA MTAKASA TAKASA MWALONI MFYAMBO|KINONGO MTUTUTU CHOROKO MJAFARI KILOPWE KIWEO BILIADI BILADI BILDA|BILDI IDILI MTAKAWA MKATA MAKIRI NYEVULE LENU UELE MHANUNI MUHINA|MCHOCHA MKURUTI UTURI ZUWARDE ZUAKULU DANDALA DANDA FELSI KUNGUMA|NETI RINGI KARAMELI ALKEMIA KARELA KILEMA FILIFILI UFIFIAJI KAHARABU|BARAKA URUJUANI JIVUJIVU JIJI AFAZIA IZARA NAZAA ZIARA KIHONGWE|HONGWE BIRIGIJI BRIJI MSIRIMBO MIRIMO MSIMBO MRISI MSIRI MSOMI SIMBI|SIMBO KONYAGI KIGANO KIYOGA GONYA TARBUSHI BARUTI BURAHI HARIBU|AHADHARU MCHOROKO CHAKAAZI CHAKAZA ZUMARIDI MUDIRIA MURIDI KITADALI|MWINGAMO MSIRISHA MSHARI MKANGAZI MAKAZI ALFAALFA ALFAFA ALFA FALA|MLONGAMA MALAGO LONGA UMBIJANI UNABII BITIRUTI UTITIRI BURI MWANGATI|MTWANA KITWITWI GALONI KIZELELE KELELE TOUKANGA KUTANA TANGUA POPOTE|PETEO TEPE MBARAZA RAMBAZA CHENGE DEHENI CHEGE HALAFU BANGE BALADI|JETI JORE ZINGIRA AIDINI DIGRII DINARI MASINE BARAWAJI AMRAWI BARAJI|JABARA JABARI KIKWARA PAROKIA KIPARA KIWARA IWAPO JIKAMA IMARIKA|KARAMA DAHILI IZRAILI ZIRALA SISIMKA SAMBIKA MPARUZI MZUMARI MZUMAI|PARUZA UIMARA UKOJA NGUDU MBUKUZI MKURUBA MRAKIBU KABURI KURUZA|KIBABA FIMBO MAKAMO CHAMBA CHAMKA CHOKEA MBACHA YONGOA YONGA UDUGU|HIGH ATIFALI GRAFITI AFRITI FOLITI FORITI RATILI MALHAMU MKUMBIZI|CHAGINA GALACHA GHALATI TAHANIA ANGATA UZANDIKI KIZINDA MASKINI|MDAKIZI UDAKIZI ZINDIKA MADARAKA NDARAMA MKOMAFI GUNGUMKA MAKUNGU|GAUGAU GUGUNA KUAMUA MKABALA JABALI MIRUNGI MNGURI MZINGI MRUZI MZURI|ATILIKA LULU KIRANJA SHONDE SONARA SOWERA WARSHA DONDOO DODO KIKOMBO|BELUWA UMBALI UMBILE UWALIO UWAMBO WAVIVU GAREGARE NGARANGE MANENA|BORITI MTEMBA MTEMBO KICHANGO MCHUANO CHUKIO CHIRIZI JARIBIO BARIZI|BOHARI JABIRI JIBARI JIBIZA MGOMBOZI CHAGIZO CHOMOZA CHIMBO UAMANA|AMIRIKA KAMBISI PIRIKANA UPAKIAJI UPANGAJI UPINGAJI JIKINGA KANGAJA|UCHANGA CHANUA CHUNYU KUPANDA KASIDA MAKATAA KATAZO KATIZA KITOPA|MAPOZI KIJALUBA MAKULAJI MAUMBILE MLUMBAJI MUSHKELI MASIHARA|MATAMSHI MSAMARIA MSHAMARA MSHARASI PONO ZERI TONI ETHA ZIKI JUHA|UJA CHENU TETA VANGA KIMEA MVIGA MKALE CHEPE PUMBA BABIA|PUNJU TOMBO PANZA PAZA LAKIRI BADALA BAADA LABDA DAKIZA MWAIRO|MWARI THUREA MATITI SUMBUA PITIKA MFUNDA SENETA CHANZO KITOBO KADIRI|PAPARA CHUSHI THAMRA MCHEMU MCHU PINGUO PINGO FITINI UTAMU MPWITO|MWITO FUNUNU NUNU TIKITA MUKAMA CHAFUO JISIFU JULUSI UAILI DURUFU|DUFU DURU KOBOLE MAKAPI MPAKA PAKIA TELEKA MKASA NYENGA MDONGEA|KURUDIA KURUDI MTENGWA MTANGE MTENGA DHALALA CHEPUKA PECHA DHUKURU|KWABUKA KWARUZA SHUFAKA KASHFA FUASA SEMESHA SAMEHE MSESE VUMILIA|SUMBUKA KIPENZI PENZI PEZI JANJUZI UJAJI NYUNGWA UTAKASO SATUA STAKA|MAULIZO LAZIMU FARAGHA KANGARA REJELEA UMAHIRI UAMIRI SURIAMA|KIJEMBE JEKI UTOKAZI MTORIRI CHIKICHA JITIKISA JIKITA TAWASIFU|STAAFU UTAIFA USHETANI SHETANI BAMBATUA BABATUA UTAMBAA UKINGONI|PUNGUANI ANTONIMU CHACHUKA ANGALIFU KISHWARA RASHIKA TIMILIFU|MTIIFU TILIFU LIFTI MUFTI TUILI UTIFUAJI JIFUTUA UTIIFU JITIA|KIEGEMEO EGEMEO MWONGOFU ONGOFU CHEKECHA HATIHATI ATIATI BANDI BINDA|KIFUNGIO KIFUNGO ELEWESHA LEWESHA SHELA BARAGUZA RUBAA ZAGAA KUNYAA|NYAKUA NYUNYA WAZIWAZI AZIZI MPAMBAJI MPAMBA BASMATI UFAHARI KAHAFI|KIBARAKA KAKAMIA NIKWATA TAWANYA MGAAGAA PAGUA HABABI SABAIA KITAPO|POTOKA BESERA SHERIA KISHIKIO SHIKIO FIDO FUATISHA KATUSHI SHITAKA|SHITUKA STAHIFU TASAUFI GARASA MBOCHI BOCHO MZIBO KECHEKA REKODI|UANGAVU ANGAVU BANANGA BANANA JANABA BORONGA ARBUNI GOBORI JANGUO|UBANGO RUKWAMA KUVAA UHAKIKA UHAKIKI UKAKASI BAHARINI BAINISHA|UBISHANI SENGENYA NUKSANI KUGESI DESTE PUJU UDHU PAPO GOGO VULIO|MKURE SHAVU BEBWA NYAGO NGUYU TOPEA PATO POTA VIMBA VIVIA|ZONGO ZOGO MBUBA MJIO CHUKA SHAHA NDUMO PUPUA UWATI MPARE|SHORE MKUNZO KIDAZI SHAKE KESA DOLE KUJAZA PUNDE SAPATU MAUJA|GIDAMU ANGASA PAJI KIPOPO KIKONO KIPUSA UPASI TAKSI TUMBUA BUTUA|TUMBA AFKANI MPANDE MSUUZO RIPOTI GUNGWI KIFOLI KIVA NAZALI KIBETI|KIRIBA FINYAA FINYA NDONYA DASILI TOKONI VURUGA VURA TUNGI TUNI|PAPASI ANINIA BILAURI UJASIRI RAJISI SIKIKA KIGASHA PANGUSA SPANA|UPANA KICHOGO KICHO TAPAKAA PINGITI TINGI NDUMIKO SIRINJI MDAHALO|UWAWATI FIRANJI LOSHENI BAASILI SILABI BARAKOA BAKORA KARABA KIGOSHO|MGOLOLE MSURAKI KISURA SAKIMU MWEREKA NZUMARI KITANGO MPURURO|KANDIKA AKIDA MLIZAMU KUSHOTO UTOKO KISHAUFU ABTADI SHANGAMA NAGHAMA|SHANGAA KISONONO MBALANGA DUDUISHA DUDIA UADUI INSULINI GANGRINI|GANGIRI RINGA BAWASIRI SARABI SAWIRI MFARISHI MPEKECHO CHACHAWA|MAJIMAJI NYUNYIZA NYUNI UKANDAJI KAUNDA KUNDAA UAKIDA KUNYANZI|KISHUNGI KUSINI GUNI LEGENI TAFISHI USAFIHI MDANZI CHOTI CHOTO MCHOO|TENDWA WADENI NDIWE KIPAPAI KIPIPA PAKITI TOKEA KOSANA ALOFONI ALFENI|FANELI FOLENI JARIFE FLORA NJELI RIALE MBOKWE MKWIRO ARACHIA JAHARA|MBIOMBIO SHUKE DEBWANI MBANDE MEDANI MNDEWA KIFEFE FICHE FEKI|LEGELEGE MGANGE MLENGE GALME LENGA BIGHAIRI GHARIBU GHUBARI UJABARI|DHIHAKA MNJU UDODI MPUPU ZOBA JISA ONEA TITA TIA FUTI|TINA CHOPA UKUFI PAPIA BACHU UJIA TIMKA UKUBA KUBA UFUPI|FUMO DEPO KUNA NUKA BAINA DAAWA DHATI SUNZA SUBU MWAYO|KIUA UMIKA TONA PINGA PUJUA UGOZI GOZI UOZI UTAA UGALE|SHIME KEFYA SADIRI BENETI CHOPEA JELEZA MKAMBE WEPESI SEPETU TEPU|DURUSU KITUKO RIDHI UDHURU DHURU MTIMKO SIFIKA LAKABU ULAKA HURIA|MBEMBE DIRIKA GURUSA GURA KWAPUA UPAWA TUKUFU MAKEKE TANZA FARIKI|KIRAI MMWAKA KWAMA SALUTI JIKWAA CHUNUA DENGUA SAFURA WAHAKA WAKAA|KHAA SONGOA UCHAGO MVILIO SOKOTA JULUDI KASRI KISIA KISRA MZUNGA|ZAMU KIGURU MAWAZO FUKUTO TEGUKA FARAJA FAJAA SUJUDU PULIKA UBAMBO|BAMBO BUMBA BOBA MBASUA RUNUNU MDOMWA MDUKUO DUKO TUTUSA KINOFU|SIJAFU PRESHA SPEA TINDIA SULUBU ZAFA TUTUKA KITATA TAKIA GOLOLI|UVUVIO MAUNGE BERETI BASTOLA SABATO STALA CHUNJUA GINGIRI MWAKISU|MKWASI UKIMWA UKWASI HESHIMA SHEHIA SAMPULI MKULIVU UKUMVI SHERISI|PEMBEJA KIBENDO BINDO NDOBE TAARIFU BOPA SHEMERE SHERE MKAIDI TEPETEA|KONYEZA ZOELEKA MSUKAJI FANYANA FANANA ARUDHI DHAMANA ADHAMA ISOTOPU|PUTO KADIRIO GHANIMA MGHANI MHANGI CHAGA UTWESHI TEUSHI AMILIFU|SILINGI SHUDUZA SUUZA ZUSHA MAHAMIA MLEOLEO UVUTAJI VUTIA MASJALA|MPEPETA MAPEPE MPEPEA MPETA MTEPE TEMEA HONGEZA HENZA HONZA KIJINGA|MANYEZI NYEMI NYIMA GWAJUKA MASHOTO UNYELEO ENEO BEBEDUA MVUKUTO|MKUTUO UTOMVU USHUJAA SHAJA UJUHA USAHA BIBIDUA VUNJIKA KONYEZO KOYO|UHAZIGI FUMBATA SHAKAWA WASAA MSAMILO MSOMA KENGEZA KUNYASI KILINZI|KUBADHI UKADHI POPOTOA POPOTA POPOO TUNGASA SAGUA KITENDE KIDETE|TANGAZO MUMIANI IFYA BANDAMA NYERERE TENDEGU DUNGE HALKUMU LUKUMA|HURUMIA MHURI CHOCHWE TUTURIKA TUKUTA TUTIKA KITEFUTE TUFE USHIRIKA|USHAKII SITIRIFU ULINGANO DANADANA KONGANYA TEGEMEZI TEGE MTENDAJI|HAIDHURU MKATABA KISABEHO TASHTITI PANDISHA UKUMBIRI MCHAGUZI CHAZI|BAHATIKA UNYARAFU NYARAFU NYAUFU JUMUIA MUUAJI MLALIAJI JILALIA|MLALAJI JALILI MAKADARA ARMADA TURUHANI SAMADARI MAARASI MADRASA|UMAARUFU KAPILARI KIPIRA DUMILIZA UZAMILI KIBUBUTU TUIBUBU UBUBU|FARIJIKA USHUPAVU SHUPAVU VUSHA SUPA KUNGUWAA GURUNETI TUNGURI NGURI|USUSUANI KITOKONO UUMIKAJI JIKIMU KISUGUDI KUSUDI MSHAZARI SEKENENE|MTULINGA TANGU UKAMVU HADHIRA SHANTA TASNIA MUJIBU UMBUJI MBUJI|UTAITI TARUMA UAMILIFU UKALIFU FIODI FUNDO RUNDO MSHONI MSINGI NOTISI|BATIZA HAMATANI HASANATI HAKIKA KADHIA KIDAKA HUSUMA ANGAMIZA|GANDAMA ANGAZA MAGADI DUMBAKI KADHIBU KIDHABU BANDUKA AFANDE BANDUA|FUANDA UKANDA ADABU BEDUA JAZANA GWENYA MANUKATO UKUZAJI MAULANA|SABASABA BAMBA MSASA KIWANGWA ANWANI CHIPUA CHUPIA MATUSI MSINGA|GUNDUA MDENGU MGUNDA NENGUA NANDU KITALE BUNGUA UBUNGA MAAMKIO|KAUKIANA KIKUBA AMIRISHA JAMHURI CHEKESHA MCHESHI CHESHI CHEKELEA|UCHEKAJI KICHELE ELEKEA KEJELI KICHEA JILAUMU SISIMUA SUMSUMA|UJASUSI ULIMAJI TASIHILI MSALITI MUHTASI MULISHI HANGAIKO KOMBANIA|MWACHANO KIGAMBO UGAGA KIANZIO MICHUZI CHANZI UBOO WIGO RODI LODI|JEBU VENA NDWEO KIKIKI HOJI EZUA HABA KUKO TOTA MBUTE|PATWA UJUBA MAKUU MWALI IJAZA POGOA PUNGA FUMBI KUJALI MWONZI|MRISHO SULULA LOZI ANJAZA KUNJUA KANJU UBEMBE RAJUA JUBA TAIPU|SHUKU MGIMBA ZUHURA GAZETI GATI GEZA MLUZI FITIRI KIFUKU TOKEZA|ZOTE ASHIYA USHUZI SHUZI FERUZI FALAKI MAASI UKILI KIVI KULI|UPEPEA PEPUA MFUMBI DUMBWI MEGUKA NUJUMU SHITADI STADI MSIKITA|TANZUKA OKOTEZA JUAKALI FANYIKA FANYIA TANDAZA CHELEZA BISBISI MANJU|NJUMU MTUTUMO TUTUO RINDIMA DAMIRI MDIRIA TAARIFA MZIZIMO TINDIKA|KOMONI NEMBO UHARO GURUGURU NYEMELEA NYONYOTA MWANDAMO WANDO|MACHELEO ASTERODI DARAHANI RAHANI DHILHAJI JALIDI JIHADI AJIHI|ONGEZEKA NGOEKA MUHARAMU MAAMURU FATIISHA KIDINDIA SHAWAALI|UELEWAJI KABURETA TARABE BADILIFU ADILIFU SAMAWATI MOMONYOA|FULULIZA OKSIJENI KAMBARAU UANAANGA KIKUKUSI HALIBARI BALARI|UANAHEWA WEHUA HADIDI DHIDI MKORA PEKEPEKE KUKE HAMSA JIRAFU FIGAU|HARAMIA MANDARI MTEMBEZI TEMBEZA MZEMBE PUMBAZA KUMBAA MAKOPA MPAAZO|MZUBAO KAYAKAYA KAKAMAA KAYAYA MAKKA MKAKA PEPESUA HEROINI DIRO|VAVAGAA DHARUBA USHEMASI SHEMASI SOMESHA KIPWA KIPWI PUKUPUKU PAMPU|MKOMO MATUNGUU MTANGUO MTUNGUO TUTUMUA FUNUTU MAFUTU KIPIMO MAPIKU|UKAMIO EPUKA PAMBAMKO PAMBAZUA MPUMBAO UKAMBAA MFEREJI MFUMAJI|MJEURI TIRIRIKA TAKRIRI UKARIRI UTIRIRI GUNGU MVO GEJI POVU WEHU|MILA UDHI RUIYA RUYA PENUA UYOKA KOYA PLOTI UBOVU KOSHI|NDUDE DUDE BISHO POFUA PUMUA NEPUA PENU RAMLI JASHO SUTA|POJAA KUOKOA KIBEDI MFUMWA HANAMU SIGANA UOGAJI POMONI TAGAA PEPESA|BINUA UBANI UMBEYA MBUYA KISUSE SUKE YASINI SINYA MTWETO KUNUSI|KIDUTA TUKIA UBISHI KARAHA DAKIZO TUKUKA ANGAMA MMWEKO KOMWE KOWE|BALUNI NASIBU KABILI KIBLA CHAFYA MSHTUO PEPEZI MPUMUO MBISHO CHEMNI|PULIZIA PULIZA MNAJIMU KUNYATA UKATA ALIANZA MGUSANO MADHILA UKWENZI|UKWENI UKWEZI KIJUMBE JUMBE NZIMA UKOMOZI GANDALO BOMBOMU MLALAVI|KIFICHO UKONAVI KIVUNO VUNIKA SHALAKA ALAKA NUKUSHI TUNGATA TUNGA|CHEKO MFURUFU FURUFU MWASISI TOKEZEA MDUKIZI DUKIZI PAMBAJA MKATAVU|KATAVU TOMBOVU UFYEFYE FEFE FUNGUKA HEKEMUA ANEROBI MRAMALI FURUFURU|PEPERUKA KIKWIKWI KINGWAGU EREVUSHA KAJEKAJE TEREMKIA FAHAMIVU|ONGEZEKO NGOEKO MVUMBUZI MUUMBI UKABAILA MKONGOTO MGOTO ANTIJENI|MAJINUNI MSHITIRI MSITIRI MRITHI SIHIRI MRIHI MRITI MNYAMAVU NYAMAVU|UNYAMA MNOKOA GHADHABU UFUMBUZI UFUMBI ASIDISHA SPANABOI BONASI|MPUMBAVU PUMBAVU UPUMBA UVUMBA VUMBUA PAMVU KIGEUGEU GEUGEU KIKONGWE|KIKOWE KIWEKO MWANGAZA TASHBIHI HABITHI MPEPEAJI MVUGULIO MVUO|KUFUNGA DUGIKA CHAFUKA MACHOFU MUHIMU MNARAHA SIMULIZI UUMIZI PEPONI|UKUPE BRONKI KIGORI MAOTEA MATEMO TOMEA MWANDAZI UOPOAJI UPOKAJI|KANOPI ELIMIKA KIJIMEA UMILIKI MSEMAJI MSHAMO JISIMU KWENDA MWENDO|KIFIJO LUMBANA KUGUSA JAMBENI JIKOMBA KIBANGO KIEGAMA ARZAKI|RIDHISHA KISHADA ALMARIA MALARIA KIHARUSI USHABIKI BUHERI MNENGUO|UGENINI MENGI DARAHIMU MAADHURA NYAMRANI UHARAMIA BUSY FOFOFO ZOGA|KWAO ZONI NGWE VIPI GUDI GURO BAPA DEWA BWENI HEKTA|WAKFU SEKTA SALIO FASLU PETUA PUTA MAUWE PODA UTORO DELTA|MAUKO FEULI PLANI DOPOA PODO GANJO UCHEU DUNDA PINDI VIZIA|VIZA EDENI FREMU REFU KIKAO KWETU KUBO TAMWA KUFIKA KUWEPO|MLENGO LENGO TAHIRI DIGALI GILDA LAHAJA JITAPA HULUTI HULU TOWEKA|MAHAME CHENEO AKHERA FYATUA FYATA KUMOJA UKOMA KUWEKO NUMBI TARAFA|WALIA KIMIA FUTAHI TANGAA SAKINI JITOSA SATO SOTA JUTA GUNDA|MUNDA UJAAJI BOZA TELEZA KASIBA ZIZIMA LUHUDI DHULU MKOWA MWAKO|KIBAGO JALUBA KAPELI BABELI KIMGAO KUWEMO MWEUO DIMBWI ASKOFU GUBETI|UBETI KARARA MOTONI KONDA SAVANA TENGUA HERIA KIHAMA KIZAZI GEREZA|MWENGE MOMBASA NAIROBI MHARARA POTELEA POTEA TOLEA SHAUNGE UHENGA|TANDAMA KINUNDU NDUNI KIKWEZO TROPIKI KIARIFU MWINUKO CHELEKO|MAABADI KIPEMBE UGURAJI JIGONGA BIGANYA JENGEKA MPASUKO MPASUO|KWANYUA FASHINI MAZIARA KIVUMBA CHOMOKA DUODENI DODI BANGO BONGA|KINYEZI MJIBIZO MBOJI BOJI MDAAWA MBOMOKO KIDUNDU KIDUDU PEMBENI BENE|FUCHAMA UCHAMA MSOGEZO GEZO PENGINE PEGI MPARUZO MZAO ELEVETA ABUWABU|BUABUA FUNGATE TONESHO UHAMAJI MWANGWI WINGA KICHAGA KITUBIO FICHIKA|UENEAJI BULDANI BUNDIA UBINDA FYATUKA ANGUKIO KIANGO KIUNGA ITIFAKI|MNADANI INAMA PARISHI PIGILIA PEMBEJO PENYEZA PENYA JITOLEA JILETA|ULIWALI PUMBUJI JIMBU UJUMI BIPU AMBAYO HUDHURIA MTEREMKO INGEKUWA|WENGI PEKECHUA PEKECHA FONETIKI KALIVARI KITAKIZO KISUGURU MANISPAA|PAMIA MAGANGAO JISAIDIA UPENYEZI GONGOMEA FUDIKIZA FUKIZA BARAZAHI|UPENYAJI PUNJE UZUNGUNI TANGULIA MAHAKAMA MAEGESHO EGESHA MAKAVAZI|UATIKAJI JITAKIA UKATAJI TAMALAKI TAZAMIWA TAZAMIA MTAWA MWIZA|TAMAKANI MBINGUNI NGUMBI UGIMBI KIHADIMU KADIMU MALIWATO LIWATO|HANIKIZA HAZINI JITOKEZA KATIZO PARAFUJO FARAO SHAMBANI KONGOMEO|CHIMIINI DAYOSISI SODAI UPOTEAJI UOTAJI UTOAJI TEPUA GINGINGI|PAMBAJIO PAMOJA BOJIA MSONGANO MSONGO SOGONA MAONO ELDORADO DARUMETI|MARUDI DUMIA EDITA MRADI FURUKUTA FUKUTA FURUTU FUTUKA KUFUTA|JEHANAMU HANJAMU KICHUNGI TASLITI SHIKILIA IKHLASI KALISI PIRAMIDI|UJANJA USHENZI SUEZI UNENI MPENZI ENEZI TANIBOI TABANO NDOARO RUDIANA|RUNDIKA UKARANI UTEMAJI UMBEJA KATIKATI TIKTIKA KATITI KIAKIA BOSHOA|MSHALE SHOMBE SHOMBO BOSHORI BOKORA BROSHA KASORO KIROBA KIJITO ROVU|MWANDANI ONELEA MGOMO MTAWANYO KATAYO KUMBUSHA MAJUNGU UTUMIAJI|KITUMBI JAMANDA KIAKILI KIKULI KITEMBO KITOMEO LIMBUKO MBETUKO|KIBOLE VUE BOPO DEKI MGODI KIJIJI ROWA FUJO ZITO DAPA|ULUWA GHIBU UTAWA UBABE FUAWE CHOZA GHAFI FIGA CHOPI BEDUI|MWOGO UNAA KILOO NDUME DEMU TUZUA TUZA MVITA FYOSI KORWA|PODOA BANJA MUUZA GHUMA NJOZI TAKWA TEMA JUVYA NJAMA ULODI|KUUNDA KITITA FANIDI SOSONA KUDURA GHASHI HIMIZA WAJIHI HIJI TUKANA|NUKTA BIGILI TALII SEFULE SEFU UBAMBA ZOROTA TOZA LAGHAI GHALI|FIDIKA NYONGE DUGUDA DERELI UONEVU ONEVU CHUSHA TAMATI SENETI FYEKEO|FYEKO JETA UJENZI LALANA WORORO HITIMA PAMBUA FAHIWA GUBERI KIDIMU|PAYUKA TENDO UGOE SHUPATU UPATU UTUPA WELEKEO BINGITA UPOSAJI PASISHA|KUNGUGU LAFUDHI MFYONYO LEKSIMU MKUSI UKEMI NADHAFA FADHAA BANTAMU|BUNTA KICHOPA KIRUNGU KIRUGU KIGOVYA VYAKO MACHELA UPAKIZI ZIKUA|UDUNIFU MKAHALE SOROVEA CHEGAMA MPIGAJI PEKECHO CHEPEO BAINI CHUNGUA|TAANISI KUTOKEA NYORORO UKURUTU SAGAMBA KASTADI KAULENI MASANJA|MAREJEO MPEPEZI MVURUGO ASASI SIASA KACHIRA UPOKEZI HAMNAZO MZAHA|ZINDUKO UBUKUZI USHAUFU SAFU NINGU MAMANIA MJISIFU MSUFI TAFITI|TITIMA TAITI TAFI NYINGINE WALIKUWA JIDUKIZA FARAKANO UPUMUAJI|MAHAFALI UFAGIAJI TAWAKALI SOKOMEZA DALIHINI ILIMRADI IDIMARI|KITINDIO IODINI FUNIKIZA TAKHMISA KANGANYA RUTUBIKA TURUBAI UKATIBU|MAJUNUNI GANGAIZA GAGAZI GANZA HAZAHAZA PANGABOI PIGANA PAGAO PAGIO|UPAMBAJI PUMBAA CHIMBUKO MLANGUZI FUKARIKA KAFUKIA KAKAKAKA|TAHAYARI UKUNJAJI UFUMWELE UBAHARIA BURAI UTUFYURU UTUFYUU TURUFU|GUNDISHA SHUNGA MUHOLELO ULOO ONGOZANA ONGOZA PENSHENI MGOMBEZI BEZO|UBARIDI ARUBII BRANDI UUZAJI KIHERO TUNDUIZI UTUMIZI GHAYA MBARUTI|MRATABU TINDI NISHATI MASTAMU MSTAMU ZUNGUSHA MASKANI MSUSU KABIDHI|ABJADI DIBAJI JADHBA ASHUKURI NUSURIKA UKANUSHI KIRUSU CHIKICHI|KITENDWA TENDEKA IKWETA KADETI KITWEA MAZISHI SHIMIZI MASIZI SIZIMA|KWACHA MKWIJI GHAFURI SHARAFU NARGISI VINGIRA VIRINGA MSWAHILI|MWALISHI MANYAGO TAANUSI TAPISHO UTOPASI KIKWEKE KWEKWE MVUKE|MSHABAHA MARAMBA AMRISHO TAFRANI HONGEA TEKETEZA JITETEA TEKETEA|KITETE CHENENE OMBAOMBA CHOMOA IDHILALI UJALIDI MATOLEO MKUGO HIBA|ZINGA UCHUMBA RIMBWATA UDHAMINI MGONZO MTOANO MTONGA NYAYO DUWAA|APIZO PAZI POZI NDUBI WANDA SUNA MWENI WENI GOGOO USHOGA|JUHUDI GWECHU KULULA MFIMBI MAPUTE HUJUMA UWASII KITAWA UTASHI BONYEA|NOBA TEREMA SHUPAA PASUA UVUTIO UNYETI NYETI NYUTI CHURIA HUJAJI|KABIRI MNYELA NYAM TUKIZI URAIBU BIRUA ZEZETA NYONDA TARAJIO HUSUSAN|MDUMAVU SHITAKI FUNGULE RONGERA GORA NYIMIVU MTOKOSO FURKANI MDADISI|MARANDA FIRASHA KITANGU MZINDUO FURISHA NYEREZI TAKDIRI MCHUCHU|USALITI KUMBATIA SALITIKA PENDELEA ENDELEA PELEA INGAWAJE CHAKAZWA|KIBUBUSA GUMEGUME DHUKURIA UTAMVIRI KITIKITI MLUNGIZI MARIDHIA|JIAMULIA TAFAKARI FARAKA STAAJABU UATILIFU JITUKUSA USUKAJI|GOLEGOLE MZUNGUKO GUMZO ITHIBATI THABITI THIBITI SHUHUDIA FYOKOCHA|CHOYO BIMBASHI MZANDIKI TAATHIRA MAJALIWA MILELE PELEZI KIKAZO|KIZUKA MKADAMU DEKUA UGOMVI FEDHEHA KUTAPIKA KUKATAA UPENDEZI UPANDE|UPANZI IKISIRI KIKAKA KIAKA MLIPUKO KULIPA PULEKI MAHULUTI MAVULIA|SHUTUMA GANGO SPELL TEZO NDAU DUA SILA MZOZO MSIO OMBI|PWAA KODE DASTA FRIZA KIPURI GUBIKO AFWAJI BILULA LILA WINCHI|BOBARI KILILI JIHAMI UPANGA HENEZI VURUGU DULABU KAZANA JEDWALI JIWE|BELESHI NGURUZI KISONGO VURUMAI KIZIBUO UBOI KOKONEO KISUKIO BUNDUKI|KIKAZIO CHENEZO KIPIMIO MPIKO KICHANIO HADUBINI NABIHI MAJAZI|KIPEPESI TAPIKA ADHARUSI DHARAU KALVATI MAFAO UNDANI MALAPA KIELEZO|KILELE MTETEMO MTETEA ELEWANA LOWANA MWENEO UZUIO INJEKTA MKWARUZO|KUPITIA KIPAGO KUPITA KUPATA APIZA MASHAPO MOTISHA MSHTAKI UAINISHO|KISANGO MSTAHIFU FAHAMIA FAMASIA MATUASI MSTAAFU TEULE TOLEO UPELE|BAINIFU KIVUMBI POKA ZUKA OZI FYOZA MKULO TAALI ILIYA MPASI|VUMO SERWA ZUZUA RIKA BETILI GURUFA MKWELI PAPATA TAPA UKENJA|NJEKU TITITI MTWEKO MRARUO DALILI NYENDO RIBONI UKUKIA KIPELE DIREKI|RARUKA URAKA KUVUTIA KUVUTA MTAZAMO MPALIZI KIVUMVU KIULIZI ULOKOLE|TIMTIMU UPAKUZI MHAMAJI MAASUMU KITONGE TENGO UPIGAJI DHUNUBU|MAPISWA MAPWA PASWA JITWAZA SAMBAZA KINGOZI WADHIFA IDHAA BANGAYA|HOSANNA MLIMAJI TUNDIKA KATUNI KIDATU UNENAJI UNANE SILISILI|MGUTUSHO MGUTUO KIJASUMU UNAIBU MKANDAJI SABABU MTAMKAJI MNYORORO|TAADHIMU ANDAMIZI ANALOJIA PATILIZA LIPIZA FASHISTI SHIFTI REMBESHA|SHEMBEA REHEMA DIKODIKO KIDOKO TAKATIFU FATAKI MALIWAZO IMARISHA|UKOMBOZI NYONYOKA HUTUBIA MAUDHUI BUMUTA DHAMBI MAZIKO MKWEZI|HADHARI NADHARI UVUMBI FASAHA TABASURI TAASUBI ADIMISHA KASHIDA|KISHIDA ABUNUSI BINUSU TAFAKURI UKAWAFI MWINYI VUNGANYA VUGAZA|BIBLIA MAWESE MKAHAWA KIZAMANI NYAKANGA NYARAKA YAKINIA AJINABIA|LAZA JUJU LEWA MLAMA ZAMDA JONGO LEVYA FUSHO MBULU WICHE|GOTO MLIPU UWATU MVUJE JEMU HUDUMA MTUCHI WIZARA UCHAWI AFUENI|DUWAZI NASURI JAWABU RUZUNA LEGEZA CHOVYA YABISI UAGUZI KIFAFA KWIKWI|HALULA KIMETA SOTOKA PEREMA FUKIZO AFYUNI FINYU KIHODA PASIPO FUTURI|SEDEKA HALULI FAMASI FUKUA MARARA TOPOZI UKIMWI UUGUZI MKANYA PATASI|TAPIA PASA SAPA PLASTA KIDERI EGEMEZA MGONJWA DUDUIKA NYONGEA FIRANGI|FUKUCHA FUCHUA SHAZASI KILINGE USAFIDI MRUTUTU JEDHAMU KICHOMI|KWININI MITEMBO TIMBE PISHO URAMALI MAPONYO PONOA PONYA KIHODHI HODHI|TANDAVU VUNDA TRAKOMA KOTAMA KILUMWE UKWELI GOMBORO GOMBO MGOBO|FLORADI KLINIKI UYABISI VIVIZIA ZINDIKO DIKONI FUFUMAA DIDIMIA|MAZOEZI UTABIBU MKAUMWA BABADUA PAKANGA DUNGUSI MSUBILI VITAMINI|MATINI MTANI MATIBABU KASWENDE KEMIKALI SEKENEKO KIUAGUGU UGANGUZI|MACHAPWI KALOMELI ASPIRINI KAPUTULA KUTUPA PUKUTA UNYAFUZI FYUZI|KIKOHOZI KIFADURO BERIBERI TANUWINI KIUAVIJA KIUAKUVU UKAVU|HABASODA SHADA KISEYEYE KIYEYE TABAKERO BOTEA CHONYOTA SEKENEKA|KENEKA SEPETUKA SETEKA TESEKA CHOCHOTA UPASUAJI TAHAFIFU SAWIJIKA|ISTILAHI TISHALI KABRASHA TALASIMU TASLIMU JEKEJEKE MSHUBIRI|MSANAKA MLAKUNGU MKUNATUU MANUKUU TUNUKU MSINDUSI MKWININI KICHOCHO|MTAMBAO MTOMBO BIKARI MUWAKO CHUKUANA CHUUZA DAATHARI TAADHIMA|LIMBIKA MBESI MUTLAKI KAMISAA KITAWI PADRI KIMONO HEROE MAHATI MTAPTA|MTAPA MWARABU UNAWIRI MTWANZI KASMA NIKOTINI TANUKA FUNGAMA FUNGANA|VUNDUMKA KUNUNUA KUNUNU UBWETE NYODO MADOIDO BAMBUTI BWIMBWI TWITWI|MWANGUO MAJILIO MLIPAJI CHUCHUA UCHACHU POLIO KAGA REPA PAYO VAMIO|MBUDA WAPI BUNDA HAFLA GOFUA BOLTI BANTU FYOMA MLEVI BOBEA|MZUZA TEMBE JIKAZA KOHOZI KIKOPE MWANGO MGAWO DANDIA MTENZI GHAMMA|FISIDI FIDI MFUASI USAFI MWANZO WAZO MBWAGO GOMBA BURUGA SABIKI|DARISI KIJITU MTALI MKAMBA SHUFAA KWESHA MKEMIA MUWELE DHOOFU FUDO|KIDUKO TABANA NAWIRI RINA KIZIWI BROMIDI MSAHALA SHAMLA MWALIKO|MKALIO KOLWA KONGOJA ONGOKA GOOKA KOJOA KUFUATA UTENGUO ZONGOMO|KIPOPOO KIOPOO UKWENJE ONDOLEO GERESHA KIPEMBA SUNDUSI SUDUSI|ARIJOJO HADHARA RERESHA TUMILIA RAGHIBU KIBULUU MADHALI KIZALIA|ELEWEKA ULEGEVU MWELEWA WELEWA MWALE UZULUFU KAMPENI JIFANYA JIFYA|KASUMBA TAIFODI MWAGUZI MGAZI LEMBUKA DHURIKA SWENENE MDUNDUGO|MSINGAJI MWOMBEZI ZAHANATI HATAZA KONDESHA DONDAKOO NYONYORA|UKINZANI KINZANI MAHULUKU HULUKU MWANYA ZUBAISHA TEPETEVU KIKAWIZI|MDHAMINI OVYOOVYO MUKTADHA SONONEKO UTANGULE TUNGUA GUTUA KISEREMA|ISRAFILI HALAHALA TUTAMAVI MACHUNGU USTAHIKI STAHIKI TISHIKA SIMIKA|UPINZANI KAKAMAVU UMASKINI MTAMBUKO MKUNGURU GALAGALA AGHALABU|BALAGHA CHUNGUZA CHUGUZA SINGIZIA SINZIA DHOOFIKA FAFARUKA KONDEANA|UKUNGURU SARUNI DANGURO KIRAGO ANATOMIA MWIGAJI GWIJI KIMOTA KITOMA|MRABAHA CHUPIO CHUPI UDOBI PAKAZA SHAHARI NYAPA KISHIMO ANGALAU|UZAMANI MWANZI MANCHANI MAGHANI KEREKETA MKEKEWA TEREMKA LEGALEGA|TUNUKIA PAYAYA KIANGUZI MLINGANO NAILONI CHEGELE CHENGEU KIPANDIO|KIPANDO KIGODO MWAMUZI UANDAZI UNAWEZA CHANGIZO HAMANIKO MSU ZUGE|SHEHE RUDUFU BERINGI KUGEUKA KUJENGA KARAKANA FOLIO LOPOO MBALUNGI|BALUNGI IKTISADI KIDUKARI KISUKARI SIKITIKA DASTURI SAGA UDOLE WASTA|TUKWA TUKA MLUPO KINAA UROGI JANDO MSEMO SHANI NOVELA MAGOWE|KIDIGI HOMBWE MNYOFU SITAWI MCHAWI NEMSI SHETRI DIRABU BURDA RUDIA|NDUMBA BANDU MTUNGA RAUNI DAYANI TANDUA TANDU KEREZO SAGISHA GHASI|TOSHEKA USOGORA UGORO ROGA GURUNZI DARZENI KIVUNGE CHUNUSI UZUIAJI|KISUNZI KOMEA WADHIHA MAFUNDE DIFENSI KINGOTO KIJOMVU MJUVI MASIMBI|YAMBIWA YAMBWA MTARIZI EKSIREI KITOTOA MPARAZO PAMA CHEREHE BINADAMU|USAMBIKO UZINDUZI MALELEJI LELEJA VIZIGIZA KAKAMIZA MIONDOKO|JIKUSURU LEWALEWA MBABATAO TARAJI KISANAMU TAMBICHI OPERETA PANJA|MUWASHO URATIBU SHULI RUZUKU MANAZILI USUFII MHODHI KUJARIBU MUTRIBU|TARJUMI UJUKUTI BURUJI BEREGEZA ZAFE SULU DEHEGE RIPU NJEO SALI|UDAKU PUNTA SADFA WAKA NDIVA TULI MDAI GUMEA NTIMBI JERAHA|MKADI UCHUSA UKWARE UZOEFU MANANE NAMNA PARATI FYEKUA FYEKA KEFU|JARIDA KIKOKO SIJIDA MTANDA CHAKAA HUDUMU BURAHA KASOKO ZUZUKA DODOSA|KIKOME KINEMBE MWEZINI FAITIKA SELELEA KIELEZI KIZOLEO BAADAYE|TUNDIZA UVULANA MTAWAFU BANGUZI NGABU SIBORIO FIKIRIA UTWALIO UTAO|RISHAFU WEZESHA PUMZIKO MZUKO MAMLAKA WEKESHA LAKO GUNJAMA KIKONZO|MAJOGOO MAPONEA AMPEA MSHUSHO SAHARI CHOTORA STAJIRI SIRAJI CHEREKO|MCHENGO VINGINYA USINGIZI MINAJILI MAOMBEZI MCHEPUKO MCHEPUO|KANIENEO MMENYUKO MNYEO KALASI WEWESEKA WAWE SISITIZA PALEPALE|FASHFASH KASOROBO JINYOSHA SHINA MAMBOLEO ULANGUZI MAONGEZI MZINGO|VUGUVUGU VVU MHUBIRI TETEMEKA UPUPU GEISHA MPAKUZI RABANA KIJICHO|PAKACHA KARAMSHI KINYUME MAPETO MATESO MTORIA MANUFAA FANANI FULL|WENDO PEWA PAGUO MTESI BETA UJOVU KEMBA UGOBO IBADA UBAYA|ABU UTARI UATI MLIMI MPAMBE POFUKA FOKASI PANELI PAGAWA PWAGA|SHIBLI TOTOVA VOTA MTENGE HUTUBA USUMBI CHONZA CHAZO KIZITO NASIHI|URAIA PULIZO LIPU RADHI DABALI SKRUBU FUSUSI KUKUTA MORAMU MARO|RASIMU MTEULE LETU KITITI SETIRI MZOEFU SIRIMA AMIRI NDEREMO MASHUDU|TADBIRI ONJESHA MNYEGEO MSHONDE HALFIYA BABAIKO MBUNIFU KIGOMBO|MIKOGO ULEOLEO DHALILI MLARIBA UPEKUZI PIKU DHARURA PONGONO PONGOO|POGOO UPANUZI BARDANI DARABI SEMANSI MZABUNI PUMZISHA MZUSHI|MAHABUSU UTAPISHI UPISHI USIAHI MSHIKIZO MSHARAFU FUFURIKA UELEWANO|VUNJANGA UGUNDUZI KIREHANI UCHOMOZI TUNDUWAA KISALATA KALASIA|SAKATA SALATA HAIJAMBO UDOGOSHI BURUDIKA KAJAYEYE TAKIKANA TAHANANI|ZINGATIA OVATAIMU UTOMVI KITULIZO TULIZO GHUSUBU PAPATIKA SAJINI|UADILIFU MPANGO TEREMSHA STAREHE TEHEMU WELEKEVU ELEKEVU MPANGAJI|MPAGANI PIGANIA ZABURI MHIFADHI MAHADHI NAFIDHI DAFINA SINODI SKONZI|SHUGHULI GHUSHI MNYARA MNYANGE MNYEGEA JINEGE UNYANGE GENDERI|DHAHANIA ABADANI UDEVU ZOLOTO BOSA VALI USONI TYUBU EKZOSI RUMADA|BONETI RIKSHO TOPITO LESENI JONGEA SHUKIA MIZIGO PISHI BANDURU NDURU|PISTONI PITIO KIOLEZA USAFIRI VISIVYO SIVYO MKWECHE SPRINGI RIKWAMA|RAFADHA KONTENA TONEA FLOTILE UDEREVA MTITIGO PINDO KUCHEKA MANOWARI|BANGANYA WALAKINI MCHAPUKO MADIGADI MGONGANO LIMUZINI KAKAMIZI|MSUGUANO MAPOKEZI CHUKIZA CHUPIZA MANSULI SALUNI KRENI NGEBE UBAWABU|UKUBWA WABUKU KODISHA RALA UUNGWANA GASKETI KITUNGA UKENGEE ASHIRAFU|SEMENTI YUPI NEVI EGESHO FOKO MSUTI VUVIA RUPIA RAMSA KOHLI|PWAGU SHUPI GUSIA NONGA SOMEA NONGWA UTANGO UCHOYO HUYO FUSULI|MAPUYA MGOMVI SADIKI MTENGO UMBUYA TWALIA WASIFU MDOSHI JIHIMU REMBUA|UTINGO PEDELI WAKIFU KILEJI UJUAJI MTASHI MAGUBE KIGARO ALTARE RAKAMU|SHINDE HIMIDI MATEKA FILISI KOKONA PUPUSA UNGAMA WENGINE GUTUSHA|GAGADUA FAFANUA FUMBATO KISHETA MFIRAJI KINYEMI URUKAJI UTOKEZO|MKUNYUO SUSUMA MSUSA USUMAKU KITIMBI PACHIKA DHULUMA MUHULA TENDESA|TENDA SHARAFA KUMBANA MAULIDI NYORORA SALISHA UNYONGE NJUKUTI|MATWANA KUGUSWA UKWASU KITISHO SIFONGO MWELEKO KIVUNDE NUFAIKA|JITWIKA GHUMIWA NJEMBA KAMAMBE UGOIGOI GOIGOI URAZINI TOBOSHA|CHAGIZA HAWINDE WAHEDI BURUNGA GOMBEZA MTARAZA TARAZA KUJENGWA|KUWASILI MAPEPETA BENIBENI KITAKASA UELEKEVU ELIMISHA MISALE|ESKALETA USHAHIDI SHAHIDI USAHIHI FUNGASHA MAWAIDHA MDAIWA TOKANA|TANDO ALIFANYA MZUKA JINYONGA UPOTOSHI SIMBULIA AMBIZANA GARAGAZA|STIHIZAI HAKAHAKA KILOWATI MAJISIFU MTAWALIA MTAWALA MPENYEZO|MSHUSHIO UNYAKUZI MFYATUKO FYATUO MFYATO UAPIZAJI JIZIA KUTAFUTA|USHARIKA ASHAKUM MARISAU MCHEKO MKOCHE PEMBEA MBEGE SHIKANA AZISE|GHASILI MAHABA KADIRIA KIRINDA CHESI IKIBALI PEMBUA NYAMATA MAELEZO|TEKELEZA UTELEZI NUFAISHA MTULWA KICHAAZI BUCHARI JILIWAZA MPINZANI|MAPUUZA PINDANA MWEHU VIVYO TOTORO VAJI MRELA MKASI UPAPI UFITE|PWAYA GURUTO UKUNJO MSHONO DERAYA KASULA PAMBWA RUBEGA LUBEGA UBALE|ZOZOTE MKUNJO BENJUA BENUA MTUPIO GURUTA GWANDA DANGA GANDA MAVANI|KUNDA ANJALI DARIZI KITEMA UVAAJI AJUA USHONI MYOMBO LOWEKA LOWEA|LOWA MGURUTO JIVALIA FUATANA TOFAUTI MKURUZO MKASABU HANJARI TAMBARA|SIDIRIA MASOMBO SUBUI UKUMBUU FURUSHI MAVALIO FASHENI NAFSI USHUMBI|HUMUSI MUHIBU KIYOMBO MADOBINI MBINDI MFINYO BISIBISI KANCHIRI|HANGUNGU NGAGU CHACHAGA BUSHASHI MELIMELI KIKINGIO KISHAMIA|USHONAJI SHANUO JISITIRI GHAFLA MSHAMBA UPENU WENU TANDAWAA MATANDA|KITANZI KITENZI STEMPU UPWAMU UTUMWA SHEGELE SUKO AGIA KWIDA RAMBA|UTUPU PWETA SURWA DOBOA WENGU VISHA DIRIZI MBONA TEITEI MPAGAO|SUBANA CHOPRI BEBENA DOKEZA WEREVU USTADI UTASI DALUGA ZUMBUA MSHIKA|WALIO HITARI KILETE MPYARO PYORA KUNGWI FUSIKA MKAZO KIKOTA NYEVUA|KIGEZO PAGARO CHOMEKA KULETWA KULETA SAIDIZI KITUNDA MKOROFI MZENGWE|MAKWETU PAMBIKA MSOKOTO UJAHILI MSIMAMO ADVANSI TAMBAZA UTATUZI|OVAROLI OVARI CHENETA CHATNE UDEKUAJI MAHARAZI SASAMBUA PEKUPEKU|UOKOTAJI UOKAJI KUKAMATA VIJIJINI KIBWESHU HOHEHAHE PAMBANYA|MTETEMEO KADHONGO GWEGWETU MKWEPUZI MFADHILI FADHILI KIPODOZI|KULIHALI UKALILI TASINIFU CHINJANA CHAUCHAU MARIDHIO KAKAWANA|KISIMAMO KIFUKO SIMBULIO ULIMBO MSHORORO MSHORO SHILANGA HAGALI|KADITAMA UVUNGUNI MAGAMAGA GAAGAA UPUMBAVU UDHALILI HALIUDI|KIBWEBWE GULAGULA UENEZAJI UNADHIFU TAHARIZI TARIZI KUMBWAYA|KIBAPARA GABADINI RUMANDE MRENDA MSHINDWA MSAWIDI WARAKA MPAJE CHURO|MREHANI MCHUCHIO ROROMOA MNYAPARA TANABAHI SEREREKA TETEREKA SHESHI|MGOGORO SOKISI VUAZA MNYWEO CHUBWI KIPIGO PASUKA HOIHOI JUBURI OGOFYA|SHANGWE UTULIVU ALELUYA GHAIDHI SUSIA KIBANZI PARADISO PARIA|KUHARIBU KUVUNJWA SHAMPENI SHITUSHA FURAHIFU MWOGOFYO SONONEKA|FURUKUTO KOKONEKA TALIBISI BATLI KASIRIKA KITANGUO KIMBIMBI|MACHECHE RIBORIBO ISTIHAKI GEGENU KIBANTU CHANGUA MACHAGU MSITUNI|VUKIVU SEUA SHAKA GHAMU TWEZA KUZA WINJI NGULI CHONDA MZOMEO|GANDUA REFUKA RAGHBA MKOLA UTEMBO MAZOEA UVIMBE DOSARI KRIOLI HAWAFU|MFARIJI JAZANDA FAIDIKA MBONYEO KONGOLE MAPITIO KARIPIA UHODARI|BARASTE TENGANA MICHAPO UHALISI MTWANGO MTANGO UKOSEFU MTAKASO|MWONEVU TANDATU MBARONI KIKANDA ONGEZEA ZONGA BABAIFU MAKEMEO|SUBUKUA JITIMAI WAYOWAYO MSISIMKO UOGOPAJI WAYAWAYA OGOPESHA|JAKAMOYO KIDAKUZI BUGHUDHA USAIDIZI UCHUKUZI UCHUUZI MKINGAMO|KIUNGUJA KIKOTAMA DEMADEMA ADEADE HEKAHEKA URUHANGA MGHAFALA HALAFA|HUSIKANA KANUSHA KAMILIFU TAJAMALA TAHARUKI THAURA TAHARAKI|HANGAIKA FADHAIKA HOZAHOZA TAPATAPA VIGAVIGA WAMOJA UDAKTARI|MSUKUMO MKUMBO CHAKACHA MBUGUMA NGAMBI UANAUKE KARAGOSI MATENDE|TONGOA UHANDISI SUJUDIA UUNDAJI MTAMBUU RAMRAMU MNYENGEO MNYONGE|MSEREGO JITENGA SERIKALI FRESKO PITE LEBU UKIGO BLABU UPILI SADIFU|UFAULU UFUNUO GILIDI NAKALA SANIFU KISAFU SOMEKA CHUANA GHARIMU|UKURASA UBINGWA UZAMIFU MUSWADA TOLESHA JIELEZA JELEZI UDURUSU|TANBIHI SHAJARA JOMETRI REJESTA MAFAMBA MSAHAFU MENYEKA MYEKA|MWENYEWE WANATAKA AKADEMIA UTAALAMU YALIYOMO DUSUMALI BREVIARI|BIOKEMIA FAHARASA TAHAKIKI CHAPISHA ACHISHA CHAPASI MOJAWAPO JAPO|MJAO MHADHARA STAKIMU ENDELEZA GAMBRA MGAMBO TINDIGA KIFUNGU MFUNIKO|FIGILI RILABA EPSILONI KANADILI KALIPSO MILIMITA MASMUMA MAJILIWA|UWEZO GAZA NINA TIVA CHEPU GAIGA UTESI TADI AYARI PINGWA|NUSKHA UTONGO TOBOKA KUDUKU KASIDI YEYOTE RUWAZA UKAIDI FUFUKA NYANDA|KIDUDE ZINDUO PUNGUKA FAKACHI PEREMBA HAMRERE MKURURO MAUJUDI|MVAMIZI JIOKOTA MTATIZI TIMAZI ZATITI PATANGI JIBRILI MHAZIGI|PEREMBE UPEPEZI UAMBAJI MSARIFU MFURIA MHITIMU TAMRINI UWAKILI|MWENENDO MSTAHIKI MWAFRIKA MWISHOWE UPUNJAJI LALAMIKA CHANJARI|HAIDRETI TOTOMA BAHALULI SUKASUKA UTHABITI TUKUTIKO DOMINIKA|KODIANI KINAMO KIONGEZO RITHISHA JIMAMASA JULIKANA MCHONJO HIYO|URUSHAJI MKUNGUZI FUNDISHO DUMISHA MSANIFU MWANGENI UTAWALA MTWA|MULA GELI WINGI JUGWE KODWA PANCHI UTOBWE FOWADI MLINDA NYANJA|NGWARA GWARA NDONDI KWATUA UKOMWE MCHUJO KATHETA KOMBORA KUFIKIA|USHINDE MENYANA ONYESHO KILENGE FRIKIKI KIKIRI KIPATE DANEDANE|JUMUISHA SUMBWI JIZATITI CHABANGA HINDI SIDII HIMAYA CHONDO JIFICHA|MHOJIWA UCHEZAJI UCHESHI USHEHA GORI TEPO NZAO MFUTO YAKHE CHETU|TOBWE PEVUA JAZBA KASRA MWOVU LABUA VUTIKA VIBAYA HUNTHA HUENDA|ZURURA KISIFA PANGUA PITIWA PWITA WATI BOLERO FEFEFE FUTUTA MAJALO|MCHOMO GONGEA CHEREWA UVUTANO UTOTOLE EREVUKA ZUZUWAA MUUMINI|URADIDI MAAGIZO JITWEZA SWAHIBU USHWA UBAVUNI MKONGWE FUDIKIA|ZUNGUKA UKUUKUU MFANANO UKATILI MSUTAJI HAFUBEKI CHOKONOA MASHTAKA|UTENGANO GOTEA MTUMIAJI MTIMAJI TEKELEZO SABATELE BATELA SADIKIKA|KISHANZU NAKSHI MTUMBALI FINYANGA SOMBOMBI MSOMBO MBIBO UFIDHULI|DUHULI UNYOUNYO MODERETA MDATO MTARO MKAMBI MNYUKUO MAELEKEO MGUMBA|REJESHI PAMBANI KIBIRI BOHARIA MCHENZA CHENZA MAHITAJI MTASBIHI|UHAMIAJI MKUNDAJI ZOEVU SEYYID GUDA ZUMO SOLO MPIGO MGUTO TIKA|UHONDO UNYAGO UGOYA MKINDA HODIYA MNYUSO TUWAZI FALADI DHUMMA NYAMBA|PWELEA MRONJO CHAWE DIVIDII MCHOBEO CHOMEO GAMBUSI KIPOKEO ROGONYA|MTORIRO MTORO UMBIKA MKARARA USTADHI SHERASI FINGINYA KIENYEJI|BODIDOTA CHECHEVU KITUTUTU TANAKALI MAKELELE KANIVALI TUMBUIZA|TAMBUZI TASHKOTA TUMBUIZO ANTIFONA KITAMKWA KIKWATA MANYANGA|KOKOLIKO HARIMUNI MRIHANI MRINDIMO TATABISI KIKWAKWA KWAKWA TUMBUU|GOMDRA UGAIDI DISKETI DORATI MWITIKO UKASISI YOWE SUBIRA TOPA PAJE|JASI MFUPI UPOLE KUMTO MWIWA NYUKA CHAPUO HALIFA HANZUA KULIKO|SOGORA DOGORI MANEVA SHUFWA WAGIVU UTANZU PUMBAO PAREDI RIPEA KIFANO|SIMILE MUGABE FYOTOA TOFYA MBWEDU UFUASI BARIKI UBAHAU ZINGUA GUNZI|MGANDA PUNGWA MVYALE VYEMA MAHEPE DIRIJI MSAPATA TAPASA MAMBETA|MUFLISI MHEMUKO MAMANUA MAGEUZI MASKARA MATOKEO OKOTEA MCHEMBE|LAAZIZI KUDUSI KISHETI UCHWARA BRUCHI MBURUZO RUZU DANDALO MADENDE|TARAZIA MGWISHO MWIGO MDUNDIKO MANGANJA MCHARAZO KIBWENGO KURUHUSU|MAULIZIO KISUKUKU UPOOZAJI CHEICHEI MATANGUO MTUNGO TASHDIDI|AMBATANO FUATILIA JIKWATUA TAHAMAKI MNYANYUO USWAHILI TELEKEVU|FARAKANA VUVUMUKA BARAKALA ALIMRADI DOGODOGO MPINGANI TAKARIRI|UNGANIFU MDURENGE MRUNGURA KIDOGORI GRIDI MTUNGAJI MWANGALA|KISOKOTO CHOKOMEA CHOKOZA MFURUNGU FURUNGU UPAGAZI SHEREHE SHESHE|FIWI DAVIO MDELA USANA POLEA GOTOA HADIA UKULI UZUZU FALAHI|KIJIWE BUNGE PANGO DORORA LILAMU UPADRI JIHISI MSHIKO MOTIFU UFITO|FICHUA TWEKA TWIKA SUHELI MWAMBO PARAZA PAAZA VIMAMU MJAKAZI UASKARI|MAKWENU ULIPAJI UHARIRI PAMBIZO KIDUCHU UKUNGWI UBALOZI UMWINYI|DUNDIZA UKAGUZI USULUBU CHAMBUA UHAZILI NGWENJE UDALALI SHAHIRI|KARIPIO MARUDIO MISHENI UJUMLA UKADAMU SHIKIZA USONARA TEGEMEO|UFUJAJI GHAWAZI GWAZA MRAJISI MUKAFAA TAPANYA KENDE UHAKIMU UKOPAJI|UWAZIRI UZIWI KUEPUKA KUULIZA KOKONYAA MWONGOZO UCHAPASI KISONOKO|UKACHERO UCHAPUZI KIJUUJUU JUUJUU BANGAIZA JARIBOSI UNYAPARA|FIRDAUSI TARAZAKI UCHORAJI KUKURIKA UTARISHI MATUMIZI TAJIRIKA|LATITUDI KONDRATI UKABIDHI UCHAPAJI TAKILIFU JITAHIDI HITAJI|NGANGARI SUSURIKA KARISAJI UTUMISHI CHAMBURO UKUNGUNI MKUNGUNI|UNAHODHA GONDI LUNDO MASINDE MSHINDE TANDIKA KIGANGO UTAMBONI|TATHMINI JOPO MUDU WENZO TEUA LOFA WAKE VOWEL GEUZO UWILI|VUNZU SHUFU JURA NIABA FYOSA MTIND PANGU TINYA NDUNDU USHEHE|MAVUNE KILAWA UDOEZI SULUHU TAWAFU UTETEO KIWIDA FYONYA UZINZI DUHUSI|KAFALA MBAMBA UWIANO MFYEKO KEKEVU UCHAFU WALADI WAJINA CHANDA JAZILA|KITALI MGAWAJI MAMLUKI THAKILI MZIRA GAWADIA MWAJIRI MPULIZO TAFLISI|MAWINDO CHAGIZI KITITIA UPIMAJI MKOROMO MTAHINI KIVUNGA KAKAMKA|KONGOTI UMARKSI MARDUDI UDAKUZI KIYUNGA NYIGU PARAMIA MSEJA GAMBERA|MSUKULE MPAGAZI MRASIMU MHAKIKI MPENDWA KIVUTIO FAWIDHI KIGWENA|FANUSI USANIFU MBURURO MATINDI MGIGISI UNGAMIA UCHANE FAKAIFA|MWAPUZA PWAZA MZALIWA UKOMAJI NYONGEZA UHAMISHO TAJIRIBA BUMBUAZI|MCHUKUZI CHUCHULI GHARADHI AKHIYARI NEEMESHA WEMBAMBA KITALIFA|DIPFRIZA MEMETEKA BUGHUDHI MWITIKIO PAYAPAYA KISIMATI MAHUSUSI|MUADHARA MUAHADA TABAWALI TILIFIKA UFUNZAJI UMAMLUKI POKEZANA|MFAGIAJI MAANDIKO KOTOKOTO MWOMBAJI MTUMISHI MAKUSUDI ZILIZALA|HITILAFU UPENDANO UPATIARA MDIDIMIO BURUHANI UTAMBUZI TABARADI|DARABA UCHOKOZI CHUKIZO TONONOKA FURUTILE UREFU TAHARIRI MGAWANYO|MWANGAO KIDUNAVI MMBUJI KITIBA JIONA MUMUCHA NDARA TATAGA HAMZIYA|PAPACHI UTENDAJI KUTENDA UDEKANI MCHEKELE CHELEO UKOMBATI UWANDANI|YAHE RIZIKI MPORORO HIMA KUWEKA BEPARI UTAFITI UTAPELI PETALI UWAKALA|UKAALA KUFAHAMU JENERETA MGONGAJI DIDIMIZA KITMIRI TEPETA DIKRII|UBINDO VYETU SAGUO GUNGE CHETE GEUZI UGAVI WAVUTI KIBUGI TOSA|ADAPTA MAJOJO MJOJA AZIMIO UVUSHI UTEULE UPUUZI CHEMVI MUHUDI WOKOVU|UVUSHO TIJARA TIARA KIPANYA MHAZILI TELEKSI MWAFAKA METHALI GWARIDE|DOKOLEA TABANGA NUDHUMU UELEKEO MLEMAVU UBAZAZI UZAZI UPOTOFU TOPU|INDHARI KEKETWA LIMBUKA RUMBI MWENEZI SARENDA MAJERUHI HANCHIFU|GURUGUZA KORODANI CHILUMBO MTUTUMKO MPEMBUZI FUKUFUKU KIZAAZAA ZAKA|UMWAGAJI EKZIBITI MTETEMKO PARAKASA USICHANA CHANUI UPAKUAJI LEGEA|NDAKATA STAARABU PITILIZA KUWASHA NDIGA DHUKU BONO MLALA UBUGU MFIWI|BANGI MKONI UPONDO KIPULI TARARE CHIPWI NCHORO MPWEKE KWANJA MGWARU|MTOKWE USTAWI MBANGI MKWARA MKINGU MPOMBO POMBO MRUNGI MTUFAA PARAGA|MHAMUNI MVANILA CHEMBEO MAREJEA SHUPAZA MBAYAYA SHAYIRI UPONGOO|MGAGANI MWARIDI MKWAMBA MJATETE MAFUNJO TUMBAKU MKIRIKA MCHIPWI|MTANATO MKATALE MJOHORO MJOHO KIGONGO KIGOGO SOMBERA ZAATARI MBIGILI|MHARAGE ZAILEMU LANTANA KANGAGA KIGUMBA GUBIKA GUGUMUA FIKICHA|MKAKASI MKAMSHI MPAGATA MADAKATA FARIKUMU MTUMBATI MKUNYATI MKUYATI|UPANDAJI MSUNGUTI MKONOMTO MTOMOKO MTOMO MWAGILIO MLANDEGE GOGADIMA|MGULABI MHALIUDI MLINGOTI WIMBOMBO MUHAGATA KICHUJIO SINIGUSE|MPUNGATE MKUNUNGU UTOMONDO MTONDOO TOMONDO MTONDO TONDOO PUKUTIKA|MKURUNGU MPALILIO FOROMALI UFYEKAJI MTUMBAKU KONGOMEA KAYEKAYE|KIFYEFYE MWANGELE NGURUKIA TONGONYA TOGONYA SANSURI UFADHILI|CHEMBEU SAMSURI KASIMILE KUTUMIKA MFUATANO MANGRINI KUMBESA TUBWI|BRUDA GOFIA TASUA LEHEMU CHEFUA DUMAZA KUVULI CHIMVI KIBAKA PINGUA|JUSURU LEMAZA RUSHWA UBICHI KIHENDO KIPEREA MIRATHI UNUNUZI SONGOFU|USONO UFURAHA GALASHA UFASIKI FASIKI KIFUSI UKONGWE REJESHA UKOSAJI|UBINAFSI GAGAMIZA KOKOTEZA JUZIJUZI TAFTISHI FUMUKANO ULINDAJI|MKUSANYO JITIHADA NGURUNGA UKUBWANI KILOMETA PELELEZI CHONGOKA|CHONGOA KASHESHE MNYANYA UTAMBAJI PARADE MADAHIRO DORIANI UDADISI|MILIHOI MFUNDO MHINDU DURI OFISI UTABA BWEHA KIPETE DAMBRA UFUNGU|THIETA MVIMBO JADIDI SAKAFIA KIGWARU MOCHARI UFAGIZI NDAKAKA BULDOZA|MATANGA ASBESTO MANYATA KICHUSI MANZILI SADARUKI KIAMBAZA UJENGAJI|KUONDOKA TAIFISHA KIKOPESA UKUMBIZO MSALA USHOROBA UBORA SHAMBIRO|SINAGOGI SEMINA AMBATANA ZEGE JIKA UNUSU UOZA DUCHU FINYO SIKUA|UTOVU GAMDRA ULUMBI BOBOKA PAPASA ZOESHA LUGOJO KOLOLO BUBUTA GAMETI|KAHIRI TITIGA MAARIFA MHIMILI KANGATA KIKUMBO TATANUA PASHANA|KABAMBE KIOKOSI CHEWALE UCHIMVI MFAGIZI BANGAZA KIPINGWA PANGISHA|CHOMEKEA USHARIFU MVIMBAJI KIJARIDA TAWASALI VILEVILE KITUGUTA|UNUNUAJI PENYENYE TIFUTIFU NYAMAUME MSHUPAVU SIGARA UNYAMAVU|LILIWALA LIWALI BABATANA ANGAANGA TAHAYURI UAYARI KIBOGOYO KIPUNGUO|UFANANO THAMINI MCHOCHEO PARAGO KUMALIZA SAMAWARI NSWI TOPE SOZA|PWAJI HIVYO PWEWA VINZU BEREU CHUJA MRIMA NYEKA UBERU UKOGA|JIDAI DIA UKETO NYONGO BWACHI KIVUKO KOJOJO FYONDA TOPIDO YEYUKA|KIBUYU BABAJE KABOBO BOHADI CHWAGO UOWEVU POROJA MAWEWA MVYAZI FYONZA|HUYU MCHOTO MLUMBI MUMBI SAFINA ZINARA DEMANI ZINDUNA CHURURA GHURURI|MZOFAFA CHOPEKA PANTONI NDARAZA MYEYUKO TUMBAWE MVUKIZO TAWADHA|CHELEZO KIVUSHO CHEREMA KIOWEVU KIOEVU UJIRANI UJINI GHARIKI CHURUZA|GUDULIA YEYUSHA PROPELA VUVUWAA GUGUMIA UNYAUFU KIBONZO KILINDI|MWAGIKA TUMBUKA SHUMBI BURUBUKU NKINDIZA KIZIMBWI BULIBULI KIKOKORO|PIMAMAJI PASIFIKI TAJUWIDI SALAMATI MAJIVUNO DEREREKA FUFUWELE|MCHIRIZO MBWEMBWE BUBUJIKA KATALOGI KOJOKOJO KULATENI LUTEKA|MAUNDIFU MHASHIRI BUBUJIKO NYEKENYA NYAMBIZI BINYA TUMBUKIA|MMWAGIKO MWAGILIA DENGELUA YABISIKA MTONESHO MNESO GILIGILI|JITWISHA MCHIRIZI MWANAPWA ALTIMETA SALILI POROMOKA PARARE TOJO|ZIMUA DOYA MJUMU TUGUU PAMBO OMEGA FURIKA TUKUZA HEKAYA NUSURU|ZOZANA MTOMEO VUKIZA GADIMU PAHALA UFUSIO FELETI JAALIA NYENZO SABURI|FUWAWE DHARIRI TALANTA MATUNZO TUNZO MPOTOVU BELENGA EKUMENI GHOFIRI|MGOMAJI TASWIRA KONGOWEA VIRIGIZA TAHABIBU METAMETA FAGOSITI|CHUNGUZI GHAMIDHA UPUNGAJI UPUNGA KEJEKEJE MEREMETA TATARIKA|MKABIDHI MALIZIKA TAJAMALI UHUSIANO USURIAMA LELEMAMA TOKOMIRE|KRETI MLONGE GHALIKA KOBWE NYOWE MFUNE USENA GOGOTA UTANDO FUKUSI|BUGUJA NYENDE CHURURU DONDORA NDOROBO NYOMVIO MVINYO TUTUMVI|KIPWEPWE VENGENYA CHECHELE RUBALUBA SIRIDADO DUDUVULE BUUWAMBE|FUMBATIO PEMBEJEO WEMBEMBE MAJIMOTO KIUADUDU KOYOKOYO SAMESAME|KIBUKIBU USUNUNU SUNUNU MFUNGWA BEKUA UTAGO TWETA PAPUA UKASI KIZORO|HOLELA SOGEZA GANGUA LENGETA MSUNUNU UMUHIMU MPIMAJI MWATUKO MSIKIVU|TONESHA HALZETI MFASIRI BWERERE ISTIWAI USALATA KICHUGUU TANDABUI|KISHINDO MKINZANO MFAWIDHI PEPESUKA UKONYEZO MTAMBUZI KIDAHIZO|KIBIONGO KISHINGO TAPAKAZA KATAZA LABIZI MUUNGANO NGUMBARU UOZO|UMBIA KIPURA TETERE KIDOSHO SHEHENI KWARARA SHEHENA BOMBASI KITONGO|FINIKSI LIPYOTO DUDUMIZI MAREHEMU VUMATITI KUKUZIWA KURUWIJI|FUMATITI GOREGORE HUDIHUDI CHIMBULE MLAMBIZU TIPITIPI HAJIVALE|KITORORO ZIPI KOTWE TETESI MTEUZI UBEDUI MVANGE LABIBU POTEZA UBUBWI|BWESHU KIPAWA TOMASA UCHALE KUPUUZA GHULAMU KILUDHU UFASAHA MGOMBEA|MDOKOZI MFURAHA BANDIKO MPEKUZI BUGUIKA GHILIBA CHOCHOTE PAPARIKA|DUBWASHA MSONDANI UJAUZITO UTUNGAJI ISITOSHE SEMEKANA DADUSAWA|GANDISHA TAKABURI DUKUDUKU MYEYUSHO UKEMEAJI ALHASILI KUREA LAVA|JINYIMA CHETEZO KIPAMBIO MOTOMOTO NURURIFU VONGONYA CHOMELEA|ZIMAMOTO KAFI ZETU FUNZO VYAKE TULIA RUJUMU UPINDI YOYOMA URONGO|KIPUTO ZAHAMA UHETHI CHORDO KALIKO PWAGUZI TAADABU CHAKAVU UTABIRI|EPUKANA DADAVUA POFUSHA FUPISHA MBENUKO PONGEZA PONGEA KIMVITA|JIBODOA FIDISHA KIMBIZA USOMAJI SEREDANI HAILIGWA KUKUTANA MCHOPOZI|KIDUBINI MSAGUNDA PEKENYUA BURUDANI MCHAKATO TINGISHA MAUZAUZA|UNEEMEVU NEEMEVU MARIDADI POROMOKO MARUMARU UTUNZAJI UDHALIMU|HINIKIZA TEFUTEFU MKUNDE PIWA CHANE MKOLE MSOLO TANZU POOZA UBUYU|KOEKA CHOVYO MKINDU MBUNGO MVINJE MBINDA KIPIGI MPOPOO MWENDE MABAVU|KONGWA TISIKA YEGEYA UGWADU GWADU GULABI UTUNDA HANGALE MYEGEYA|MTIKITI MDODOKI MDARABI TAMVIRI VUMBIKA MKWAKWA MKUNAZI SPIRITI|PAPATUA KIPOOZA BIRIMBI KIKONYO GLUKOSI TUNGUJA UPEPEAJI MTOMONDO|MBIRIMBI MKANGAJA KIPUKUSA MDORIANI MPAPINDI PEKETEKA LAWALAWA|FOROSADI VUNGUNYA MWANGUZI KARAKARA FUTAFUTA BIRINGA RISIMU BODWE|DIVAI MDAKU PAGWA MLAJI UKOGO MSEMI AGANO MNEPO BIGIJA MFYOSI|SULIKA UKALI JAHILI KISAKI NGOJEA SANIDI UCHURO BUMUNDA GWADUKA|DODESHA MPAPASO PISHORI OMBOJEA FADHILA MTAKATA UKELELE KISHOKA|UVAMIZI KOROBOI KICHANE MKOLOGWE MAKOJOZI MAOKOZI CHANYATA TAHALILI|UKENGELE POKONYWA BOKOBOKO HADITHIA MAFYONGO CHAMBEGA GAYAGAYA|PELELEZA UPOKEAJI DONDOSHA MWELEKEO KOSEKANA KADIRIFU UFAKIRI|URAFIKI FARIDI EPIFANIA PLASTIKI MAPATANO VINONO BWACHE MDWERE|MLOMBO MFIGILI MNGOGWE NYINYORO TEMBELEA JAZO UDAHA CHUYA BOFYA WISKI|PAMWE TIIFU MASALO FIRARI UBWEGE BWEGE SPISHI UCHEPE SUFUFU KAFENI|DIRIKI KIPUTE MJUMBE UKONGO UGOKO GHAIBU KISOMO UNYENDE TASFIDA|KARADHA ITIBARI MSAMAHA MTUNGULE KIBWANDO UCHAKAVU TENGEMAA|MAKURUHU KIKIRIKA UFUNGUZI TIKITIKI JONGELEA HATIMAYE FILIHALI|TONOBARI KIPASHIO UKAWIAJI MSUKWANO MBASHIRI RUGARUGA MWENYEZI|ULAYA UHINDU UFALME RIZAVU TOROKA NYANZA KUBEBA MADUHULI MSHIHIRI|MLAHAKA UMATI VUNDE PORWA DAGLA KORONA HUJUMU FAHIRI ONGOPA KIPOFU|TABIKI FELEJI MLIPWA UNDUGU MREJEO BWENZI FIRIDI MJANJA NUSUSI SHARTI|ULOWEZI UBEPARI FIRAUNI UBEBERU MHUJUMU MLOWEZI SULTANI MKOLONI|UKOLONI UYAHUDI PURUZAI DHULUMU JIPINDA PANJI MDUMIZI UBUNIFU|UZINIFU MAKALIO KOSESHA GHOFIRA KIPINGO MHAJIRI MKHUFTI MAHURUJI|STAWISHA HARAKATI MDHIBITI UZALENDO AKRONIMU MZALENDO MWENYEJI|MKIMBIZI UDIKTETA TARADADI MUADHAMU KIBYONGO PANGILIA MAGIGIMO|SAWASAWA MSHIKAJI UGOMBEZI MGEUZO TADARAKI ARKADIA JIINGIZA|POMBOJEA TASILITI JITAWALA USULTANI CHOPOA KUSAHAU MATAMVUA DUWI|CHUSA UBANO MGONO TUMBI NGEBWE OVODHA UPINDO ZANUBA VUNGWI PEREGE|UKONZO CHENGA BAMVUA CHANJE MZUMERE KIKOTWE ZUMBURU CHOKOWE KIKWARE|NDUWARI KISHAZI SONGORO KIFIMBO PROTINI FATUNDU BILIULI NYAMBUO|KIPALIO MLAKASA PINGUSI SHAHAMU SIMBIKA SIBIKA UCHOKOO MBINGUSI|KITHEMBE DUMBWARA KIKUNAZI SULISULI GULEGULE KINENGWE BOROMALI|GEGEREKA KAADONDO KALAFATI JITANIBU BILIWILI MSHARIFU KUCHUKUA|NAIRUZI PEFU VYERO BOBWE USA VUZI VUNGE MWINYO ZIMBAA MKONZO|WARAGI UZUSHI MPWAMU GURUFU MSONYO SHUJAA JIBANZA MCHOKOO BWAGAZA|PWETEKA PANGANA WANZUKI TEKENYA MHITAJI WABAADU SUMAKUA MWOSHA|UNYWELE UHAFIFU FALSAFA CHAPUKA HESHIMU KISTARI PITISHA TITIMUA|CHUTAMA YUGAYUGA KIJAKAZI KIDOKEZI VURUGIKA MFUMBATI UJAPONGO|MAHABUBU MAJARIBU UTEMBEZI FONDOGOO MEMETUKA ALTANETA MZINGILE|MKINZANI MFALME SHOMVI FATUWA KIFAHARI KIRAFIKI UCHAFUZI UCHAGUZI|VIDOGO ZUGA SWAGA CHETI MDOYA UVATI TUNUTU ZELBIA JIDABA GUGUMO|ELEMEA JIGIJA NYANGE PARAPI KULIPWA MPAPURE TAMBAVU VARANGA UONGOFU|MSUSUMO MVUTANO UKAKAFU YUMKINI MKOSEFU MKOKOTO VOGOMEA MTEGUKO|KAIZARI ABURANI KIBEBERU PAPATUKA TASAWARI FUDIFUDI VIMBISHA|KIDADISI MASIVINA KOROWEZA UCHOMAJI BASHASHI YOSAYOSA UNYEGEZI|MFUANAZI CHIPUKIO TAZAMANA TATIZO KIPEKEE KUPOKEA KUVALIA IMEKUWA|KUHESABU KUCHAGUA KUPOTEZA KUFUNGUA KUHITAJI KUTAMBUA KUFIKIRI|PONUO LAIKI GUGUTA KIANZO SIBABI KABWELA MFITINI MPOKEZI SEMBUSE|DHURUBU MTOLILO MBADALA SHUMIZI WARANTI VURUJUA KACHERO JIAMINI|MSOMAJI NADHIRI POKONYA TOKOMEA ADHIFARI VURUMIZA KIJALIZO MSUMBUFU|CHANGUKA MZINDUKO MAKOHOZI TELEKEZA SHANGAZA SALIMINI PEREPESA|MNYAKUZI MUUMBUZI ZIDISHIA CHAMBANA MAPIGANO CHUCHUKA MCHOKOZI|UBAHAIMU ALWARIDI DAWIRI MKOMBOZI UHANITHI MJAJI UPESI MTOBWE PWEZUA|MTITIO MZINZI MGANGO CHEPUA LUKUKI MJESUTI SHADIDI BENDEJI ONGOPEA|MPUJUFU BONYEZA BAKUNJA NGAWIRA VARANGE TOMBORO CHIBUKU PONGEZI|HUDHURIO LAZIMIKA AFADHALI ASPIRETA UNYOGOVU MGANGAJI FELEFELE|PAMBANUA KUMBWEWE TASIFIDA TOKOMEZA SADIKIFU TAKATAKA TIKISIKA|UVURUNGU ULALO HARAM MDEKI MSONGE KIJOGOO KITANGA KWENCHI CHWECHWE|MSINDANO HADIBODI BABEWANA MSTATILI AMBILIKA LADU GLOPU DURURI|JIRIMU MCHORO RISASI JELEBI KULABU WISHWA MAREFU TOVYOO KEREZA HOTUBA|UFYOSI JIMUDU KIFANI BOBOTOA KIVIMBE KIPENYO VIRINGE ALOMOFU AMOFASI|NDURURU KIFUMBU AKAENDA MGOGOYO SOGELEA MWADIDI BUDHARA KARAMKA|FALAULA TAMBUZA HIRIMIA MTAFUNO UDERERE FIRIGISA ZIGIZAGA KIBADALA|MVIRINGO JERIKENI UVIRINGO KUKUBALI KIDUDUSI KIMWINYI MPITISHO|MARUFUKU KIVOLOYA MATERESI UOMBEAJI GOGOTEZA UBOHARIA WAJIBIKA|ELEMENTI KIFUKIZO SOMBOGOA KENGEUKA GOBAGOBA FAHAMIKA KIZIBITI|MKONGOJO MZINDUZI PEMBENNE GLOBU";
+(()=>{const pal=["#7c3aed", "#0891b2", "#c2410c", "#16a34a", "#db2777", "#2563eb", "#b45309", "#0d9488"];const D8=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]];
+  MIX_WORDS.split("|").forEach((g,i)=>LEVELS.push({size:i<300?9:10,cat:"MCHANGANYIKO",color:pal[i%pal.length],dirs:D8,words:g.split(" ")}));})();
+
 const CAP_COLORS=['#2f80ed','#22b04b','#f2891f','#e8413c','#9b51e0','#13b5a6','#e84393','#e0a800','#3a5bd9'];
 const FILL='ABDEFGHIJKLMNOPRSTUVWYZ'; // Kiswahili alphabet has no Q, X, C alone is rare
 const TAU=Math.PI*2;
 
 /* ---------- Images (from Neno) ---------- */
 const IMG={
-  kiwango1:"images/kiwango1.jpg",
-  bahari:"images/bahari.jpg",
-  chakula:"images/chakula.jpg"
+  kiwango3:"images/kiwango3.jpg",
+  kiwango2:"images/kiwango2.jpg",
+  kiwango1:"images/kiwango1.jpg"
 };
-const SCENE_STYLE={kiwango1:'transform:scale(1.3);transform-origin:50% 0'};
-function setScene(key){
-  $('scene').innerHTML=`<img src="${IMG[key]}" alt="" style="${SCENE_STYLE[key]||''}"><div class="shade"></div>`;
+// Full-screen photos: the image always covers the whole screen, and is zoomed/shifted
+// just enough that the person's eyes sit in the open area between the word card and the board.
+const SCENE_EYES={kiwango1:0.20, kiwango2:0.44, kiwango3:0.53};   // eye height as a fraction of the photo
+/* ---------- Scenes: a unique, topic-matched vector illustration for every level ----------
+   Built from the level number (seed) + topic: time of day, landform, and props (animals,
+   boats, houses, market, school...) all vary, so no two levels look the same. Vector art
+   stays razor sharp on any screen and costs almost nothing in app size. */
+function rng(seed){ let t=seed>>>0; return ()=>{ t+=0x6D2B79F5; let r=Math.imul(t^t>>>15,1|t); r^=r+Math.imul(r^r>>>7,61|r); return ((r^r>>>14)>>>0)/4294967296; }; }
+const PAL=[
+ {n:'dawn',  sky:['#1b2a5c','#6d6fb0','#f5a8a0','#ffd6a0'], sun:'#fff1d6', hill:['#9a7fa8','#6b5689','#43355f'], fg:'#22183a', water:['#f4b9a6','#7d6fae'], stars:0},
+ {n:'day',   sky:['#2b8fdc','#7cc8f4','#cfeefc','#eefaff'], sun:'#fff8d0', hill:['#9ccf94','#62a865','#3c8044'], fg:'#1f3d22', water:['#5fd0de','#1a8fae'], stars:0},
+ {n:'golden',sky:['#3a5ba8','#8f8ac0','#f2a65a','#ffe0a0'], sun:'#fff0b8', hill:['#c9935a','#946339','#5f3d24'], fg:'#2e1a10', water:['#ffd08a','#b0604a'], stars:0},
+ {n:'sunset',sky:['#1d1145','#6b2a6e','#e2566b','#ffa95a'], sun:'#ffe9b0', hill:['#86405a','#55243f','#2f1228'], fg:'#1c0b18', water:['#ff9f70','#5a2550'], stars:.15},
+ {n:'dusk',  sky:['#0f1a3d','#2f3780','#7a4f9a','#c77aa0'], sun:'#ffe3c4', hill:['#433b7a','#2e2858','#1b1738'], fg:'#0e0b22', water:['#8a6aa8','#241e4a'], stars:.6},
+ {n:'night', sky:['#040820','#0f1a4e','#22266a','#3a2f78'], sun:'#fffbe6', hill:['#1f1f48','#151536','#0c0c24'], fg:'#06061a', water:['#2a3a7a','#0a0f30'], stars:1},
+];
+// topic -> [landform, props]
+const TOPIC_SCENE={
+ WANYAMA:['plain','wild'], MIFUGO:['hills','farmanimals'], NDEGE:['lake','birds'], WADUDU:['meadow','bugs'],
+ BAHARI:['sea','boats'], CHAKULA:['plain','village'], JIKONI:['plain','village'], MATUNDA:['hills','fruittrees'],
+ MBOGA:['hills','farm'], BUSTANI:['hills','farm'], FAMILIA:['plain','people'], MWILI:['plain','people'],
+ HISIA:['lake','people'], SALAMU:['plain','village'], NYUMBANI:['hills','houses'], MIJI:['city','city'],
+ SOKONI:['city','market'], KAZI:['city','city'], TEKNOLOJIA:['city','city'], USAFIRI:['plain','road'],
+ SHULE:['plain','school'], ANGA:['mountain','sky'], SIKU:['mountain','sky'], MICHEZO:['plain','pitch'],
+ MUZIKI:['plain','drums'], RANGI:['hills','rainbow'], NAMBA:['hills','kites'], NCHI:['mountain','wild'],
+ MAVAZI:['plain','kanga'], VITENDO:['any','any'], SIFA:['any','any'], MCHANGANYIKO:['any','any']
+};
+function sceneSVG(levelNo, cat){
+  const R=rng(levelNo*2654435761 ^ 0x9e3779b9); const r=(a,b)=>a+(b-a)*R(); const pick=a=>a[Math.floor(R()*a.length)];
+  const flip=()=>R()<.5?-1:1;
+  let [land,props]=TOPIC_SCENE[cat]||['any','any'];
+  if(land==='any') land=pick(['plain','hills','lake','mountain','sea','meadow']);
+  if(props==='any') props=pick(['wild','birds','village','houses','boats','farm','kites','rainbow','fruittrees','people']);
+  if(land==='sea' && !['boats','birds','kites','rainbow'].includes(props)) props='boats';
+  const P=PAL[(levelNo*5 + (cat||'').length*3) % PAL.length];
+  const id='s'+levelNo; const fg=P.fg; const H=P.hill;
+  let o='';
+  // ---- sky ----
+  o+=`<defs><linearGradient id="${id}k" x1="0" y1="0" x2="0" y2="1">${P.sky.map((c,i)=>`<stop offset="${[0,.4,.68,.82][i]}" stop-color="${c}"/>`).join('')}</linearGradient>
+      <radialGradient id="${id}g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="${P.sun}"/><stop offset=".3" stop-color="${P.sun}" stop-opacity=".55"/><stop offset="1" stop-color="${P.sun}" stop-opacity="0"/></radialGradient>
+      <linearGradient id="${id}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.water[0]}"/><stop offset="1" stop-color="${P.water[1]}"/></linearGradient></defs>`;
+  o+=`<rect width="400" height="800" fill="url(#${id}k)"/>`;
+  if(P.stars){ const n=Math.round(90*P.stars); for(let i=0;i<n;i++) o+=`<circle cx="${r(0,400).toFixed(1)}" cy="${r(0,300).toFixed(1)}" r="${r(.5,1.7).toFixed(2)}" fill="#fff" opacity="${r(.35,1).toFixed(2)}"/>`; }
+  const sx=r(60,340), sy = P.n==='day'?r(70,150): P.n==='night'||P.n==='dusk'? r(70,170) : r(195,250);
+  o+=`<circle cx="${sx}" cy="${sy}" r="${P.n==='day'?110:150}" fill="url(#${id}g)"/><circle cx="${sx}" cy="${sy}" r="${P.n==='night'?26:r(30,44)}" fill="${P.sun}"/>`;
+  if(P.n==='night') o+=`<circle cx="${sx+10}" cy="${sy-6}" r="22" fill="${P.sky[1]}"/>`;   // crescent moon
+  if(!P.stars || P.stars<.5){ for(let i=0,n=Math.round(r(2,5));i<n;i++){ const cx=r(-20,420), cy=r(40,200), w=r(50,110);
+    o+=`<g fill="#fff" opacity="${(P.n==='day'?.85:.35).toFixed(2)}"><ellipse cx="${cx}" cy="${cy}" rx="${w}" ry="${w*.13}"/><ellipse cx="${cx-w*.25}" cy="${cy-w*.1}" rx="${w*.45}" ry="${w*.18}"/><ellipse cx="${cx+w*.2}" cy="${cy-w*.06}" rx="${w*.35}" ry="${w*.14}"/></g>`; } }
+  const sky=o; o='';
+  // ---- props library ----
+  const acacia=(x,y,s,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="${c}"><path d="M-3 0 L-2 -60 L-14 -82 L-11 -84 L0 -66 L9 -88 L12 -86 L3 -60 L4 0Z"/><ellipse cx="-14" cy="-88" rx="34" ry="8"/><ellipse cx="14" cy="-94" rx="38" ry="9"/><ellipse cx="0" cy="-100" rx="30" ry="7"/></g>`;
+  const baobab=(x,y,s,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="${c}"><path d="M-26 0 C-22 -50 -28 -90 -20 -126 L20 -126 C28 -90 22 -50 26 0Z"/><path d="M-18 -122 C-36 -144 -62 -150 -86 -144 L-84 -138 C-62 -140 -40 -132 -16 -112Z"/><path d="M16 -122 C36 -146 68 -154 94 -142 L90 -136 C68 -144 42 -134 14 -112Z"/><path d="M-6 -126 C-9 -152 -3 -170 6 -182 L11 -178 C4 -166 2 -150 6 -124Z"/></g>`;
+  const palm=(x,y,s,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="${c}"><path d="M0 0 C6 -60 2 -120 18 -170 L24 -168 C10 -120 14 -60 8 0Z"/><g transform="translate(21 -170)"><path d="M0 0 C-30 -18 -60 -10 -78 10 C-50 -4 -28 -2 0 4Z"/><path d="M0 0 C30 -22 62 -14 80 6 C52 -8 28 -4 0 4Z"/><path d="M0 0 C-14 -30 -40 -44 -64 -40 C-38 -32 -20 -18 -2 2Z"/><path d="M0 0 C16 -32 42 -46 68 -40 C40 -32 22 -18 2 2Z"/><path d="M0 0 C-4 -30 2 -50 10 -62 C6 -42 6 -22 4 2Z"/></g></g>`;
+  const roundTree=(x,y,s,c=fg,fruit)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-4" y="-46" width="8" height="46" fill="${c}"/><circle cx="0" cy="-62" r="30" fill="${c}"/><circle cx="-20" cy="-50" r="18" fill="${c}"/><circle cx="20" cy="-50" r="18" fill="${c}"/>${fruit?Array.from({length:9},(_,i)=>`<circle cx="${(Math.sin(i*2.1)*24).toFixed(1)}" cy="${(-58+Math.cos(i*1.7)*18).toFixed(1)}" r="4.5" fill="${fruit}"/>`).join(''):''}</g>`;
+  const giraffe=(x,y,s,f,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})" fill="${c}"><path d="M0 0 L3 -40 L-2 -42 L-6 -78 L-14 -96 L-8 -100 L-1 -84 L8 -44 L22 -44 L26 0 L22 0 L19 -30 L8 -30 L6 0Z"/></g>`;
+  const elephant=(x,y,s,f,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})" fill="${c}"><path d="M-30 0 L-28 -26 C-34 -40 -30 -56 -12 -60 C4 -64 22 -60 30 -46 C36 -42 42 -36 40 -22 L40 0 L33 0 L32 -16 L22 -16 L22 0 L14 0 L13 -18 L-8 -18 L-8 0 L-15 0 L-15 -20 L-21 -20 L-22 0Z"/><path d="M30 -46 C44 -46 48 -30 46 -12 L50 -2 L44 -2 L40 -14 C40 -24 38 -34 30 -38Z"/><ellipse cx="20" cy="-48" rx="10" ry="14"/></g>`;
+  const zebra=(x,y,s,f,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})" fill="${c}"><path d="M-20 0 L-19 -20 C-22 -26 -18 -32 -8 -32 L14 -32 L24 -46 L32 -44 L30 -36 L22 -26 L20 0 L16 0 L15 -18 L-12 -18 L-13 0Z"/><path d="M-20 -26 L-28 -10 L-25 -9 L-18 -22Z"/></g>`;
+  const cow=(x,y,s,f,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})" fill="${c}"><path d="M-22 0 L-21 -18 C-24 -26 -18 -30 -10 -30 L16 -30 C22 -30 26 -26 30 -30 L36 -28 L34 -20 L26 -18 L24 0 L20 0 L19 -14 L-14 -14 L-15 0Z"/><path d="M28 -30 L24 -38 M32 -30 L36 -38" stroke="${c}" stroke-width="2.5"/></g>`;
+  const birds=(n,c=fg)=>Array.from({length:n},()=>{const x=r(30,370),y=r(380,580),w=r(6,13);return `<path d="M${x-w} ${y} q${w/2} ${-w/2} ${w} 0 q${w/2} ${-w/2} ${w} 0" stroke="${c}" stroke-width="${(w/5).toFixed(1)}" fill="none" stroke-linecap="round"/>`}).join('');
+  const hut=(x,y,s,c=fg,a='#c8743a')=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-22" y="-26" width="44" height="26" fill="${c}"/><path d="M-30 -24 L0 -54 L30 -24Z" fill="${a}"/><rect x="-6" y="-16" width="12" height="16" fill="${P.sun}" opacity=".7"/></g>`;
+  const house=(x,y,s,c=fg,a='#b5532a',win=P.stars>.4?'#ffd86b':'#cfe8ff')=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-26" y="-34" width="52" height="34" fill="${c}"/><path d="M-32 -32 L0 -56 L32 -32Z" fill="${a}"/><rect x="-18" y="-24" width="10" height="10" fill="${win}"/><rect x="8" y="-24" width="10" height="10" fill="${win}"/><rect x="-5" y="-16" width="10" height="16" fill="${a}"/></g>`;
+  const tower=(x,y,w,h,c=fg)=>{let s=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${c}"/>`; const lit=P.stars>.3?'#ffd86b':'#d7ecff';
+    for(let yy=y-h+8; yy<y-8; yy+=12) for(let xx=x+5; xx<x+w-6; xx+=10) if(R()<.6) s+=`<rect x="${xx}" y="${yy}" width="5" height="6" fill="${lit}" opacity=".85"/>`; return s;};
+  const stall=(x,y,s,col)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-2" y="-40" width="4" height="40" fill="${fg}"/><path d="M-34 -40 Q0 -64 34 -40Z" fill="${col}"/><rect x="-26" y="-18" width="52" height="18" fill="${fg}"/><circle cx="-14" cy="-21" r="5" fill="#ff8a1f"/><circle cx="-2" cy="-21" r="5" fill="#e11d48"/><circle cx="10" cy="-21" r="5" fill="#22c55e"/></g>`;
+  const bus=(x,y,s,f,col)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><rect x="-40" y="-30" width="80" height="24" rx="5" fill="${col}"/><rect x="-34" y="-26" width="58" height="9" fill="#dff3ff" opacity=".85"/><rect x="28" y="-26" width="8" height="12" fill="#dff3ff" opacity=".85"/><circle cx="-24" cy="-5" r="7" fill="${fg}"/><circle cx="24" cy="-5" r="7" fill="${fg}"/></g>`;
+  const dhow=(x,y,s,f,c=fg)=>`<g transform="translate(${x} ${y}) scale(${s*f} ${s})"><path d="M-36 0 L40 0 L30 12 L-26 12Z" fill="${c}"/><path d="M4 -76 L4 0 L-40 -6Z" fill="#fffaf0" opacity=".95"/><rect x="3" y="-78" width="2" height="80" fill="${c}"/></g>`;
+  const person=(x,y,s,col)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="0" cy="-46" r="7" fill="${fg}"/><path d="M-10 -36 L10 -36 L14 -6 L-14 -6Z" fill="${col}"/><rect x="-7" y="-6" width="5" height="6" fill="${fg}"/><rect x="2" y="-6" width="5" height="6" fill="${fg}"/></g>`;
+  const butterfly=(x,y,s,col)=>`<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="-6" cy="-4" rx="7" ry="9" fill="${col}"/><ellipse cx="6" cy="-4" rx="7" ry="9" fill="${col}"/><ellipse cx="-5" cy="6" rx="5" ry="6" fill="${col}" opacity=".85"/><ellipse cx="5" cy="6" rx="5" ry="6" fill="${col}" opacity=".85"/><rect x="-1" y="-10" width="2" height="20" fill="${fg}"/></g>`;
+  const flower=(x,y,s,col)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-1" y="-24" width="2" height="24" fill="${H[2]}"/>${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-30" rx="4" ry="7" fill="${col}" transform="rotate(${a} 0 -24)"/>`).join('')}<circle cx="0" cy="-24" r="3.5" fill="#ffd34d"/></g>`;
+  const kite=(x,y,s,col)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -26 L18 0 L0 26 L-18 0Z" fill="${col}"/><path d="M0 -26 L0 26 M-18 0 L18 0" stroke="#fff" stroke-width="1.5" opacity=".7"/><path d="M0 26 q8 20 -4 40 q-10 20 4 44" stroke="${fg}" stroke-width="1.5" fill="none"/></g>`;
+  const drum=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-16 -44 L16 -44 L10 0 L-10 0Z" fill="#8a4b22"/><ellipse cx="0" cy="-44" rx="16" ry="5" fill="#f3e0c0"/><path d="M-16 -44 L10 0 M16 -44 L-10 0" stroke="#3a1d0c" stroke-width="1.5"/></g>`;
+  const KANGA=['#e11d48','#f59e0b','#16a34a','#2563eb','#9333ea','#0d9488','#ea580c'];
+  const ground=(y,c,amp=14)=>`<path d="M0 ${y} C${r(60,120)} ${y-amp*r(.5,1.5)} ${r(160,240)} ${y+amp*r(.3,1.2)} ${r(260,330)} ${y-amp*r(.4,1)} S380 ${y-amp*.4} 400 ${y} V800 H0Z" fill="${c}"/>`;
+  // ---- landform ----
+  let gy=640;   // ground line where props stand
+  if(land==='mountain'){
+    const mx=r(120,280), mh=r(200,250), snow=P.n==='night'?'#c9d4ee':'#ffffff';
+    o+=`<path d="M${mx-260} 640 L${mx-80} ${640-mh+30} Q${mx-30} ${640-mh} ${mx} ${640-mh-6} Q${mx+30} ${640-mh} ${mx+80} ${640-mh+30} L${mx+260} 640Z" fill="${H[1]}"/>`;
+    o+=`<path d="M${mx-52} ${640-mh+20} Q${mx-20} ${640-mh-2} ${mx} ${640-mh-6} Q${mx+24} ${640-mh-2} ${mx+54} ${640-mh+20} L${mx+38} ${640-mh+34} L${mx+20} ${640-mh+22} L${mx+4} ${640-mh+38} L${mx-14} ${640-mh+24} L${mx-32} ${640-mh+36}Z" fill="${snow}" opacity=".95"/>`;
+    o+=ground(650,H[0],10)+ground(700,H[1],12)+ground(740,H[2],10); gy=705;
+  } else if(land==='sea'){
+    o+=`<rect y="520" width="400" height="200" fill="url(#${id}w)"/>`;
+    for(let i=0;i<7;i++){ const x=r(0,360),y=r(540,660),w=r(24,50); o+=`<path d="M${x} ${y} q${w/2} -5 ${w} 0" stroke="#fff" stroke-width="2" opacity=".45" fill="none"/>`; }
+    o+=`<path d="M0 690 C120 670 260 700 400 676 V800 H0Z" fill="#f2dca8"/><path d="M0 730 C140 714 280 742 400 724 V800 H0Z" fill="#e6c98a"/>`; gy=700;
+  } else if(land==='lake'){
+    o+=ground(560,H[0],18);
+    o+=`<rect y="600" width="400" height="120" fill="url(#${id}w)"/><g fill="${P.sun}" opacity=".5"><rect x="${sx-50}" y="612" width="100" height="3" rx="1.5"/><rect x="${sx-34}" y="628" width="68" height="3" rx="1.5"/><rect x="${sx-18}" y="644" width="36" height="3" rx="1.5"/></g>`;
+    o+=ground(720,H[1],10)+ground(756,H[2],8); gy=728;
+  } else if(land==='city'){
+    o+=ground(600,H[0],10);
+    let x=-10; const tc = P.stars>.3 ? H[2] : ['#4b5878','#5d6a8a','#3f4a66'][Math.floor(R()*3)];
+    while(x<410){ const w=r(28,56), h=r(80,230); o+=tower(x,640,w,h, R()<.5?tc:H[2]); x+=w+r(2,8); }
+    o+=ground(650,H[1],6)+ground(720,fg,6); gy=690;
+  } else { // plain, hills, meadow
+    const amp = land==='hills'?34: land==='meadow'?10:16;
+    o+=ground(560,H[0],amp)+ground(620,H[1],amp*.9)+ground(690,H[2],amp*.7); gy=700;
+  }
+  // ---- props by topic ----
+  const f=flip;
+  switch(props){
+    case 'wild': { o+=acacia(r(30,110),gy-r(0,20),r(.8,1.2))+acacia(r(290,380),gy-r(10,30),r(.6,.9));
+      const kinds=[giraffe,elephant,zebra]; for(let i=0,n=Math.round(r(2,4));i<n;i++) o+=pick(kinds)(r(120,300),gy+r(-6,8),r(.8,1.3),f()); o+=birds(Math.round(r(2,6)),fg); break; }
+    case 'farmanimals': { o+=`<path d="M0 ${gy-20} H400" stroke="${fg}" stroke-width="3"/>`; for(let x=10;x<400;x+=40) o+=`<rect x="${x}" y="${gy-34}" width="4" height="30" fill="${fg}"/>`;
+      for(let i=0,n=Math.round(r(3,5));i<n;i++) o+=cow(r(40,360),gy+r(6,30),r(.9,1.3),f()); o+=roundTree(r(300,380),gy-10,r(.9,1.2)); break; }
+    case 'birds': { o+=birds(Math.round(r(10,18)),fg)+palm(r(10,60),gy+20,r(.9,1.2))+acacia(r(300,380),gy,r(.6,.9)); break; }
+    case 'bugs': { for(let i=0;i<14;i++) o+=flower(r(10,390),gy+r(10,90),r(.8,1.5),pick(KANGA));
+      for(let i=0,n=Math.round(r(3,6));i<n;i++) o+=butterfly(r(40,360),r(520,660),r(.9,1.6),pick(KANGA)); break; }
+    case 'boats': { for(let i=0,n=Math.round(r(1,3));i<n;i++) o+=dhow(r(60,340),r(560,640),r(.6,1.1),f()); o+=palm(r(0,50),800,r(1,1.3))+palm(r(330,390),800,r(.9,1.15))+birds(Math.round(r(2,5)),fg); break; }
+    case 'village': { for(let i=0,n=Math.round(r(2,4));i<n;i++) o+=hut(r(40,360),gy+r(0,20),r(.9,1.3),fg,pick(['#c8743a','#a65a2a','#d29a4a']));
+      o+=baobab(r(20,90),gy+10,r(.7,1))+`<path d="M${r(150,250)} ${gy-30} q-10 -30 6 -60 q14 -30 -4 -70" stroke="#ddd" stroke-width="6" opacity=".35" fill="none"/>`; break; }
+    case 'fruittrees': { for(let i=0,n=Math.round(r(3,5));i<n;i++) o+=roundTree(r(30,370),gy+r(-10,20),r(.9,1.4),H[2],pick(['#ff8a1f','#facc15','#e11d48','#84cc16'])); break; }
+    case 'farm': { for(let i=0;i<6;i++){ const y=gy+10+i*16; o+=`<path d="M0 ${y} Q200 ${y-14} 400 ${y}" stroke="${H[2]}" stroke-width="5" fill="none" opacity=".7"/>`; for(let x=r(0,20);x<400;x+=r(18,28)) o+=`<circle cx="${x}" cy="${y-6}" r="${r(3,5)}" fill="${H[0]}"/>`; }
+      o+=hut(r(300,370),gy-6,r(.8,1),fg)+roundTree(r(20,80),gy,r(.9,1.2)); break; }
+    case 'people': { const n=Math.round(r(3,6)); for(let i=0;i<n;i++) o+=person(60+i*(280/n)+r(-10,10),gy+r(0,20),r(1,1.4),pick(KANGA)); o+=baobab(r(300,390),gy,r(.6,.9))+acacia(r(10,60),gy-10,r(.6,.8)); break; }
+    case 'houses': { let x=r(-10,20); while(x<400){ o+=house(x+30,gy+r(-6,14),r(.8,1.2),fg,pick(['#b5532a','#8c2d2d','#2f6f8f','#a16207'])); x+=r(70,100);} o+=roundTree(r(10,390),gy+18,r(.8,1)); break; }
+    case 'city': { o+=birds(Math.round(r(0,4)),fg); break; }
+    case 'market': { for(let i=0,n=Math.round(r(4,6));i<n;i++) o+=stall(30+i*(340/n)+r(0,20),gy+r(10,30),r(.9,1.2),pick(KANGA)); for(let i=0;i<3;i++) o+=person(r(30,370),gy+r(30,60),r(1,1.2),pick(KANGA)); break; }
+    case 'road': { o+=`<path d="M0 ${gy+30} L400 ${gy+10} L400 ${gy+50} L0 ${gy+70}Z" fill="#3a3a44"/><path d="M0 ${gy+50} L400 ${gy+30}" stroke="#ffd34d" stroke-width="3" stroke-dasharray="18 14"/>`;
+      o+=bus(r(80,320),gy+r(48,56),r(1,1.4),f(),pick(['#f59e0b','#16a34a','#2563eb','#e11d48']))+acacia(r(10,70),gy,r(.6,.9))+acacia(r(330,390),gy-6,r(.5,.8)); break; }
+    case 'school': { const x=r(120,260); o+=`<g transform="translate(${x} ${gy+10})"><rect x="-70" y="-60" width="140" height="60" fill="#f2e6cf"/><path d="M-80 -58 L0 -92 L80 -58Z" fill="#b5532a"/>${[-50,-22,6,34].map(a=>`<rect x="${a}" y="-46" width="16" height="16" fill="#7dc3e8"/>`).join('')}<rect x="-8" y="-28" width="16" height="28" fill="#5b3a1e"/></g>
+      <g transform="translate(${x+110} ${gy+10})"><rect x="0" y="-110" width="3" height="110" fill="${fg}"/><rect x="3" y="-110" width="40" height="8" fill="#1eb53a"/><rect x="3" y="-102" width="40" height="5" fill="#fcd116"/><rect x="3" y="-97" width="40" height="7" fill="#000"/><rect x="3" y="-90" width="40" height="5" fill="#fcd116"/><rect x="3" y="-85" width="40" height="8" fill="#00a3dd"/></g>`;
+      for(let i=0;i<3;i++) o+=person(r(30,110),gy+r(30,60),r(.9,1.1),'#2563eb'); break; }
+    case 'sky': { o+=birds(Math.round(r(3,8)),fg)+acacia(r(20,120),gy,r(.6,.9)); break; }
+    case 'pitch': { o+=`<path d="M0 ${gy+10} H400 V800 H0Z" fill="#2f8f3f"/>`; for(let i=0;i<5;i++) o+=`<rect x="0" y="${gy+10+i*24}" width="400" height="12" fill="#3aa14b" opacity=".6"/>`;
+      o+=`<g transform="translate(${r(120,280)} ${gy+30})" stroke="#fff" stroke-width="4" fill="none"><path d="M-60 0 V-50 H60 V0"/><path d="M-60 -50 L-50 -40 H50 L60 -50" stroke-width="2" opacity=".7"/></g><circle cx="${r(100,300)}" cy="${gy+80}" r="10" fill="#fff"/><path d="M0 ${gy+60} H400" stroke="#fff" stroke-width="3" opacity=".7"/>`;
+      for(let i=0;i<3;i++) o+=person(r(30,370),gy+r(70,110),r(1,1.2),pick(['#facc15','#16a34a'])); break; }
+    case 'drums': { for(let i=0,n=Math.round(r(3,5));i<n;i++) o+=drum(70+i*(260/n)+r(0,20),gy+r(20,40),r(1,1.4)); for(let i=0;i<3;i++) o+=person(r(30,370),gy+r(0,20),r(1,1.3),pick(KANGA)); o+=baobab(r(300,390),gy-10,r(.6,.8)); break; }
+    case 'rainbow': { const cx=r(140,260), rr=r(150,210); ['#e11d48','#f97316','#facc15','#22c55e','#3b82f6','#8b5cf6'].forEach((c,i)=>o+=`<path d="M${cx-rr+i*9} ${gy} A${rr-i*9} ${rr-i*9} 0 0 1 ${cx+rr-i*9} ${gy}" stroke="${c}" stroke-width="9" fill="none" opacity=".75"/>`);
+      o+=roundTree(r(20,80),gy+10,r(.9,1.2))+hut(r(300,380),gy+10,r(.9,1.1)); break; }
+    case 'kites': { for(let i=0,n=Math.round(r(3,6));i<n;i++) o+=kite(r(40,360),r(400,590),r(.8,1.4),pick(KANGA)); for(let i=0;i<2;i++) o+=person(r(80,320),gy+r(10,30),r(1,1.2),pick(KANGA)); break; }
+    case 'kanga': { for(let k=0;k<2;k++){ const y=gy-r(70,40)+k*30; o+=`<path d="M0 ${y} Q200 ${y+20} 400 ${y}" stroke="${fg}" stroke-width="2" fill="none"/>`;
+        for(let x=r(10,30);x<380;x+=r(46,62)){ const c=pick(KANGA), c2=pick(KANGA); o+=`<g transform="translate(${x} ${y+8})"><rect x="0" y="0" width="36" height="46" fill="${c}"/><rect x="4" y="4" width="28" height="38" fill="none" stroke="${c2}" stroke-width="3"/><circle cx="18" cy="23" r="7" fill="${c2}"/></g>`; } }
+      o+=person(r(40,360),gy+r(20,40),r(1.1,1.3),pick(KANGA)); break; }
+  }
+  // lift the landscape so the horizon and props sit in the open band between the word card and the board
+  const SHIFT=300, bottom = props==='pitch' ? '#2f8f3f' : land==='sea' ? '#e6c98a' : land==='city' ? fg : H[2];
+  return `<svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${sky}<g transform="translate(0 -${SHIFT})">${o}</g><rect y="${800-SHIFT-4}" width="400" height="${SHIFT+4}" fill="${bottom}"/></svg>`;
+}
+
+function setScene(key,color){
+  if(SCENE_EYES[key]!=null){
+    $('scene').innerHTML=`<img class="bg-focus" id="focusImg" src="${IMG[key]}" alt=""><div class="shade"></div>`;
+    const fi=$('focusImg'); fi.dataset.key=key; fi.onload=placeFocus; if(fi.complete) placeFocus();
+    return;
+  }
+  if(IMG[key]){ $('scene').innerHTML=`<img src="${IMG[key]}" alt=""><div class="shade"></div>`; return; }
+  // No photo for this level: a crisp vector Tanzanian landscape chosen by topic
+  $('scene').innerHTML = sceneSVG(mode==='daily' ? dailySeed : levelIdx+1, L && L.cat) + '<div class="shade"></div>';
+}
+
+function placeFocus(){
+  const fi=document.getElementById('focusImg'); if(!fi||!fi.naturalWidth) return;
+  const e=SCENE_EYES[fi.dataset.key];
+  const W=window.innerWidth, H=window.innerHeight, iw=fi.naturalWidth, ih=fi.naturalHeight;
+  const top=$('category').getBoundingClientRect().bottom, bot=$('board').getBoundingClientRect().top;
+  const gc=(top+bot)/2;                                   // middle of the open area
+  const s=Math.max(W/iw, H/ih, gc/(e*ih), (H-gc)/((1-e)*ih)); // cover screen AND keep eyes at gc
+  const w=iw*s, h=ih*s;
+  fi.style.width=w+'px'; fi.style.height=h+'px';
+  fi.style.left=((W-w)/2)+'px'; fi.style.top=(gc-e*h)+'px';
 }
 
 /* ---------- State ---------- */
@@ -257,26 +736,43 @@ const gridEl=$('grid'), capsEl=$('caps'), innerEl=$('inner'), bubble=$('bubble')
 let sel=null, tempCap=null;
 
 /* ---------- Puzzle generation ---------- */
+// Direction class: 0 = horizontal, 1 = vertical, 2 = diagonal
+const dirClass=([dr,dc])=> dr===0?0 : dc===0?1 : 2;
+function shuffled(a){ a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function generate(){
+  // Words are spread evenly over horizontal / vertical / diagonal, and every direction is chosen from
+  // ALL positions where the word fits (the old random-start method silently favoured straight lines).
+  const classes=[0,1,2].filter(k=>L.dirs.some(d=>dirClass(d)===k));
   for(let attempt=0;attempt<200;attempt++){
     const g=Array.from({length:size},()=>Array(size).fill(''));
     const placed=[]; let ok=true;
-    const list=[...L.words].sort((a,b)=>b.length-a.length);
-    for(const w of list){
-      let done=false;
-      for(let t=0;t<300 && !done;t++){
-        const [dr,dc]=L.dirs[Math.floor(Math.random()*L.dirs.length)];
-        const r0=Math.floor(Math.random()*size), c0=Math.floor(Math.random()*size);
-        const rEnd=r0+dr*(w.length-1), cEnd=c0+dc*(w.length-1);
-        if(rEnd<0||rEnd>=size||cEnd<0||cEnd>=size) continue;
-        let fits=true;
-        for(let i=0;i<w.length;i++){const ch=g[r0+dr*i][c0+dc*i]; if(ch&&ch!==w[i]){fits=false;break}}
-        if(!fits) continue;
-        const cells=[];
-        for(let i=0;i<w.length;i++){g[r0+dr*i][c0+dc*i]=w[i];cells.push([r0+dr*i,c0+dc*i])}
-        placed.push({w,cells,found:false}); done=true;
+    const byLen=[...L.words].sort((a,b)=>b.length-a.length);
+    const plan0=shuffled(byLen.map((_,i)=>classes[i%classes.length]));
+    // diagonal words are placed first, while the grid is still empty enough for them
+    const idx=byLen.map((_,i)=>i).sort((a,b)=>(plan0[b]===2)-(plan0[a]===2));
+    const list=idx.map(i=>byLen[i]), plan=idx.map(i=>plan0[i]);
+    for(let wi=0; wi<list.length && ok; wi++){
+      const w=list[wi]; let done=false;
+      const order=[plan[wi], ...shuffled(classes.filter(x=>x!==plan[wi]))];
+      for(const cls of order){
+        // forward reading directions (→ ↓ ↘ ↗) are offered before reversed ones about two times out of three
+        const dirs=L.dirs.filter(d=>dirClass(d)===cls).sort((a,b)=>{ const fa=(a[0]>=0&&a[1]>=0)||(a[0]===-1&&a[1]===1), fb=(b[0]>=0&&b[1]>=0)||(b[0]===-1&&b[1]===1); return (fb-fa) + (Math.random()<.35? (fa-fb)*2 : 0); });
+        for(const [dr,dc] of dirs){
+          const spots=[];
+          for(let r0=0;r0<size;r0++) for(let c0=0;c0<size;c0++){
+            const re=r0+dr*(w.length-1), ce=c0+dc*(w.length-1);
+            if(re<0||re>=size||ce<0||ce>=size) continue;
+            let fits=true; for(let i=0;i<w.length;i++){ const ch=g[r0+dr*i][c0+dc*i]; if(ch&&ch!==w[i]){fits=false;break;} }
+            if(fits) spots.push([r0,c0]);
+          }
+          if(!spots.length) continue;
+          const [r0,c0]=spots[Math.floor(Math.random()*spots.length)], cells=[];
+          for(let i=0;i<w.length;i++){ g[r0+dr*i][c0+dc*i]=w[i]; cells.push([r0+dr*i,c0+dc*i]); }
+          placed.push({w,cells,found:false}); done=true; break;
+        }
+        if(done) break;
       }
-      if(!done){ok=false;break}
+      if(!done) ok=false;
     }
     if(!ok) continue;
     for(let r=0;r<size;r++)for(let c=0;c<size;c++) if(!g[r][c]) g[r][c]=FILL[Math.floor(Math.random()*FILL.length)];
@@ -285,11 +781,12 @@ function generate(){
 }
 
 /* ---------- Render ---------- */
-function startLevel(){
-  L=LEVELS[levelIdx]; size=L.size; colorIdx=0; foundCount=0;
+let mode='level', dailyKey='', dailySeed=0;
+function startLevel(custom){
+  L=custom||LEVELS[levelIdx]; size=L.size; colorIdx=0; foundCount=0;
   generate();
-  setScene(L.scene);
-  $('levelLbl').textContent='Kiwango '+(levelIdx+1);
+  setScene(L.scene, L.color);
+  $('levelLbl').textContent= mode==='daily' ? 'Kila Siku' : 'Kiwango '+(levelIdx+1);
   $('catTitle').textContent=L.cat;
   $('category').style.setProperty('--cat',L.color);
   $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
@@ -301,6 +798,8 @@ function startLevel(){
     d.dataset.r=r; d.dataset.c=c; gridEl.appendChild(d);
   }
   capsEl.innerHTML=''; updateCount(); fitBoard();
+  hintsLeft=3; $('hintLeft').textContent=hintsLeft; $('hintBtn').disabled=false; levelBonus=0;
+  stopHand(); if(mode==='level' && levelIdx===0) setTimeout(startHand,400);
 }
 function updateCount(){$('countLbl').textContent=foundCount+'/'+words.length}
 
@@ -311,6 +810,7 @@ function fitBoard(){
   const cs=innerEl.clientWidth/size;
   gridEl.style.fontSize=(cs*0.64)+'px';
   redrawCaps();
+  placeFocus();
 }
 
 /* ---------- Capsules ---------- */
@@ -374,7 +874,7 @@ board.addEventListener('pointerdown',e=>{
 board.addEventListener('pointermove',e=>{
   if(!sel) return;
   const end=snapEnd(sel.start,cellFromPoint(e.clientX,e.clientY));
-  if(end[0]!==sel.end[0]||end[1]!==sel.end[1]){sel.end=end; updateSel()}
+  if(end[0]!==sel.end[0]||end[1]!==sel.end[1]){sel.end=end; updateSel(); sfx.tick(pathCells(sel.start,sel.end).length)}
 });
 function updateSel(){
   tempCap._a=sel.start; tempCap._b=sel.end; placeCap(tempCap,sel.start,sel.end);
@@ -391,19 +891,241 @@ function endSel(){
   bubble.classList.remove('show');
   if(hit>=0){
     const w=words[hit]; w.found=true; foundCount++; colorIdx++;
-    tempCap.classList.remove('temp'); tempCap.classList.add('pop');
+    tempCap.classList.remove('temp'); tempCap.classList.add('okcap');
+    cells.forEach(([r,c],i)=>{ const e=cellEl(r,c); e.classList.remove('grow'); void e.offsetWidth; e.style.setProperty('--d',(i*0.05)+'s'); e.classList.add('grow'); });
     cells.forEach(([r,c])=>{const e=cellEl(r,c); e._found=true; e.classList.add('on'); e.classList.remove('temp-on')});
-    $('w'+hit).classList.add('found'); updateCount();
+    flyWord(w.w, sel.color, tempCap, $('w'+hit)); updateCount();
     if(navigator.vibrate) try{navigator.vibrate(25)}catch(_){}
-    if(foundCount===words.length) setTimeout(showWin,550);
+    if(foundCount===words.length) setTimeout(showWin,1250); else sfx.correct();
+    stopHand(); clearHint();
   }else{
-    const dead=tempCap; dead.classList.add('fail'); setTimeout(()=>dead.remove(),360);
-    lightPath([]);
+    const dead=tempCap; lightPath([]);
+    const again=words.find(w=>w.found&&(w.w===str||w.w===rev));
+    const bw = cells.length>=3 ? (DICT.has(str)?str:DICT.has(rev)?rev:null) : null;
+    if(again){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Umeshalipata neno hili!'); sfx.wrong(); }
+    else if(bw && bonus.has(bw)){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Tayari ni neno lako la ziada ⭐'); }
+    else if(bw){ addBonus(bw); dead.classList.add('gold'); setTimeout(()=>dead.remove(),900); sfx.bonus(); }
+    else if(cells.length>1){ dead.classList.remove('temp'); dead.classList.add('bad'); setTimeout(()=>dead.remove(),720); sfx.wrong();
+      cells.forEach(([r,c])=>{ const e=cellEl(r,c); e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); setTimeout(()=>e.classList.remove('shake'),460); });
+      if(navigator.vibrate) try{navigator.vibrate(60)}catch(_){} }
+    else { dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); }
   }
   sel=null; tempCap=null;
 }
 board.addEventListener('pointerup',endSel);
 board.addEventListener('pointercancel',endSel);
+
+/* ---------- Sound (Neno's sounds + soft synthesized game tones) ---------- */
+const SND={music:"sounds/menu-music.mp3", menu:"sounds/menu.mp3", back:"sounds/back.mp3", select:"sounds/select.mp3"};
+let soundOn=true; try{ soundOn = localStorage.getItem('tn_sound')!=='0'; }catch(_){}
+let actx=null; const clips={}; let music=null, wantMusic=false;
+function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(_){} } if(actx&&actx.state==='suspended') actx.resume().catch(()=>{}); }
+function tone(f,d,type,delay,vol){ if(!soundOn||!actx) return; const t=actx.currentTime+(delay||0), o=actx.createOscillator(), g=actx.createGain();
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(vol||.12,t); g.gain.exponentialRampToValueAtTime(.001,t+d); o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d); }
+function clip(k){ if(!soundOn) return; try{ let a=clips[k]; if(!a){ a=clips[k]=new Audio(SND[k]); a.volume=.8; } a.currentTime=0; a.play().catch(()=>{}); }catch(_){} }
+const sfx={
+  menu:()=>clip('menu'), back:()=>clip('back'), select:()=>clip('select'),
+  tick:n=>{ ensureAudio(); tone(440+((n||1)%8)*45,.06,'sine',0,.18); },
+  correct:()=>{ ensureAudio(); [523.25,659.25,783.99].forEach((f,i)=>tone(f,.14,'sine',i*.08,.15)); },
+  wrong:()=>{ ensureAudio(); tone(220,.12,'triangle',0,.10); tone(180,.16,'triangle',.08,.08); },
+  bonus:()=>{ ensureAudio(); [880,1108.7,1318.5,1760].forEach((f,i)=>tone(f,.12,'triangle',i*.06,.10)); },
+  hint:()=>{ ensureAudio(); tone(1046.5,.18,'sine',0,.12); tone(1318.5,.22,'sine',.1,.10); },
+  win:()=>{ ensureAudio(); [523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,.24,'triangle',i*.12,.15)); }
+};
+function musicEl(){ if(!music){ music=new Audio(SND.music); music.loop=true; music.volume=.35; } return music; }
+function playMusic(){ wantMusic=true; if(!soundOn) return; musicEl().play().catch(()=>{}); }
+function stopMusic(){ wantMusic=false; if(music) music.pause(); }
+function setSound(on){ soundOn=on; try{ localStorage.setItem('tn_sound',on?'1':'0'); }catch(_){}
+  document.querySelectorAll('.sound-btn').forEach(b=>{ b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-label', on?'Zima sauti':'Washa sauti'); });
+  if(!on && music) music.pause(); else if(on && wantMusic) playMusic(); }
+// browsers only allow sound after the first touch: start the menu music then
+document.addEventListener('pointerdown',()=>{ ensureAudio(); if(wantMusic && soundOn && music && music.paused) music.play().catch(()=>{}); },true);
+
+/* ---------- Found word flies from the board up to its place in the list, then gets crossed out ---------- */
+function flyWord(text, color, fromEl, toEl){
+  const a=fromEl.getBoundingClientRect(), b=toEl.getBoundingClientRect();
+  const fx=a.left+a.width/2, fy=a.top+a.height/2, tx=b.left+b.width/2, ty=b.top+b.height/2;
+  const f=document.createElement('div'); f.className='fly'; f.textContent=text; f.style.background=color;
+  f.style.left=fx+'px'; f.style.top=fy+'px'; document.body.appendChild(f);
+  const mx=(fx+tx)/2, my=Math.min(fy,ty)-70;                       // arc over the top
+  const anim=f.animate([
+    {left:fx+'px', top:fy+'px', transform:'translate(-50%,-50%) scale(.9)', opacity:.0},
+    {left:fx+'px', top:(fy-14)+'px', transform:'translate(-50%,-50%) scale(1.25)', opacity:1, offset:.18},
+    {left:mx+'px', top:my+'px', transform:'translate(-50%,-50%) scale(1.05)', opacity:1, offset:.55},
+    {left:tx+'px', top:ty+'px', transform:'translate(-50%,-50%) scale(.75)', opacity:.95}
+  ],{duration:900, easing:'cubic-bezier(.45,0,.3,1)'});
+  const land=()=>{ f.remove(); toEl.classList.add('found','just'); };
+  anim.onfinish=land; anim.oncancel=land;
+}
+
+/* ---------- Android back button ----------
+   Inside the Play Store app (or opened directly) the phone's back button walks back through the browser
+   history. We keep one extra history entry as a guard and decide ourselves what "back" means:
+   popup -> close it, game -> menu, other tab -> home tab, home -> ask before leaving.
+   Not armed when the page is shown inside another page (e.g. a preview frame). */
+const STANDALONE = window.top === window.self;
+let leaving=false;
+function armBack(){ if(STANDALONE && !leaving) try{ history.pushState({tn:1},''); }catch(_){} }
+function askExit(){
+  showSheet(`<h3 style="color:#e8411f">Utoke kwenye mchezo?</h3><p>Maendeleo yako yamehifadhiwa.</p>
+    <div style="display:flex;gap:10px;justify-content:center"><button class="btn" data-close>Endelea</button>
+    <button class="btn" id="exitBtn" style="background:linear-gradient(180deg,#ef4444,#b91c1c);box-shadow:0 5px 0 #7f1d1d">Toka</button></div>`);
+  $('exitBtn').onclick=()=>{ leaving=true; $('sheet').classList.remove('show'); stopMusic(); history.back(); };
+}
+window.addEventListener('popstate',()=>{
+  if(!STANDALONE || leaving) return;
+  if($('sheet').classList.contains('show')) $('sheet').classList.remove('show');
+  else if($('menu').classList.contains('show')){
+    const onHome=document.querySelector('.tab.active')?.dataset.tab==='home';
+    if(onHome) askExit(); else { sfx.back(); showTab('home'); }
+  } else { sfx.back(); $('overlay').classList.remove('show'); showMenu('home'); }
+  armBack();
+});
+armBack();
+
+/* ---------- Mkusanyiko: one stamp of a Tanzanian region every 5 levels ---------- */
+const REGIONS=[
+ ['🏙️','DAR ES SALAAM','#0369a1','Jiji kubwa zaidi Tanzania na bandari kuu ya nchi.'],
+ ['🏛️','DODOMA','#b45309','Makao makuu ya nchi. Bunge la Tanzania liko hapa.'],
+ ['🦒','ARUSHA','#16a34a','Lango la safari za Serengeti na Ngorongoro. Mlima Meru uko hapa.'],
+ ['🏔️','KILIMANJARO','#475569','Mlima Kilimanjaro ni mlima mrefu zaidi barani Afrika.'],
+ ['🌴','UNGUJA','#0d9488','Kisiwa cha viungo. Mji Mkongwe (Stone Town) ni urithi wa dunia.'],
+ ['🌿','PEMBA','#15803d','Kisiwa kinachojulikana kwa karafuu.'],
+ ['🐟','MWANZA','#2563eb','Mji wa miamba kando ya Ziwa Victoria, ziwa kubwa zaidi Afrika.'],
+ ['🌊','TANGA','#0891b2','Mkoa wa pwani wenye mashamba ya mkonge na mapango ya Amboni.'],
+ ['🌄','MOROGORO','#7c3aed','Uko chini ya Milima ya Uluguru, karibu na Hifadhi ya Mikumi.'],
+ ['🏞️','IRINGA','#a16207','Karibu na Hifadhi ya Ruaha, moja ya hifadhi kubwa nchini.'],
+ ['☕','MBEYA','#7c2d12','Nyanda za juu zenye kahawa, chai na hali ya hewa ya baridi.'],
+ ['🐒','KIGOMA','#be185d','Kando ya Ziwa Tanganyika. Sokwe wa Gombe wanaishi hapa.'],
+ ['🥜','MTWARA','#c2410c','Mkoa maarufu kwa zao la korosho.'],
+ ['🏯','LINDI','#9333ea','Magofu ya kale ya Kilwa Kisiwani yako katika mkoa huu.'],
+ ['📜','PWANI','#0e7490','Bagamoyo, mji wa kihistoria, uko katika mkoa huu.'],
+ ['🌳','TABORA','#65a30d','Mkoa wa kihistoria katikati ya nchi wenye misitu ya miombo.'],
+ ['🦩','SINGIDA','#db2777','Una maziwa madogo kama Ziwa Singidani.'],
+ ['💎','SHINYANGA','#4f46e5','Mgodi wa almasi wa Mwadui uko hapa.'],
+ ['⛏️','GEITA','#ca8a04','Mkoa unaojulikana kwa uchimbaji wa dhahabu.'],
+ ['🍌','KAGERA','#15803d','Bukoba iko hapa. Maarufu kwa kahawa na ndizi.'],
+ ['🦁','MARA','#b91c1c','Sehemu ya Serengeti. Musoma iko kando ya Ziwa Victoria.'],
+ ['🐦','MANYARA','#0284c7','Ziwa Manyara na hifadhi yake maarufu kwa ndege.'],
+ ['🐃','SIMIYU','#78350f','Sehemu kubwa ya Serengeti, makazi ya nyumbu wengi.'],
+ ['🦛','KATAVI','#334155','Hifadhi ya Katavi ina viboko na nyati wengi.'],
+ ['🐊','RUKWA','#166534','Una Ziwa Rukwa na sehemu ya Ziwa Tanganyika.'],
+ ['☄️','SONGWE','#1e1b4b','Kimondo cha Mbozi, mojawapo ya vimondo vikubwa duniani, kiko hapa.'],
+ ['🍃','NJOMBE','#047857','Nyanda za juu zenye mashamba ya chai na baridi kali.'],
+ ['🛶','RUVUMA','#1d4ed8','Mto Ruvuma unatenganisha Tanzania na Msumbiji. Songea iko hapa.']
+];
+const stampsOwned=()=>Math.min(REGIONS.length, Math.floor(completed()/5));
+function collectionHTML(){
+  const n=stampsOwned();
+  return `<h2>Mikoa ya Tanzania</h2><p style="margin:0 0 6px">Stempu ${n}/${REGIONS.length} · moja kila viwango 5</p>
+   <div class="stamps">${REGIONS.map((r,k)=>{ const own=k<n;
+     return `<button class="stamp${own?'':' locked'}" data-k="${k}" aria-label="${r[1]}"><div class="in" style="background:${r[2]}">
+       <span class="em">${own?r[0]:'🔒'}</span><span class="nm">${own?r[1]:'Kiwango '+((k+1)*5)}</span></div></button>`; }).join('')}</div>`;
+}
+function openStamp(k){
+  const r=REGIONS[k]; if(k>=stampsOwned()){ sfx.wrong(); toast(`Maliza Kiwango ${(k+1)*5} kupata stempu hii`); return; }
+  sfx.menu();
+  showSheet(`<div style="font-size:3.4rem;line-height:1">${r[0]}</div><h3 style="color:${r[2]}">${r[1]}</h3><p>${r[3]}</p><button class="btn" data-close>Sawa</button>`);
+}
+
+/* ---------- Kila Siku: one puzzle per day, the same for every player, with a streak ---------- */
+const MONTHS=['Januari','Februari','Machi','Aprili','Mei','Juni','Julai','Agosti','Septemba','Oktoba','Novemba','Desemba'];
+const dkey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+let dailyDone=new Set(); try{ dailyDone=new Set(JSON.parse(localStorage.getItem('tn_daily')||'[]')); }catch(_){}
+function saveDaily(){ try{ localStorage.setItem('tn_daily',JSON.stringify([...dailyDone])); }catch(_){} }
+function streak(){ const d=new Date(); if(!dailyDone.has(dkey(d))) d.setDate(d.getDate()-1); let n=0; while(dailyDone.has(dkey(d))){ n++; d.setDate(d.getDate()-1); } return n; }
+function dailyLevelFor(key){
+  const seed=[...key].reduce((h,ch)=>Math.imul(h^ch.charCodeAt(0),16777619)>>>0,2166136261), R=rng(seed);
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO');
+  const cats=[...new Set(themed.map(Lv=>Lv.cat))], cat=cats[Math.floor(R()*cats.length)];
+  const pool=[...new Set(themed.filter(Lv=>Lv.cat===cat).flatMap(Lv=>Lv.words))].filter(w=>w.length<=8);
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const words=[]; let letters=0;
+  for(const w of pool){ if(words.length===8) break; if(letters+w.length>46) continue; words.push(w); letters+=w.length; }
+  const col=themed.find(Lv=>Lv.cat===cat).color;
+  return {size:8, cat, color:col, dirs:[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0]], words, seed};
+}
+function startDaily(){
+  globeStop();
+  dailyKey=dkey(new Date()); const Lv=dailyLevelFor(dailyKey); dailySeed=100000+(Lv.seed%900000);
+  mode='daily';
+  $('menu').classList.remove('show'); stopMusic();
+  document.querySelector('.app').style.visibility='visible';
+  startLevel(Lv); requestAnimationFrame(fitBoard);
+}
+function dailyCardHTML(icon){
+  const now=new Date(), today=dkey(now), done=dailyDone.has(today), st=streak();
+  const first=new Date(now.getFullYear(),now.getMonth(),1), days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const pad=(first.getDay()+6)%7;   // weeks start on Monday (Jumatatu)
+  let cal=''; for(let i=0;i<pad;i++) cal+='<span class="blank"></span>';
+  for(let d=1; d<=days; d++){ const k=dkey(new Date(now.getFullYear(),now.getMonth(),d));
+    cal+=`<span class="${dailyDone.has(k)?'done':''} ${k===today?'today':''}">${dailyDone.has(k)?'✓':d}</span>`; }
+  return `${icon}<h2>Fumbo la Kila Siku</h2>
+    <p style="margin:4px 0 8px">${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}</p>
+    <span class="streak">🔥 Siku ${st} mfululizo</span>
+    <div class="cal">${cal}</div>
+    ${done ? '<p style="margin:12px 0 0;color:#16a34a">Umemaliza fumbo la leo ✅<br>Rudi kesho kwa fumbo jipya!</p>'
+           : '<button class="btn" data-daily style="margin-top:10px">Cheza fumbo la leo</button>'}`;
+}
+function showDailyWin(){
+  dailyDone.add(dailyKey); saveDaily(); const st=streak();
+  $('winText').textContent='Fumbo la leo limekamilika!';
+  $('medalNum').textContent=st; $('medal').querySelector('small').textContent='SIKU MFULULIZO';
+  $('medal').style.setProperty('--p','100%');
+  $('progFill').style.width='0%'; $('progText').textContent= st>1 ? `🔥 Siku ${st} mfululizo — endelea hivyo!` : 'Rudi kesho kwa fumbo jipya!';
+  $('nextBtn').textContent='Rudi';
+  $('overlay').classList.add('show'); sfx.win();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('progFill').style.width=Math.min(100,st/7*100)+'%'; }));
+}
+
+/* ---------- Bonus words, hints, tutorial hand ---------- */
+const DICT=new Set(); LEVELS.forEach(Lv=>Lv.words.forEach(w=>DICT.add(w)));
+let bonus=new Set(); try{ bonus=new Set(JSON.parse(localStorage.getItem('tn_bonus')||'[]')); }catch(_){}
+let levelBonus=0, hintsLeft=3;
+function saveBonus(){ try{ localStorage.setItem('tn_bonus',JSON.stringify([...bonus])); }catch(_){} }
+function renderBonusCount(){ $('bonusCount').textContent = bonus.size ? bonus.size : ''; }
+let toastT; function toast(msg,gold){ const t=$('toast'); t.textContent=msg; t.classList.toggle('gold',!!gold); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1600); }
+function addBonus(w){
+  const first = bonus.size===0;
+  bonus.add(w); levelBonus++; saveBonus(); renderBonusCount();
+  if(navigator.vibrate) try{navigator.vibrate([20,40,20])}catch(_){}
+  if(first) showSheet(`<h3>NENO LA ZIADA ⭐</h3><p>Umepata <b>${w}</b> — neno halisi ambalo halipo kwenye orodha!<br>Maneno ya ziada huhifadhiwa kwenye nyota iliyo juu.</p><button class="btn" data-close>Sawa!</button>`);
+  else toast(`Neno la ziada: ${w} ⭐`, true);
+}
+function showSheet(html){ $('sheetCard').innerHTML=html; $('sheet').classList.add('show'); }
+$('sheet').addEventListener('click',e=>{ if(e.target.id==='sheet'||e.target.closest('[data-close]')) $('sheet').classList.remove('show'); });
+$('bonusBtn').addEventListener('click',()=>{
+  const list=[...bonus];
+  showSheet(`<h3>Maneno ya ziada ⭐</h3><p>${list.length ? `Umepata maneno ${list.length} ya ziada.` : 'Bado huna. Tafuta maneno mengine halisi ndani ya gridi!'}</p>
+    <div class="bonus-list">${list.slice(-120).reverse().map(w=>`<span>${w}</span>`).join('')}</div><button class="btn" data-close>Funga</button>`);
+});
+let hintCell=null;
+function clearHint(){ if(hintCell){ hintCell.classList.remove('hint'); hintCell=null; } }
+$('hintBtn').addEventListener('click',()=>{
+  if(hintsLeft<=0) return;
+  const left=words.filter(w=>!w.found); if(!left.length) return;
+  clearHint();
+  const w=left[Math.floor(Math.random()*left.length)];
+  hintCell=cellEl(w.cells[0][0],w.cells[0][1]); hintCell.classList.add('hint'); sfx.hint();
+  hintsLeft--; $('hintLeft').textContent=hintsLeft; if(hintsLeft<=0) $('hintBtn').disabled=true;
+});
+let handEl=null, handAnim=null;
+function startHand(){
+  stopHand(); if(levelIdx!==0 || mode!=='level') return;
+  const w=words.find(x=>!x.found); if(!w) return;
+  const cs=innerEl.clientWidth/size, a=cellCenter(...w.cells[0]), b=cellCenter(...w.cells[w.cells.length-1]);
+  handEl=document.createElement('div'); handEl.className='hand'; handEl.textContent='👆'; handEl.style.setProperty('--hs',(cs*0.62)+'px');
+  innerEl.appendChild(handEl);
+  handAnim=handEl.animate([
+    {left:a[0]+'px',top:a[1]+'px',opacity:0},{left:a[0]+'px',top:a[1]+'px',opacity:1,offset:.15},
+    {left:b[0]+'px',top:b[1]+'px',opacity:1,offset:.75},{left:b[0]+'px',top:b[1]+'px',opacity:0}],
+    {duration:2200,iterations:Infinity,easing:'ease-in-out'});
+}
+function stopHand(){ if(handAnim) handAnim.cancel(); if(handEl) handEl.remove(); handEl=null; handAnim=null; }
+board.addEventListener('pointerdown',()=>{ if(handEl) handEl.style.visibility='hidden'; sfx.tick(1); },true);
+board.addEventListener('pointerup',()=>{ if(handEl) handEl.style.visibility='visible'; },true);
+renderBonusCount();
+setTimeout(()=>setSound(soundOn),0);
 
 /* ---------- Progress (saved on this device) ---------- */
 let unlocked=1; // number of levels opened
@@ -412,14 +1134,24 @@ function saveProgress(){ try{ localStorage.setItem('tn_unlocked',String(unlocked
 
 /* ---------- Win ---------- */
 function showWin(){
+  if(mode==='daily') return showDailyWin();
   const last=levelIdx===LEVELS.length-1;
   if(!last && unlocked<levelIdx+2){ unlocked=levelIdx+2; saveProgress(); }
-  $('winText').textContent= last ? 'Umemaliza viwango vyote vya majaribio!' : 'Umepata maneno yote.';
-  $('nextBtn').textContent= last ? 'Menyu' : 'Endelea';
-  $('overlay').classList.add('show');
+  $('winText').textContent= last ? 'Umemaliza viwango vyote!' : (levelBonus ? `Maneno ya ziada: ${levelBonus} ⭐` : 'Umepata maneno yote.');
+  $('nextBtn').textContent= last ? 'Menyu' : 'Kiwango kinachofuata';
+  $('medalNum').textContent = words.length;
+  const step = (levelIdx % 5) + 1;                       // a reward every 5 levels
+  $('medal').style.setProperty('--p', (step/5*100)+'%');
+  $('progFill').style.width='0%';
+  const stampNo=Math.floor((levelIdx+1)/5)-1, rg=REGIONS[stampNo];
+  $('progText').textContent = step===5 ? (rg ? `Stempu mpya: ${rg[1]} ${rg[0]}!` : 'Zawadi imefunguliwa! 🎉') : `Stempu inayofuata: ${step}/5`;
+  $('medal').querySelector('small').textContent='MANENO';
+  $('overlay').classList.add('show'); sfx.win();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('progFill').style.width=(step/5*100)+'%'; }));
 }
-$('nextBtn').addEventListener('click',()=>{
+$('nextBtn').addEventListener('click',()=>{ sfx.select();
   $('overlay').classList.remove('show');
+  if(mode==='daily'){ showMenu('daily'); return; }
   if(levelIdx===LEVELS.length-1){ showMenu(); return; }
   levelIdx++; startLevel();
 });
@@ -431,10 +1163,9 @@ function buildField(){
   const cs=Math.max(40,Math.min(58,W/7.2));
   const ox=W/2-3*cs, oy=0, rows=Math.ceil(H/cs)+1;
   const cmin=-Math.ceil(ox/cs), cmax=Math.ceil((W-ox)/cs);
-  const r1=Math.max(1,Math.floor(rows*0.30)), r2=r1+1, c1=0, c2=2;
+  const r1=Math.max(1,Math.round(rows*0.11)), r2=r1+1, c1=0, c2=2;
   const special={};
-  [...'TAFUTA'].forEach((ch,i)=>special[r1+','+(c1+i)]=ch);
-  [...'NENO'].forEach((ch,i)=>special[r2+','+(c2+i)]=ch);
+  // (logo removed: the word globe is the centrepiece of the home screen)
   let html='';
   for(let r=0;r<rows;r++)for(let c=cmin;c<cmax;c++){
     const k=r+','+c, hi=special[k];
@@ -443,35 +1174,127 @@ function buildField(){
     html+=`<span class="lt${hi?' hi':''}" style="left:${ox+c*cs}px;top:${oy+r*cs}px;width:${cs}px;height:${cs}px;font-size:${cs*(hi?.62:.48)}px${hi?`;animation-delay:${delay}s`:''}">${ch}</span>`;
   }
   const pill=(r,c,n,color,delay)=>`<span class="pill" style="left:${ox+c*cs+cs*.06}px;top:${oy+r*cs+cs*.1}px;width:${n*cs-cs*.12}px;height:${cs*.8}px;background:${color};animation-delay:${delay}s"></span>`;
-  html+=pill(r1,c1,6,'#159a8c',0.2)+pill(r2,c2,4,'#3b2a8f',0.85);
   f.innerHTML=html;
 }
-function showMenu(){
-  document.querySelector('.app').style.visibility='hidden';
-  $('playSub').textContent='Kiwango '+unlocked;
-  $('menu').classList.add('show');
-  buildField();
+const UNLOCK={daily:10, collect:5};           // levels to complete before a tab opens
+const completed=()=>unlocked-1;
+function greeting(){
+  const h=new Date().getHours();
+  return h<11?'Habari za asubuhi!':h<16?'Habari za mchana!':h<19?'Habari za jioni!':'Habari za usiku!';
 }
-function startGame(idx){
-  levelIdx=idx;
-  $('menu').classList.remove('show'); $('levels').classList.remove('show');
-  document.querySelector('.app').style.visibility='visible';
-  startLevel(); requestAnimationFrame(fitBoard);
+function lockedCard(icon,title,need){
+  const left=Math.max(0,need-completed());
+  return `${icon}<h2>${title}</h2><p>Maliza Kiwango ${need} kufungua!<br><span style="color:#7d1d78">Bado viwango ${left}.</span></p>
+    <button class="btn" data-play>Cheza Kiwango ${unlocked}</button>`;
 }
-function openLevels(){
-  $('levelGrid').innerHTML=LEVELS.map((lv,i)=>{
+function renderTabs(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    const need=UNLOCK[t.dataset.tab], old=t.querySelector('.lock'); if(old) old.remove();
+    if(need && completed()<need){ const l=document.createElement('span'); l.className='lock'; l.textContent='🔒'; t.appendChild(l); }
+  });
+  const cal=document.querySelector('[data-tab="daily"] svg').outerHTML.replace('<svg','<svg class="big-ico"');
+  const stamp=document.querySelector('[data-tab="collect"] svg').outerHTML.replace('<svg','<svg class="big-ico"');
+  $('dailyCard').innerHTML= completed()>=UNLOCK.daily ? dailyCardHTML(cal) : lockedCard(cal,'Fumbo la Kila Siku',UNLOCK.daily);
+  $('collectCard').innerHTML= completed()>=UNLOCK.collect ? collectionHTML() : lockedCard(stamp,'Mkusanyiko',UNLOCK.collect);
+  // show every opened level plus the next 12 locked ones (the full list has ~1,900 levels)
+  $('levelGrid').innerHTML=LEVELS.slice(0,Math.min(LEVELS.length,unlocked+12)).map((lv,i)=>{
     const open=i<unlocked;
     return `<button class="lvl" data-i="${i}" ${open?'':'disabled'} style="background:${lv.color}">${open?(i+1):'🔒'}<small>${lv.cat}</small></button>`;
   }).join('');
-  $('levels').classList.add('show');
 }
-$('playBtn').addEventListener('click',()=>startGame(unlocked-1));
-$('levelsBtn').addEventListener('click',openLevels);
-$('closeLevels').addEventListener('click',()=>$('levels').classList.remove('show'));
-$('levelGrid').addEventListener('click',e=>{
-  const b=e.target.closest('.lvl'); if(b && !b.disabled) startGame(+b.dataset.i);
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('show',p.dataset.pane===name));
+  $('menu').classList.toggle('dim',name!=='home');
+  if(name==='home') globeStart(); else globeStop();
+}
+
+/* ---------- Home screen word globe: Swahili words on a 3D sphere, spin it with a finger ---------- */
+const G={cv:null,ctx:null,items:[],M:[1,0,0,0,1,0,0,0,1],vx:0,vy:0,drag:false,lx:0,ly:0,moved:0,raf:0,last:0,
+  calm: window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches};
+function globeInit(){
+  G.cv=$('globe'); G.ctx=G.cv.getContext('2d');
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO'), pool=[];
+  themed.forEach(Lv=>Lv.words.forEach(w=>{ if(w.length>=3&&w.length<=7) pool.push([w,Lv.cat,Lv.color]); }));
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  const N=Math.min(48,pool.length), golden=Math.PI*(3-Math.sqrt(5));
+  G.items=pool.slice(0,N).map(([w,cat,col],i)=>{ const y=1-2*(i+.5)/N, r=Math.sqrt(1-y*y), t=golden*i;
+    return {w,cat,col,p:[Math.cos(t)*r,y,Math.sin(t)*r],pop:0,sx:0,sy:0,z:0}; });
+  G.vx=0.0016; G.vy=0.0042;
+  G.cv.addEventListener('pointerdown',e=>{ G.drag=true; G.moved=0; G.lx=e.clientX; G.ly=e.clientY; G.vx=G.vy=0; G.cv.setPointerCapture(e.pointerId); ensureAudio(); });
+  G.cv.addEventListener('pointermove',e=>{ if(!G.drag) return; const dx=e.clientX-G.lx, dy=e.clientY-G.ly; G.lx=e.clientX; G.ly=e.clientY;
+    G.moved+=Math.abs(dx)+Math.abs(dy); const k=0.008; rotate(dy*k, dx*k); G.vy=dx*k; G.vx=dy*k; });
+  const up=e=>{ if(!G.drag) return; G.drag=false; if(G.moved<8) globeTap(e); };
+  G.cv.addEventListener('pointerup',up); G.cv.addEventListener('pointercancel',()=>{G.drag=false;});
+}
+function rotate(ax,ay){ // M = Ry(ay) * Rx(ax) * M
+  const cx=Math.cos(ax), sx=Math.sin(ax), cy=Math.cos(ay), sy=Math.sin(ay), M=G.M, out=new Array(9);
+  const R=[cy, sy*sx, sy*cx,  0, cx, -sx,  -sy, cy*sx, cy*cx];
+  for(let r=0;r<3;r++) for(let c=0;c<3;c++) out[r*3+c]=R[r*3]*M[c]+R[r*3+1]*M[3+c]+R[r*3+2]*M[6+c];
+  G.M=out;
+}
+function globeTap(e){
+  const b=G.cv.getBoundingClientRect(), x=e.clientX-b.left, y=e.clientY-b.top;
+  let best=null, bd=1e9;
+  G.items.forEach(it=>{ if(it.z<0.1) return; const d=Math.hypot(it.sx-x,it.sy-y); if(d<bd){bd=d;best=it;} });
+  if(best && bd<54){ best.pop=1; sfx.tick(best.w.length); toast(`${best.w} · ${best.cat}`); }
+}
+function globeFrame(t){
+  G.raf=requestAnimationFrame(globeFrame);
+  const cv=G.cv, dpr=Math.min(2,window.devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight;
+  if(!w||!h) return;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); }
+  if(!G.drag){
+    rotate(G.vx,G.vy);
+    const bx=0.0016, by=G.calm?0:0.0042;           // ease back to a slow idle spin
+    G.vx+= (bx-G.vx)*0.03; G.vy+= (by-G.vy)*0.03; if(G.calm){ G.vx*=0.95; }
+  }
+  const ctx=G.ctx; ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+  const R=Math.min(w*0.40, h*0.44), cx=w/2, cy=h/2, M=G.M;
+  // soft glow behind the globe
+  const gr=ctx.createRadialGradient(cx,cy,R*.1,cx,cy,R*1.15); gr.addColorStop(0,'rgba(255,255,255,.16)'); gr.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle=gr; ctx.beginPath(); ctx.arc(cx,cy,R*1.15,0,Math.PI*2); ctx.fill();
+  G.items.forEach(it=>{ const [x,y,z]=it.p; const X=M[0]*x+M[1]*y+M[2]*z, Y=M[3]*x+M[4]*y+M[5]*z, Z=M[6]*x+M[7]*y+M[8]*z;
+    it.z=Z; it.sx=cx+X*R; it.sy=cy+Y*R; it.pop*=0.92; });
+  [...G.items].sort((a,b)=>a.z-b.z).forEach(it=>{
+    const d=(it.z+1)/2, size=(10+13*d)*(1+it.pop*.7);
+    ctx.font=`900 ${size.toFixed(1)}px "Nunito",system-ui,sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.globalAlpha=0.08+0.92*d*d*d;
+    if(d>.62){ ctx.lineWidth=Math.max(2,size*.22); ctx.strokeStyle=it.col; ctx.lineJoin='round'; ctx.strokeText(it.w,it.sx,it.sy); }
+    ctx.fillStyle = d>.62 ? '#fff' : '#ffe9f0'; ctx.fillText(it.w,it.sx,it.sy);
+  });
+  ctx.globalAlpha=1;
+}
+function globeStart(){ if(!G.cv) globeInit(); if(!G.raf) G.raf=requestAnimationFrame(globeFrame); }
+function globeStop(){ if(G.raf) cancelAnimationFrame(G.raf); G.raf=0; }
+function showMenu(tab){
+  document.querySelector('.app').style.visibility='hidden';
+  $('playSub').textContent='Kiwango '+unlocked;
+  $('greet').textContent=greeting();
+  renderTabs();
+  $('menu').classList.add('show');
+  buildField();
+  showTab(typeof tab==='string'?tab:'home');
+  playMusic();
+}
+function startGame(idx){
+  levelIdx=idx; mode='level'; globeStop();
+  $('menu').classList.remove('show'); stopMusic();
+  document.querySelector('.app').style.visibility='visible';
+  startLevel(); requestAnimationFrame(fitBoard);
+}
+$('playBtn').addEventListener('click',()=>{ sfx.select(); startGame(unlocked-1); });
+$('tabbar').addEventListener('click',e=>{ const t=e.target.closest('.tab'); if(t){ sfx.menu(); showTab(t.dataset.tab); } });
+$('soundBtn').addEventListener('click',()=>{ ensureAudio(); setSound(!soundOn); if(soundOn) sfx.menu(); });
+$('menu').addEventListener('click',e=>{
+  if(e.target.closest('[data-play]')){ sfx.select(); startGame(unlocked-1); return; }
+  if(e.target.closest('[data-daily]')){ sfx.select(); startDaily(); return; }
+  const st=e.target.closest('.stamp'); if(st) openStamp(+st.dataset.k);
 });
-$('homeBtn').addEventListener('click',showMenu);
+$('levelGrid').addEventListener('click',e=>{
+  const b=e.target.closest('.lvl'); if(b && !b.disabled){ sfx.select(); startGame(+b.dataset.i); }
+});
+$('homeBtn').addEventListener('click',()=>{ sfx.back(); showMenu('home'); });
 
 window.addEventListener('resize',fitBoard);
 showMenu();
