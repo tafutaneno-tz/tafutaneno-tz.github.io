@@ -916,7 +916,7 @@ board.addEventListener('pointerup',endSel);
 board.addEventListener('pointercancel',endSel);
 
 /* ---------- Sound (Neno's sounds + soft synthesized game tones) ---------- */
-const SND={music:"sounds/menu-music.mp3", game:"sounds/game-music.mp3", menu:"sounds/menu.mp3", back:"sounds/back.mp3", select:"sounds/select.mp3"};
+const SND={music:"sounds/muziki-menyu.mp3", game:"sounds/muziki-mchezo.mp3", menu:"sounds/bonyeza.mp3", back:"sounds/rudi.mp3", select:"sounds/chagua.mp3"};
 let soundOn=true; try{ soundOn = localStorage.getItem('tn_sound')!=='0'; }catch(_){}
 let actx=null; const clips={}; let music=null, wantMusic=false;
 function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(_){} } if(actx&&actx.state==='suspended') actx.resume().catch(()=>{}); }
