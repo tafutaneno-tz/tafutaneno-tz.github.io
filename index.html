@@ -42,6 +42,11 @@ body{
 #menu.dim .globe{display:none}
 .globe-hint{position:absolute;left:0;right:0;top:calc(64% + 2px);z-index:3;text-align:center;color:#fff;font:900 .85rem "Nunito",sans-serif;opacity:.85;text-shadow:0 1px 3px rgba(0,0,0,.35);pointer-events:none}
 #menu.dim .globe-hint{display:none}
+.music-btn{width:40px;height:40px;border-radius:50%;border:3px solid #fff;background:rgba(0,0,0,.28);color:#fff;font-size:1.1rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;padding:0}
+.music-btn.off::after{content:"";position:absolute;left:6px;right:6px;top:50%;height:3px;background:#fff;transform:rotate(-45deg);border-radius:2px}
+#menu .music-btn{position:absolute;top:calc(17px + env(safe-area-inset-top,0px));right:70px;z-index:7;width:46px;height:46px}
+#menu.dim .music-btn{display:none}
 .sound-btn{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:7;width:46px;height:46px;border-radius:50%;
   border:3px solid #fff;background:rgba(0,0,0,.25);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .icon-btn{position:relative;width:46px;height:46px;border-radius:50%;border:3px solid #fff;cursor:pointer;padding:0;
@@ -349,7 +354,7 @@ body{
       <button class="icon-btn" id="bonusBtn" aria-label="Maneno ya ziada"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg><span class="badge" id="bonusCount"></span></button>
       <span class="level" id="levelLbl">Kiwango 1</span>
     </span>
-    <span class="score" id="countLbl">0/0</span>
+    <span style="display:flex;gap:8px;align-items:center"><button class="music-btn" id="musicBtnGame" aria-label="Zima muziki">🎵</button><span class="score" id="countLbl">0/0</span></span>
   </div>
   <section class="category" id="category">
     <h1 id="catTitle">WANYAMA</h1>
@@ -369,6 +374,7 @@ body{
 <section class="menu" id="menu">
   <div class="field" id="field" role="img" aria-label="Tafuta Neno"></div>
   <button class="sound-btn" id="soundBtn" aria-label="Zima sauti">🔊</button>
+  <button class="music-btn" id="musicBtnMenu" aria-label="Zima muziki">🎵</button>
   <canvas class="globe" id="globe" aria-label="Tufe la maneno ya Kiswahili. Lizungushe kwa kidole, gusa neno kuona kundi lake."></canvas>
   <div class="pane pane-home" data-pane="home">
     <div class="greet" id="greet">Habari!</div>
@@ -1103,15 +1109,31 @@ const sfx={
 // two calm ambient tracks: one for the menu, a softer one while playing
 const tracks={}; let wantTrack='music';
 function trackEl(k){ if(!tracks[k]){ const a=new Audio(SND[k]); a.loop=true; a.volume= k==='game' ? .16 : .3; tracks[k]=a; } return tracks[k]; }
+let musicOn=true; try{ musicOn = localStorage.getItem('tn_music')!=='0'; }catch(_){}
+const TRACK_VOL={music:.3, game:.16}; let fadeT=null;
+function fadeTo(a, target, ms, done){ clearInterval(fadeT); const from=a.volume, t0=performance.now();
+  fadeT=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/ms); a.volume=Math.max(0,Math.min(1,from+(target-from)*k)); if(k>=1){ clearInterval(fadeT); done&&done(); } },40); }
 function playMusic(k){ k=k||'music'; wantTrack=k; wantMusic=true;
   Object.keys(tracks).forEach(x=>{ if(x!==k) tracks[x].pause(); });
-  if(!soundOn) return; music=trackEl(k); music.play().catch(()=>{}); }
+  if(!soundOn || !musicOn || document.hidden) return; music=trackEl(k);
+  if(music.paused){ music.volume=0; music.play().catch(()=>{}); }
+  fadeTo(music, TRACK_VOL[k]||.25, 1200); }
+// a short pause between levels: the music fades out on the win screen and comes back with the next level
+function pauseMusicForBreak(){ wantMusic=false; const a=music; if(a && !a.paused) fadeTo(a, 0, 700, ()=>a.pause()); }
+function setMusic(on){ musicOn=on; try{ localStorage.setItem('tn_music',on?'1':'0'); }catch(_){}
+  document.querySelectorAll('.music-btn').forEach(b=>{ b.classList.toggle('off',!on); b.setAttribute('aria-label', on?'Zima muziki':'Washa muziki'); });
+  if(!on) Object.values(tracks).forEach(a=>a.pause()); else if(wantMusic) playMusic(wantTrack); }
+// stop the music when the player leaves the app (home button, screen off, another app) and resume on return
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) Object.values(tracks).forEach(a=>a.pause());
+  else if(wantMusic) playMusic(wantTrack); });
+window.addEventListener('pagehide',()=>Object.values(tracks).forEach(a=>a.pause()));
 function stopMusic(){ wantMusic=false; Object.values(tracks).forEach(a=>a.pause()); }
 function setSound(on){ soundOn=on; try{ localStorage.setItem('tn_sound',on?'1':'0'); }catch(_){}
   document.querySelectorAll('.sound-btn').forEach(b=>{ b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-label', on?'Zima sauti':'Washa sauti'); });
   if(!on) Object.values(tracks).forEach(a=>a.pause()); else if(wantMusic) playMusic(wantTrack); }
 // browsers only allow sound after the first touch: start the menu music then
-document.addEventListener('pointerdown',()=>{ ensureAudio(); if(wantMusic && soundOn && music && music.paused) music.play().catch(()=>{}); },true);
+document.addEventListener('pointerdown',()=>{ ensureAudio(); if(wantMusic && soundOn && musicOn && music && music.paused) music.play().catch(()=>{}); },true);
 
 /* ---------- Found word flies from the board up to its place in the list, then gets crossed out ---------- */
 function flyWord(text, color, fromEl, toEl){
@@ -1253,7 +1275,7 @@ function showDailyWin(){
   $('medal').style.setProperty('--p','100%');
   $('progFill').style.width='0%'; $('progText').textContent= st>1 ? `🔥 Siku ${st} mfululizo — endelea hivyo!` : 'Rudi kesho kwa fumbo jipya!';
   $('nextBtn').textContent='Rudi';
-  $('overlay').classList.add('show'); sfx.win();
+  $('overlay').classList.add('show'); sfx.win(); pauseMusicForBreak();
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('progFill').style.width=Math.min(100,st/7*100)+'%'; }));
 }
 
@@ -1366,14 +1388,14 @@ function showWin(){
   const stampNo=Math.floor((levelIdx+1)/5)-1, rg=REGIONS[stampNo];
   $('progText').textContent = step===5 ? (rg ? `Stempu mpya: ${rg[1]} ${rg[0]}!` : 'Zawadi imefunguliwa! 🎉') : `Stempu inayofuata: ${step}/5`;
   $('medal').querySelector('small').textContent='MANENO';
-  $('overlay').classList.add('show'); sfx.win();
+  $('overlay').classList.add('show'); sfx.win(); pauseMusicForBreak();
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('progFill').style.width=(step/5*100)+'%'; }));
 }
 $('nextBtn').addEventListener('click',()=>{ sfx.select();
   $('overlay').classList.remove('show');
   if(mode==='daily'){ showMenu('daily'); return; }
   if(levelIdx===LEVELS.length-1){ showMenu(); return; }
-  levelIdx++; startLevel();
+  levelIdx++; startLevel(); playMusic('game');
 });
 
 /* ---------- Menu ---------- */
@@ -1506,6 +1528,8 @@ function startGame(idx){
 $('playBtn').addEventListener('click',()=>{ sfx.select(); startGame(unlocked-1); });
 $('tabbar').addEventListener('click',e=>{ const t=e.target.closest('.tab'); if(t){ sfx.menu(); showTab(t.dataset.tab); } });
 $('soundBtn').addEventListener('click',()=>{ ensureAudio(); setSound(!soundOn); if(soundOn) sfx.menu(); });
+document.querySelectorAll('.music-btn').forEach(b=>b.addEventListener('click',()=>{ ensureAudio(); setMusic(!musicOn); sfx.menu(); }));
+setMusic(musicOn);
 $('menu').addEventListener('click',e=>{
   if(e.target.closest('[data-play]')){ sfx.select(); startGame(unlocked-1); return; }
   if(e.target.closest('[data-daily]')){ sfx.select(); startDaily(); return; }
