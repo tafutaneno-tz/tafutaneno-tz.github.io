@@ -700,20 +700,26 @@ const MIX_WORDS="ZEITUNI MANJANO HAYA AYA UKOA KOA KUA KUO SHIA|ASI SAI SIA NDIY
 const D4=[[0,1],[1,0],[1,1],[-1,1]], D6=D4.concat([[0,-1],[-1,0]]), D8=D6.concat([[-1,-1],[1,-1]]);
 /* ---------- Methali (Swahili proverbs): fill-in-the-blank levels — level 7, then every 5th level ---------- */
 const METHALI=["Haba na haba hujaza kibaba", "Pole pole ndio mwendo", "Haraka haraka haina baraka", "Penye nia pana njia", "Usipoziba ufa utajenga ukuta", "Kidole kimoja hakivunji chawa", "Mchelea mwana kulia hulia yeye", "Asiyesikia la mkuu huvunjika guu", "Mgeni njoo mwenyeji apone", "Akili ni nywele kila mtu ana zake", "Bandu bandu huisha gogo", "Mtaka cha mvunguni sharti ainame", "Asiyefunzwa na mamaye hufunzwa na ulimwengu", "Fimbo ya mbali haiui nyoka", "Umoja ni nguvu utengano ni udhaifu", "Dalili ya mvua ni mawingu", "Mwenda pole hajikwai", "Chovya chovya humaliza buyu la asali", "Mchagua jembe si mkulima", "Mwenye macho haambiwi tazama", "Usione vyaelea vimeundwa", "Kila ndege huruka na mbawa zake", "Mvumilivu hula mbivu", "Samaki mkunje angali mbichi", "Jogoo la shamba haliwiki mjini", "Hakuna marefu yasiyo na ncha", "Wapiganapo tembo nyasi huumia", "Kupotea njia ndiko kujua njia", "Ahadi ni deni", "Kawia ufike", "Mtoto umleavyo ndivyo akuavyo", "Simba mwenda kimya ndiye mla nyama", "Nyumba njema si mlango", "Heri kujikwaa kidole kuliko kujikwaa ulimi", "Mpanda ngazi hushuka", "Ukupigao ndio ukufunzao", "Elimu ni bahari", "Mchumia juani hulia kivulini", "Akipenda chongo huita kengeza", "Kizuri chajiuza kibaya chajitembeza", "Mtu ni watu", "Damu nzito kuliko maji", "Mti mkuu ukigwa wana wa ndege huyumba", "Siku za mwizi ni arobaini"];
-function methaliLevel(k, cycle, dirs){
+const METHALI_PER_LEVEL=3;
+function methaliBlanks(k, cycle){
   const text=METHALI[k%METHALI.length], toks=text.toUpperCase().split(" ");
   const R=rng(9173+k*131+cycle*7919);
+  // prefer real content words of 4-7 letters; one blank, or two when the proverb is long
   let cand=[...new Set(toks.filter(t=>/^[A-Z]{3,8}$/.test(t)))];
-  for(let i=cand.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [cand[i],cand[j]]=[cand[j],cand[i]]; }
-  const want=Math.min(cand.length>2 ? cand.length-1 : cand.length, toks.length<=3 ? 2 : toks.length<=5 ? 3 : 4);   // keep at least one word visible as a clue
-  const blanks=cand.slice(0,Math.max(2,want)).sort((a,b)=>toks.indexOf(a)-toks.indexOf(b));
-  let size=Math.max(5, ...blanks.map(w=>w.length)); const letters=blanks.reduce((a,w)=>a+w.length,0);
+  cand.sort((x,y)=>((y.length>=4&&y.length<=7)-(x.length>=4&&x.length<=7)) || (R()-.5));
+  const n = toks.length>=6 && cand.length>=3 ? 2 : 1;
+  return {k:k%METHALI.length, text, blanks:cand.slice(0,n)};
+}
+function methaliLevel(m, dirs){
+  const series=[]; for(let i=0;i<METHALI_PER_LEVEL;i++){ const k=m+i; series.push(methaliBlanks(k, Math.floor(k/METHALI.length))); }
+  const words=[...new Set(series.flatMap(x=>x.blanks))];
+  let size=Math.max(5, ...words.map(w=>w.length)); const letters=words.reduce((a,w)=>a+w.length,0);
   while(letters>size*size*0.5 && size<8) size++;
-  return {size, cat:"METHALI", color:"#b45309", dirs, words:blanks, methali:{k:k%METHALI.length, text}};
+  return {size, cat:"METHALI", color:"#b45309", dirs, words, methali:{series}};
 }
 (()=>{ const out=[]; let m=0;
   LEVELS.forEach(Lv=>{ const n=out.length+1;
-    if(n>=7 && (n-7)%5===0){ out.push(methaliLevel(m, Math.floor(m/METHALI.length), n<=15?D4:n<=40?D6:D8)); m++; }
+    if(n>=7 && (n-7)%5===0){ out.push(methaliLevel(m, n<=15?D4:n<=40?D6:D8)); m+=METHALI_PER_LEVEL; }
     out.push(Lv); });
   LEVELS.length=0; out.forEach(x=>LEVELS.push(x)); })();
 
@@ -951,13 +957,7 @@ function startLevel(custom){
   $('catTitle').textContent=L.cat;
   $('category').style.setProperty('--cat',L.color);
   $('words').classList.toggle('methali', !!L.methali);
-  if(L.methali){
-    const used=new Set();   // a word that appears twice (HABA na HABA) becomes two blanks filled together
-    $('words').innerHTML=L.methali.text.toUpperCase().split(' ').map(t=>{
-      const i=words.findIndex(w=>w.w===t);
-      if(i>=0){ const first=!used.has(i); used.add(i); return `<span ${first?`id="w${i}" `:''}data-wi="${i}" class="blank" style="--n:${t.length}">${t}</span>`; }
-      return `<span class="mw">${t}</span>`; }).join('');
-  } else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
+  if(L.methali){ methCur=0; renderMethali(); } else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
   gridEl.style.gridTemplateColumns=`repeat(${size},1fr)`;
   gridEl.style.gridTemplateRows=`repeat(${size},1fr)`;
   gridEl.innerHTML='';
@@ -1062,7 +1062,7 @@ function endSel(){
     tempCap.classList.remove('temp'); tempCap.classList.add('okcap');
     cells.forEach(([r,c],i)=>{ const e=cellEl(r,c); e.classList.remove('grow'); void e.offsetWidth; e.style.setProperty('--d',(i*0.05)+'s'); e.classList.add('grow'); });
     cells.forEach(([r,c])=>{const e=cellEl(r,c); e._found=true; e.classList.add('on'); e.classList.remove('temp-on')});
-    flyWord(w.w, sel.color, tempCap, $('w'+hit)); updateCount(); praise(w.w, sel.color);
+    flyWord(w.w, sel.color, tempCap, L.methali ? methaliTarget(w.w) : $('w'+hit)); updateCount(); praise(w.w, sel.color);
     if(navigator.vibrate) try{navigator.vibrate(25)}catch(_){}
     if(foundCount===words.length) setTimeout(showWin,1250); else sfx.correct();
     stopHand(); clearHint();
@@ -1126,7 +1126,9 @@ function flyWord(text, color, fromEl, toEl){
     {left:mx+'px', top:my+'px', transform:'translate(-50%,-50%) scale(1.05)', opacity:1, offset:.55},
     {left:tx+'px', top:ty+'px', transform:'translate(-50%,-50%) scale(.75)', opacity:.95}
   ],{duration:900, easing:'cubic-bezier(.45,0,.3,1)'});
-  const land=()=>{ f.remove(); if(toEl.classList.contains('blank')) document.querySelectorAll(`.blank[data-wi="${toEl.dataset.wi}"]`).forEach(e=>e.classList.add('filled')); else toEl.classList.add('found','just'); };
+  const land=()=>{ f.remove();
+    if(L.methali){ document.querySelectorAll(`#words .blank[data-w="${text}"]`).forEach(e=>e.classList.add('filled')); methaliCheck(); }
+    else toEl.classList.add('found','just'); };
   anim.onfinish=land; anim.oncancel=land;
 }
 
@@ -1255,6 +1257,27 @@ function showDailyWin(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('progFill').style.width=Math.min(100,st/7*100)+'%'; }));
 }
 
+/* ---------- Methali levels: proverbs come one after another, each with one or two blanks ---------- */
+let methCur=0, methTimer=null;
+const isFound=w=>words.some(x=>x.w===w && x.found);
+function renderMethali(){
+  const sr=L.methali.series, cur=sr[methCur];
+  const dots=sr.map((_,i)=>`<span style="opacity:${i<=methCur?1:.35}">${i<methCur?'●':i===methCur?'◉':'○'}</span>`).join(' ');
+  $('words').innerHTML = cur.text.toUpperCase().split(' ').map(t=> cur.blanks.includes(t)
+      ? `<span class="blank${isFound(t)?' filled':''}" data-w="${t}" style="--n:${t.length}">${t}</span>`
+      : `<span class="mw">${t}</span>`).join('')
+    + `<div style="flex-basis:100%;text-align:center;font-size:.8rem;color:#b45309;letter-spacing:.2em">${dots}</div>`;
+  $('words').animate([{opacity:0,transform:'translateX(30px)'},{opacity:1,transform:'none'}],{duration:350,easing:'ease-out'});
+}
+function methaliTarget(w){ return document.querySelector(`#words .blank[data-w="${w}"]`) || $('catTitle'); }
+function methaliCheck(){
+  const sr=L.methali.series; clearTimeout(methTimer);
+  if(words.every(x=>x.found)){ methCur=sr.length-1; return; }          // level finished: the win screen shows all proverbs
+  if(sr[methCur].blanks.every(isFound)){
+    methTimer=setTimeout(()=>{ while(methCur<sr.length-1 && sr[methCur].blanks.every(isFound)) methCur++; renderMethali(); }, 900);
+  }
+}
+
 /* ---------- Praise popup when a word is found ---------- */
 const PRAISE=['Vizuri!','Safi!','Hodari!','Bomba!','Nzuri sana!','Umeweza!','Kazi nzuri!','Shwari!','Poa sana!','Hongera!'];
 const PRAISE_BIG=['Ajabu!','Safi sana!','Wewe ni bingwa!','Kipaji!'];
@@ -1331,7 +1354,7 @@ let methaliOwned=new Set(); try{ methaliOwned=new Set(JSON.parse(localStorage.ge
 function showWin(){
   if(mode==='daily') return showDailyWin();
   const q=$('winQuote'); q.hidden=!L.methali;
-  if(L.methali){ q.textContent='“'+L.methali.text+'.”'; methaliOwned.add(L.methali.k); try{ localStorage.setItem('tn_methali',JSON.stringify([...methaliOwned])); }catch(_){} }
+  if(L.methali){ clearTimeout(methTimer); q.innerHTML=L.methali.series.map(x=>'“'+x.text+'.”').join('<br>'); L.methali.series.forEach(x=>methaliOwned.add(x.k)); try{ localStorage.setItem('tn_methali',JSON.stringify([...methaliOwned])); }catch(_){} }
   const last=levelIdx===LEVELS.length-1;
   if(!last && unlocked<levelIdx+2){ unlocked=levelIdx+2; saveProgress(); }
   $('winText').textContent= last ? 'Umemaliza viwango vyote!' : (levelBonus ? `Maneno ya ziada: ${levelBonus} ⭐` : 'Umepata maneno yote.');
