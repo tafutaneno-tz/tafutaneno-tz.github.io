@@ -1,1 +1,8 @@
-
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.tafutaneno.app",
+    "sha256_cert_fingerprints": ["9E:89:86:38:6E:A8:BA:66:48:04:47:2D:AA:E6:AF:FE:8D:BB:81:BF:AB:51:22:A5:4C:94:18:9E:C0:39:93:63"]
+  }
+}]
