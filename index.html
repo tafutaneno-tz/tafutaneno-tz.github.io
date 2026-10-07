@@ -117,6 +117,11 @@ body{
 .praise{position:fixed;left:50%;z-index:21;pointer-events:none;white-space:nowrap;transform:translate(-50%,-50%);
   font:900 2rem/1 "Baloo 2","Nunito",sans-serif;color:#fff;letter-spacing:.02em;padding:10px 26px 8px;border-radius:999px;
   background:var(--pc,#e8411f);border:3px solid #fff;box-shadow:0 6px 0 rgba(0,0,0,.18),0 10px 24px rgba(0,0,0,.35);text-shadow:0 2px 0 rgba(0,0,0,.25)}
+.words.orodha{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px;justify-items:start;padding:8px 18px 10px}
+.words.orodha span{padding-left:1.45em;font-size:1.12rem}
+.words.orodha span::before{content:"";position:absolute;left:0;top:50%;width:1em;height:1em;transform:translateY(-50%);border:2.5px solid #8d83a0;border-radius:5px;background:#fff;box-sizing:border-box}
+.words.orodha span.found::before{content:"✓";background:#22c55e;border-color:#16a34a;color:#fff;font-size:.85em;line-height:1;display:flex;align-items:center;justify-content:center;width:1.18em;height:1.18em}
+.words.orodha span.found::after{left:1.35em}
 .cap.gold{background:#f5b301!important;animation:goldfade .9s ease forwards}
 @keyframes goldfade{0%{opacity:.95}60%{opacity:.95}100%{opacity:0}}
 .sheet{position:fixed;inset:0;z-index:9;display:none;align-items:center;justify-content:center;background:rgba(20,8,40,.6);backdrop-filter:blur(3px)}
@@ -723,11 +728,20 @@ function methaliLevel(m, dirs){
   while(letters>size*size*0.5 && size<8) size++;
   return {size, cat:"METHALI", color:"#b45309", dirs, words, methali:{series}};
 }
-(()=>{ const out=[]; let m=0;
+/* ---------- Orodha (real-life lists with checkboxes): level 10, then every 10 levels ---------- */
+const ORODHA=[["ORODHA YA SOKONI", "🛒", "#0f766e", "NYANYA VITUNGUU MCHELE MAFUTA SUKARI CHUMVI NDIZI MAYAI"], ["MAPISHI YA PILAU", "🍲", "#c2410c", "MCHELE NYAMA KITUNGUU VIAZI MAFUTA CHUMVI BIZARI ILIKI"], ["FUTARI YA RAMADHANI", "🌙", "#4338ca", "TENDE UJI SAMBUSA BAJIA MANDAZI CHAI MATUNDA MHOGO"], ["SAFARI YA SERENGETI", "🦒", "#a16207", "KAMERA MAJI KOFIA RAMANI DARUBINI CHAKULA TIKETI MKOBA"], ["MKOBA WA SHULE", "🎒", "#1d4ed8", "KITABU DAFTARI KALAMU PENSELI RULA KIFUTIO RAMANI KAMUSI"], ["MAANDALIZI YA HARUSI", "💍", "#be185d", "PETE KEKI MAUA NGOMA ZAWADI GAUNI SUTI WAGENI"], ["SIKUKUU YA IDD", "🕌", "#047857", "KANZU BAIBUI PILAU BIRIANI HALUA ZAWADI MANUKATO WAGENI"], ["CHAI YA ASUBUHI", "☕", "#92400e", "CHAI MAZIWA SUKARI MKATE SIAGI MANDAZI MAYAI ASALI"], ["SIKU YA UFUKWENI", "🏖️", "#0891b2", "TAULO MAJI KOFIA MPIRA MIWANI MWAVULI NDOO KAPTULA"], ["KUSAFISHA NYUMBA", "🧹", "#7c3aed", "UFAGIO NDOO SABUNI MAJI KITAMBAA DIRISHA SAKAFU TAKATAKA"], ["KAZI YA SHAMBANI", "🌱", "#15803d", "JEMBE PANGA MBEGU MBOLEA MAJI NDOO KOFIA MAHINDI"], ["SIKUKUU YA KRISMASI", "🎄", "#b91c1c", "MTI ZAWADI KEKI PILAU NYIMBO NGUO FAMILIA TAA"], ["SAFARI YA BASI", "🚌", "#b91c1c", "TIKETI BEGI PESA SIMU MAJI CHAKULA KITI DEREVA"], ["SIKU YA KUZALIWA", "🎂", "#db2777", "KEKI MISHUMAA ZAWADI MAPUTO MUZIKI MARAFIKI SODA PIPI"], ["MATUNDA YA SOKONI", "🍍", "#ea580c", "EMBE NANASI PAPAI NDIZI TIKITI CHUNGWA PERA NAZI"]];
+function orodhaLevel(o, dirs){
+  const [title,emoji,color,ws]=ORODHA[o%ORODHA.length], words=ws.split(' ');
+  const letters=words.reduce((a,w)=>a+w.length,0), size= letters>40 ? 9 : 8;
+  return {size, cat:title+' '+emoji, color, dirs, words, orodha:true};
+}
+(()=>{ const out=[]; let m=0, o=0;
   LEVELS.forEach(Lv=>{ const n=out.length+1;
     if(n>=7 && (n-7)%5===0){ out.push(methaliLevel(m, n<=15?D4:n<=40?D6:D8)); m+=METHALI_PER_LEVEL; }
+    else if(n>=10 && n%10===0){ out.push(orodhaLevel(o, n<=40?D6:D8)); o++; }
     out.push(Lv); });
   LEVELS.length=0; out.forEach(x=>LEVELS.push(x)); })();
+LEVELS[3].scene='kiwango4';   // 4th level: player photo
 
 
 const CAP_COLORS=['#2f80ed','#22b04b','#f2891f','#e8413c','#9b51e0','#13b5a6','#e84393','#e0a800','#3a5bd9'];
@@ -736,13 +750,14 @@ const TAU=Math.PI*2;
 
 /* ---------- Images (from Neno) ---------- */
 const IMG={
+  kiwango4:"images/kiwango4.jpg",
   kiwango3:"images/kiwango3.jpg",
   kiwango2:"images/kiwango2.jpg",
   kiwango1:"images/kiwango1.jpg"
 };
 // Full-screen photos: the image always covers the whole screen, and is zoomed/shifted
 // just enough that the person's eyes sit in the open area between the word card and the board.
-const SCENE_EYES={kiwango1:0.20, kiwango2:0.44, kiwango3:0.53};   // eye height as a fraction of the photo
+const SCENE_EYES={kiwango1:0.20, kiwango2:0.44, kiwango3:0.53, kiwango4:0.52};   // eye height as a fraction of the photo
 /* ---------- Scenes: a unique, topic-matched vector illustration for every level ----------
    Built from the level number (seed) + topic: time of day, landform, and props (animals,
    boats, houses, market, school...) all vary, so no two levels look the same. Vector art
@@ -963,6 +978,7 @@ function startLevel(custom){
   $('catTitle').textContent=L.cat;
   $('category').style.setProperty('--cat',L.color);
   $('words').classList.toggle('methali', !!L.methali);
+  $('words').classList.toggle('orodha', !!L.orodha);
   if(L.methali){ methCur=0; renderMethali(); } else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
   gridEl.style.gridTemplateColumns=`repeat(${size},1fr)`;
   gridEl.style.gridTemplateRows=`repeat(${size},1fr)`;
@@ -1236,7 +1252,7 @@ function saveDaily(){ try{ localStorage.setItem('tn_daily',JSON.stringify([...da
 function streak(){ const d=new Date(); if(!dailyDone.has(dkey(d))) d.setDate(d.getDate()-1); let n=0; while(dailyDone.has(dkey(d))){ n++; d.setDate(d.getDate()-1); } return n; }
 function dailyLevelFor(key){
   const seed=[...key].reduce((h,ch)=>Math.imul(h^ch.charCodeAt(0),16777619)>>>0,2166136261), R=rng(seed);
-  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali);
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha);
   const cats=[...new Set(themed.map(Lv=>Lv.cat))], cat=cats[Math.floor(R()*cats.length)];
   const pool=[...new Set(themed.filter(Lv=>Lv.cat===cat).flatMap(Lv=>Lv.words))].filter(w=>w.length<=8);
   for(let i=pool.length-1;i>0;i--){ const j=Math.floor(R()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
@@ -1379,7 +1395,7 @@ function showWin(){
   if(L.methali){ clearTimeout(methTimer); q.innerHTML=L.methali.series.map(x=>'“'+x.text+'.”').join('<br>'); L.methali.series.forEach(x=>methaliOwned.add(x.k)); try{ localStorage.setItem('tn_methali',JSON.stringify([...methaliOwned])); }catch(_){} }
   const last=levelIdx===LEVELS.length-1;
   if(!last && unlocked<levelIdx+2){ unlocked=levelIdx+2; saveProgress(); }
-  $('winText').textContent= last ? 'Umemaliza viwango vyote!' : (levelBonus ? `Maneno ya ziada: ${levelBonus} ⭐` : 'Umepata maneno yote.');
+  $('winText').textContent= last ? 'Umemaliza viwango vyote!' : L.orodha ? 'Orodha imekamilika! ✅' : (levelBonus ? `Maneno ya ziada: ${levelBonus} ⭐` : 'Umepata maneno yote.');
   $('nextBtn').textContent= last ? 'Menyu' : 'Kiwango kinachofuata';
   $('medalNum').textContent = words.length;
   const step = (levelIdx % 5) + 1;                       // a reward every 5 levels
@@ -1456,7 +1472,7 @@ const G={cv:null,ctx:null,items:[],M:[1,0,0,0,1,0,0,0,1],vx:0,vy:0,drag:false,lx
   calm: window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches};
 function globeInit(){
   G.cv=$('globe'); G.ctx=G.cv.getContext('2d');
-  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali), pool=[];
+  const themed=LEVELS.filter(Lv=>Lv.cat!=='MCHANGANYIKO' && !Lv.methali && !Lv.orodha), pool=[];
   themed.forEach(Lv=>Lv.words.forEach(w=>{ if(w.length>=3&&w.length<=7) pool.push([w,Lv.cat,Lv.color]); }));
   for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
   const N=Math.min(48,pool.length), golden=Math.PI*(3-Math.sqrt(5));
