@@ -809,6 +809,8 @@ function orodhaLevel(o, dirs){
   LEVELS.length=0; out.forEach(x=>LEVELS.push(x)); })();
 LEVELS[3].scene='kiwango4';   // 4th level: player photo
 LEVELS[4].scene='kiwango5';
+LEVELS[5].scene='kiwango6';
+LEVELS[6].scene='kiwango7';
 
 
 const CAP_COLORS=['#2f80ed','#22b04b','#f2891f','#e8413c','#9b51e0','#13b5a6','#e84393','#e0a800','#3a5bd9'];
@@ -817,6 +819,8 @@ const TAU=Math.PI*2;
 
 /* ---------- Images (from Neno) ---------- */
 const IMG={
+  kiwango7:"images/kiwango7.jpg",
+  kiwango6:"images/kiwango6.jpg",
   kiwango5:"images/kiwango5.jpg",
   kiwango4:"images/kiwango4.jpg",
   kiwango3:"images/kiwango3.jpg",
@@ -825,8 +829,8 @@ const IMG={
 };
 // Full-screen photos: the image always covers the whole screen, and is zoomed/shifted
 // just enough that the person's eyes sit in the open area between the word card and the board.
-const SCENE_EYES={kiwango1:0.20, kiwango2:0.44, kiwango3:0.53, kiwango4:0.52, kiwango5:0.41};
-const SCENE_FX={kiwango5:0.62};   // horizontal centre of the face when it is not in the middle of the photo   // eye height as a fraction of the photo
+const SCENE_EYES={kiwango1:0.20, kiwango2:0.44, kiwango3:0.53, kiwango4:0.52, kiwango5:0.41, kiwango6:0.31, kiwango7:0.39};
+const SCENE_FX={kiwango5:0.62, kiwango6:0.45, kiwango7:0.42};   // horizontal centre of the face when it is not in the middle of the photo   // eye height as a fraction of the photo
 /* ---------- Scenes: a unique, topic-matched vector illustration for every level ----------
    Built from the level number (seed) + topic: time of day, landform, and props (animals,
    boats, houses, market, school...) all vary, so no two levels look the same. Vector art
