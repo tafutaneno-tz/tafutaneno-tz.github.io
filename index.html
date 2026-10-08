@@ -1039,9 +1039,35 @@ function generate(){
 
 /* ---------- Render ---------- */
 let mode='level', dailyKey='', dailySeed=0;
+/* ---------- Resume: a half-finished level comes back exactly as it was (grid, found words, colours) ---------- */
+const RESUME_KEY='tn_resume', RESUME_MAX=6;
+const resumeId=()=> mode==='daily' ? 'D'+dailyKey : 'L'+levelIdx;
+function readResume(){ try{ return JSON.parse(localStorage.getItem(RESUME_KEY)||'{}')||{}; }catch(_){ return {}; } }
+function writeResume(all){ try{ localStorage.setItem(RESUME_KEY,JSON.stringify(all)); }catch(_){} }
+function clearResume(){ const all=readResume(); if(all[resumeId()]){ delete all[resumeId()]; writeResume(all); } }
+function saveResume(){
+  if(!words || foundCount>=words.length) return clearResume();
+  const all=readResume();
+  all[resumeId()]={t:Date.now(), size, grid, words:words.map(w=>({w:w.w,cells:w.cells,found:!!w.found,color:w.color||null})),
+                   colorIdx, foundCount, levelBonus, ds:dailyStart||0};
+  const keys=Object.keys(all).sort((a,b)=>all[b].t-all[a].t);          // keep only the most recent few
+  keys.slice(RESUME_MAX).forEach(k=>delete all[k]);
+  writeResume(all);
+}
+function takeResume(){
+  const r=readResume()[resumeId()];
+  if(!r || r.size!==L.size || !Array.isArray(r.grid) || !Array.isArray(r.words)) return null;
+  const a=[...L.words].sort().join(), b=r.words.map(w=>w.w).sort().join();
+  if(a!==b || !r.words.some(w=>w.found)) return null;
+  return r;
+}
 function startLevel(custom){
+  clearTimeout(methTimer);
   L=custom||LEVELS[levelIdx]; size=L.size; colorIdx=0; foundCount=0;
-  generate();
+  const rs=takeResume();
+  if(rs){ grid=rs.grid; words=rs.words.map(w=>({...w})); colorIdx=rs.colorIdx||0; foundCount=words.filter(w=>w.found).length;
+          if(mode==='daily' && rs.ds) dailyStart=rs.ds; }
+  else generate();
   setScene(L.scene, L.color);
   $('levelLbl').textContent= mode==='daily' ? 'Kila Siku' : 'Kiwango '+(levelIdx+1);
   $('catTitle').textContent= L.cat==='MCHANGANYIKO' ? 'CHANGAMOTO 🏆' : L.cat;
@@ -1049,7 +1075,9 @@ function startLevel(custom){
   $('words').classList.toggle('methali', !!L.methali);
   $('words').classList.toggle('orodha', !!L.orodha);
   $('words').classList.toggle('picha', !!L.picha);
-  if(L.methali){ methCur=0; renderMethali(); }
+  if(L.methali){ methCur=0;
+    if(rs){ const sr=L.methali.series; while(methCur<sr.length-1 && sr[methCur].blanks.every(isFound)) methCur++; }
+    renderMethali(); }
   else if(L.picha){ $('words').innerHTML=words.map((w,i)=>`<span id="w${i}"><b>${L.picha[w.w]}</b><i>${w.w}</i></span>`).join(''); }
   else $('words').innerHTML=words.map((w,i)=>`<span id="w${i}">${w.w}</span>`).join('');
   gridEl.style.gridTemplateColumns=`repeat(${size},1fr)`;
@@ -1060,8 +1088,13 @@ function startLevel(custom){
     d.dataset.r=r; d.dataset.c=c; gridEl.appendChild(d);
   }
   capsEl.innerHTML=''; updateCount(); fitBoard();
-  $('hintBtn').disabled=false; levelBonus=0; maybeIntro();
-  stopHand(); if(mode==='level' && levelIdx===0) setTimeout(startHand,400);
+  $('hintBtn').disabled=false; levelBonus=rs ? (rs.levelBonus||0) : 0; maybeIntro();
+  if(rs){ words.forEach((w,i)=>{ if(!w.found) return;
+      w.cells.forEach(([r,c])=>{ const e=cellEl(r,c); e._found=true; e.classList.add('on'); });
+      makeCap(w.color||CAP_COLORS[i%CAP_COLORS.length], w.cells[0], w.cells[w.cells.length-1], 'okcap');
+      if(!L.methali){ const sp=$('w'+i); if(sp) sp.classList.add('found'); } });
+    toast('Endelea ulipoachia 👍'); }
+  stopHand(); if(mode==='level' && levelIdx===0 && !rs) setTimeout(startHand,400);
 }
 function updateCount(){$('countLbl').textContent=foundCount+'/'+words.length}
 
@@ -1152,7 +1185,7 @@ function endSel(){
   const hit=words.findIndex(w=>!w.found && (w.w===str||w.w===rev) && cells.length===w.w.length);
   bubble.classList.remove('show');
   if(hit>=0){
-    const w=words[hit]; w.found=true; foundCount++; colorIdx++;
+    const w=words[hit]; w.found=true; w.color=sel.color; foundCount++; colorIdx++; saveResume();
     tempCap.classList.remove('temp'); tempCap.classList.add('okcap');
     cells.forEach(([r,c],i)=>{ const e=cellEl(r,c); e.classList.remove('grow'); void e.offsetWidth; e.style.setProperty('--d',(i*0.05)+'s'); e.classList.add('grow'); });
     cells.forEach(([r,c])=>{const e=cellEl(r,c); e._found=true; e.classList.add('on'); e.classList.remove('temp-on')});
@@ -1386,7 +1419,7 @@ function methaliCheck(){
   const sr=L.methali.series; clearTimeout(methTimer);
   if(words.every(x=>x.found)){ methCur=sr.length-1; return; }          // level finished: the win screen shows all proverbs
   if(sr[methCur].blanks.every(isFound)){
-    methTimer=setTimeout(()=>{ while(methCur<sr.length-1 && sr[methCur].blanks.every(isFound)) methCur++; renderMethali(); }, 900);
+    methTimer=setTimeout(()=>{ if(!L.methali) return; while(methCur<sr.length-1 && sr[methCur].blanks.every(isFound)) methCur++; renderMethali(); }, 900);
   }
 }
 
@@ -1504,7 +1537,7 @@ function renderBonusCount(){ $('bonusCount').textContent = bonus.size ? bonus.si
 let toastT; function toast(msg,gold){ const t=$('toast'); t.textContent=msg; t.classList.toggle('gold',!!gold); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1600); }
 function addBonus(w){
   const first = bonus.size===0;
-  bonus.add(w); levelBonus++; saveBonus(); renderBonusCount(); addCoins(2);
+  bonus.add(w); levelBonus++; saveBonus(); renderBonusCount(); addCoins(2); saveResume();
   if(navigator.vibrate) try{navigator.vibrate([20,40,20])}catch(_){}
   if(first) showSheet(`<h3>NENO LA ZIADA ⭐</h3><p>Umepata <b>${w}</b> — neno halisi ambalo halipo kwenye orodha!<br>Maneno ya ziada huhifadhiwa kwenye nyota iliyo juu.</p><button class="btn" data-close>Sawa!</button>`);
   else toast(`Neno la ziada: ${w} ⭐`, true);
