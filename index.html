@@ -350,6 +350,13 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 .lvl small{font-family:"Nunito",sans-serif;font-size:.45rem;font-weight:900;opacity:.9}
 .lvl:disabled{background:#d9d2e6!important;color:#8d83a0;cursor:default}
 .lvl:focus-visible{outline:3px solid #2f80ed;outline-offset:2px}
+.lvl .lk{font-size:.85rem;line-height:1}
+.lvl-prog{grid-column:1/-1;text-align:center;font-weight:900;color:#5b4f73;font-size:.95rem;margin:-4px 0 4px}
+.lvl-prog b{color:#f2385a}
+.lvl-bar{height:10px;border-radius:99px;background:#eee8f5;overflow:hidden;margin-top:6px}
+.lvl-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff8a1f,#f2385a)}
+.lvl-more{grid-column:1/-1;border-radius:18px;padding:16px 12px;text-align:center;background:linear-gradient(135deg,#fff3e6,#ffe4ec);color:#7d1d78;font-weight:900;font-size:1.05rem;line-height:1.35}
+.lvl-more small{display:block;color:#8d83a0;font-size:.8rem;font-weight:800;margin-top:4px}
 .close-row{text-align:center}
 
 /* ---------- Loading screen ---------- */
@@ -1657,10 +1664,21 @@ function renderTabs(){
   $('dailyCard').innerHTML= completed()>=UNLOCK.daily ? dailyCardHTML(cal) : lockedCard(cal,'Fumbo la Kila Siku',UNLOCK.daily);
   $('collectCard').innerHTML= completed()>=UNLOCK.collect ? collectionHTML() : lockedCard(stamp,'Mkusanyiko',UNLOCK.collect);
   // show every opened level plus the next 12 locked ones (the full list has ~1,900 levels)
-  $('levelGrid').innerHTML=LEVELS.slice(0,Math.min(LEVELS.length,unlocked+12)).map((lv,i)=>{
-    const open=i<unlocked;
-    return `<button class="lvl" data-i="${i}" ${open?'':'disabled'} style="background:${lv.color}">${open?(i+1):'🔒'}<small>${lv.cat}</small></button>`;
-  }).join('');
+  // every level is listed; tiles are added in batches while scrolling so even weak phones stay smooth
+  const fmt=n=>n.toLocaleString('en-US'), pct=Math.max(1,Math.round(completed()/LEVELS.length*1000)/10);
+  const g=$('levelGrid'); if(g._obs) g._obs.disconnect();
+  g.innerHTML=`<div class="lvl-prog">Kiwango <b>${fmt(unlocked)}</b> kati ya ${fmt(LEVELS.length)}<div class="lvl-bar"><i style="width:${pct}%"></i></div></div>`;
+  let shown=0;
+  const tile=i=>{ const lv=LEVELS[i], open=i<unlocked;
+    return `<button class="lvl" data-i="${i}" ${open?'':'disabled'} style="background:${lv.color}">${open?(i+1):'<span class="lk">🔒</span>'+(i+1)}<small>${lv.cat==='MCHANGANYIKO'?'CHANGAMOTO':lv.cat}</small></button>`; };
+  const more=document.createElement('div'); more.className='lvl-more';
+  const addBatch=n=>{ const end=Math.min(LEVELS.length,shown+n); let h=''; for(let i=shown;i<end;i++) h+=tile(i);
+    more.insertAdjacentHTML('beforebegin',h); shown=end;
+    if(shown>=LEVELS.length){ more.remove(); if(g._obs) g._obs.disconnect(); }
+    else more.innerHTML=`🔒 Viwango ${fmt(LEVELS.length-shown)} zaidi vinakusubiri!<small>Endelea kushuka kuona zaidi</small>`; };
+  g.appendChild(more); addBatch(Math.max(60, unlocked+24));
+  if('IntersectionObserver' in window){ g._obs=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) addBatch(120); },{rootMargin:'400px'}); g._obs.observe(more); }
+  else more.onclick=()=>addBatch(120);
 }
 function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
