@@ -3,6 +3,11 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.tafutaneno.app",
-    "sha256_cert_fingerprints": ["9E:89:86:38:6E:A8:BA:66:48:04:47:2D:AA:E6:AF:FE:8D:BB:81:BF:AB:51:22:A5:4C:94:18:9E:C0:39:93:63"]
+    "sha256_cert_fingerprints": [
+      "A5:92:D0:84:FB:AE:33:03:6E:B1:CF:2F:D6:14:10:01:0A:DE:86:CF:04:B6:FE:D0:88:C9:BB:CA:6C:92:1F:38",
+      "9D:E2:FD:40:35:D5:74:AF:7A:DE:BE:7F:93:39:1E:B1:3B:C4:B7:35:5A:DE:00:02:DC:5D:DD:B7:D1:00:29:A8",
+      "13:9C:B4:41:E2:25:09:B9:78:86:18:B2:4B:EE:7C:0F:D9:33:F4:43:4E:C0:B1:5C:95:D5:6C:14:37:FC:3C:1F",
+      "9E:89:86:38:6E:A8:BA:66:48:04:47:2D:AA:E6:AF:FE:8D:BB:81:BF:AB:51:22:A5:4C:94:18:9E:C0:39:93:63"
+    ]
   }
 }]
