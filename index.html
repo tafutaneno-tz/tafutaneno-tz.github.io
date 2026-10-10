@@ -218,6 +218,9 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 .menu .menu-actions .btn.big small{color:#7d1d78}
 .menu .menu-actions .btn.alt{background:rgba(255,255,255,.16);color:#fff;border:2px solid rgba(255,255,255,.75);box-shadow:none;width:75%}
 .menu .menu-actions .btn.alt:active{transform:scale(.97)}
+.menu .menu-actions .btn.alt.haraka-btn{background:linear-gradient(180deg,#17694a,#0d4a33);border-color:#f5c542;color:#f5c542;font-size:1.15rem;padding:10px 14px;line-height:1.15}
+.menu .menu-actions .btn.alt.haraka-btn small{display:block;color:#eafbf1;font-size:.72rem;font-weight:800;margin-top:2px}
+.menu .menu-actions .btn.alt.haraka-btn:disabled{opacity:.75;filter:grayscale(.6)}
 .app{
   position:relative; z-index:1; height:100%;
   display:flex; flex-direction:column; align-items:center;
@@ -422,6 +425,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
     <div class="greet" id="greet">Habari!</div>
     <div class="menu-actions">
       <button class="btn big" id="playBtn">Cheza<small id="playSub">Kiwango 1</small></button>
+      <button class="btn alt haraka-btn" id="harakaBtn">⚡ Neno la Haraka<small id="harakaSub"></small></button>
     </div>
   </div>
   <div class="pane" data-pane="levels">
@@ -457,6 +461,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="ad-slot" id="adSlot" aria-hidden="true"></div>
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
+<script src="haraka.js?v=2"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1304,6 +1309,7 @@ function askExit(){
 }
 window.addEventListener('popstate',()=>{
   if(!STANDALONE || leaving) return;
+  if(window.Haraka && Haraka.isOpen()){ Haraka.back(); armBack(); return; }
   if($('sheet').classList.contains('show')) $('sheet').classList.remove('show');
   else if($('menu').classList.contains('show')){
     const onHome=document.querySelector('.tab.active')?.dataset.tab==='home';
@@ -1596,6 +1602,22 @@ function saveProgress(){ try{ localStorage.setItem('tn_unlocked',String(unlocked
 
 /* ---------- Win ---------- */
 let methaliOwned=new Set(); try{ methaliOwned=new Set(JSON.parse(localStorage.getItem('tn_methali')||'[]')); }catch(_){}
+/* ---------- Neno la Haraka (haraka.js): a 30-second quiz between levels ----------
+   Not a numbered level, so level numbers and saved progress never shift.
+   It opens once after levels 5, 10, 15 … – only the first time that level is cleared.
+   It can also be played any time from the home screen (button under Cheza). */
+const HARAKA_EVERY=5;
+let firstClear=false;
+function harakaDue(n){
+  if(!window.Haraka || mode!=='level' || !firstClear) return false;
+  if(n<HARAKA_EVERY || n%HARAKA_EVERY!==0) return false;
+  let last=0; try{ last=parseInt(localStorage.getItem('tn_haraka_last'),10)||0; }catch(_){}
+  return n>last;
+}
+function openHaraka(n, then){
+  try{ localStorage.setItem('tn_haraka_last',String(n)); }catch(_){}   // marked at once: it can never pop up twice for the same level
+  Haraka.open({ sfx, sound:()=>soundOn, onClose: ()=>then() });
+}
 function showWin(){
   confetti();
   if(mode==='daily') return showDailyWin();
@@ -1603,6 +1625,7 @@ function showWin(){
   const q=$('winQuote'); q.hidden=!L.methali;
   if(L.methali){ clearTimeout(methTimer); q.innerHTML=L.methali.series.map(x=>'“'+x.text+'.”').join('<br>'); L.methali.series.forEach(x=>methaliOwned.add(x.k)); try{ localStorage.setItem('tn_methali',JSON.stringify([...methaliOwned])); }catch(_){} }
   const last=levelIdx===LEVELS.length-1;
+  firstClear = !last && unlocked<levelIdx+2;
   if(!last && unlocked<levelIdx+2){ unlocked=levelIdx+2; saveProgress(); }
   $('winText').textContent= last ? 'Umemaliza viwango vyote!' : L.orodha ? 'Orodha imekamilika! ✅' : (levelBonus ? `Maneno ya ziada: ${levelBonus} ⭐` : 'Umepata maneno yote.');
   $('nextBtn').textContent= last ? 'Menyu' : 'Kiwango kinachofuata';
@@ -1620,7 +1643,8 @@ $('nextBtn').addEventListener('click',()=>{ sfx.select();
   $('overlay').classList.remove('show');
   if(mode==='daily'){ showMenu('daily'); return; }
   if(levelIdx===LEVELS.length-1){ showMenu(); return; }
-  levelIdx++; startLevel(); playMusic('game');
+  const goNext=()=>{ levelIdx++; startLevel(); playMusic('game'); };
+  if(harakaDue(levelIdx+1)) openHaraka(levelIdx+1, goNext); else goNext();
 });
 
 /* ---------- Menu ---------- */
@@ -1749,6 +1773,9 @@ function globeStop(){ if(G.raf) cancelAnimationFrame(G.raf); G.raf=0; }
 function showMenu(tab){
   document.querySelector('.app').style.visibility='hidden';
   $('playSub').textContent='Kiwango '+unlocked;
+  { const hb=$('harakaBtn'), open=completed()>=HARAKA_EVERY; let best=0; try{ best=JSON.parse(localStorage.getItem('tn_haraka_best'))||0; }catch(_){}
+    hb.disabled=!open || !window.Haraka;
+    $('harakaSub').textContent= !window.Haraka ? 'Haipatikani sasa' : !open ? `🔒 Maliza kiwango ${HARAKA_EVERY}` : best ? `Rekodi yako: ${best}` : 'Sekunde 30 · maswali ya haraka'; }
   $('greet').textContent=greeting();
   renderTabs();
   $('menu').classList.add('show');
@@ -1763,6 +1790,11 @@ function startGame(idx){
   startLevel(); requestAnimationFrame(fitBoard);
 }
 $('playBtn').addEventListener('click',()=>{ sfx.select(); startGame(unlocked-1); });
+$('harakaBtn').addEventListener('click',()=>{
+  if($('harakaBtn').disabled || !window.Haraka || Haraka.isOpen()) return;
+  sfx.select(); globeStop();
+  Haraka.open({ sfx, sound:()=>soundOn, onClose:()=>showMenu('home') });
+});
 $('tabbar').addEventListener('click',e=>{ const t=e.target.closest('.tab'); if(t){ sfx.menu(); showTab(t.dataset.tab); } });
 $('soundBtn').addEventListener('click',()=>{ ensureAudio(); setSound(!soundOn); if(soundOn) sfx.menu(); });
 document.querySelectorAll('.music-btn').forEach(b=>b.addEventListener('click',()=>{ ensureAudio(); setMusic(!musicOn); sfx.menu(); }));
