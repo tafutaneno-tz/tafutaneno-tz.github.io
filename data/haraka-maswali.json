@@ -1,0 +1,3067 @@
+{
+ "version": 1,
+ "categories": {
+  "wanyama": "Wanyama",
+  "vyakula": "Vyakula",
+  "vitu": "Vitu vya kila siku",
+  "asili": "Asili",
+  "kazi": "Kazi",
+  "lugha": "Lugha",
+  "tanzania": "Tanzania",
+  "maarifa": "Maarifa ya jumla"
+ },
+ "questions": [
+  {
+   "id": "wanyama_001",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama gani hulia “nyau nyau”?",
+   "options": [
+    "PAKA",
+    "SIMBA",
+    "TEMBO",
+    "CHUI"
+   ],
+   "correctAnswer": "PAKA",
+   "explanation": "Paka ni mnyama wa nyumbani anayelia “nyau”."
+  },
+  {
+   "id": "wanyama_002",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama gani hubweka na kulinda nyumba?",
+   "options": [
+    "MBWA",
+    "PAKA",
+    "MBUZI",
+    "KONDOO"
+   ],
+   "correctAnswer": "MBWA",
+   "explanation": "Mbwa hubweka na hulinda nyumba ya mwenyewe."
+  },
+  {
+   "id": "wanyama_003",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama mkubwa sana mwenye mkonga mrefu ni yupi?",
+   "options": [
+    "TEMBO",
+    "FARU",
+    "KIBOKO",
+    "NYATI"
+   ],
+   "correctAnswer": "TEMBO",
+   "explanation": "Tembo ndiye mnyama mwenye mkonga."
+  },
+  {
+   "id": "wanyama_004",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama mwenye shingo ndefu kuliko wote ni yupi?",
+   "options": [
+    "TWIGA",
+    "SWALA",
+    "NYUMBU",
+    "KIBOKO"
+   ],
+   "correctAnswer": "TWIGA",
+   "explanation": "Twiga ana shingo ndefu kuliko mnyama yeyote."
+  },
+  {
+   "id": "wanyama_005",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama anayeitwa “mfalme wa porini” ni yupi?",
+   "options": [
+    "SIMBA",
+    "FISI",
+    "NGIRI",
+    "SUNGURA"
+   ],
+   "correctAnswer": "SIMBA",
+   "explanation": "Simba huitwa mfalme wa porini."
+  },
+  {
+   "id": "wanyama_006",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Ng'ombe hutupa kinywaji gani?",
+   "options": [
+    "MAZIWA",
+    "ASALI",
+    "CHAI",
+    "MAFUTA"
+   ],
+   "correctAnswer": "MAZIWA",
+   "explanation": "Ng'ombe hukamuliwa na kutupa maziwa."
+  },
+  {
+   "id": "wanyama_007",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mdudu gani hutengeneza asali?",
+   "options": [
+    "NYUKI",
+    "MBU",
+    "NZI",
+    "SISIMIZI"
+   ],
+   "correctAnswer": "NYUKI",
+   "explanation": "Nyuki hutengeneza asali kwenye mzinga."
+  },
+  {
+   "id": "wanyama_008",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Ndege gani huwika “kokoriko” alfajiri?",
+   "options": [
+    "JOGOO",
+    "BATA",
+    "NJIWA",
+    "KUNGURU"
+   ],
+   "correctAnswer": "JOGOO",
+   "explanation": "Jogoo huwika alfajiri: kokoriko!"
+  },
+  {
+   "id": "wanyama_009",
+   "category": "wanyama",
+   "difficulty": 1,
+   "question": "Mnyama gani wa nyumbani hutaga mayai?",
+   "options": [
+    "KUKU",
+    "MBUZI",
+    "PAKA",
+    "NG'OMBE"
+   ],
+   "correctAnswer": "KUKU",
+   "explanation": "Kuku hutaga mayai."
+  },
+  {
+   "id": "wanyama_010",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama gani ana milia myeusi na myeupe mwilini?",
+   "options": [
+    "PUNDAMILIA",
+    "NYATI",
+    "SWALA",
+    "FISI"
+   ],
+   "correctAnswer": "PUNDAMILIA",
+   "explanation": "Pundamilia ana milia myeusi na myeupe."
+  },
+  {
+   "id": "wanyama_011",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama mzito anayeshinda majini mchana na kula majani usiku ni yupi?",
+   "options": [
+    "KIBOKO",
+    "TWIGA",
+    "SIMBA",
+    "NGAMIA"
+   ],
+   "correctAnswer": "KIBOKO",
+   "explanation": "Kiboko hukaa majini mchana na hutoka usiku kula majani."
+  },
+  {
+   "id": "wanyama_012",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama mwenye pembe moja au mbili juu ya pua ni yupi?",
+   "options": [
+    "FARU",
+    "TEMBO",
+    "NYATI",
+    "PAA"
+   ],
+   "correctAnswer": "FARU",
+   "explanation": "Faru ana pembe juu ya pua yake."
+  },
+  {
+   "id": "wanyama_013",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama anayeweza kukaa siku nyingi jangwani bila kunywa maji ni yupi?",
+   "options": [
+    "NGAMIA",
+    "FARASI",
+    "PUNDA",
+    "NG'OMBE"
+   ],
+   "correctAnswer": "NGAMIA",
+   "explanation": "Ngamia huvumilia kiu jangwani kwa siku nyingi."
+  },
+  {
+   "id": "wanyama_014",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama mdogo mwenye masikio marefu anayeruka-ruka ni yupi?",
+   "options": [
+    "SUNGURA",
+    "PANYA",
+    "KOBE",
+    "KINDI"
+   ],
+   "correctAnswer": "SUNGURA",
+   "explanation": "Sungura ana masikio marefu na huruka-ruka."
+  },
+  {
+   "id": "wanyama_015",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama anayebeba gamba gumu mgongoni na kutembea polepole sana ni yupi?",
+   "options": [
+    "KOBE",
+    "SUNGURA",
+    "NYOKA",
+    "MJUSI"
+   ],
+   "correctAnswer": "KOBE",
+   "explanation": "Kobe ana gamba gumu mgongoni na hutembea polepole."
+  },
+  {
+   "id": "wanyama_016",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama asiye na miguu anayetambaa kwa tumbo ni yupi?",
+   "options": [
+    "NYOKA",
+    "MJUSI",
+    "KOBE",
+    "CHURA"
+   ],
+   "correctAnswer": "NYOKA",
+   "explanation": "Nyoka hana miguu, hutambaa kwa tumbo."
+  },
+  {
+   "id": "wanyama_017",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama mdogo anayeruka-ruka, mwenye ngozi laini, anayeishi karibu na maji ni yupi?",
+   "options": [
+    "CHURA",
+    "MJUSI",
+    "PANYA",
+    "KOBE"
+   ],
+   "correctAnswer": "CHURA",
+   "explanation": "Chura huishi karibu na maji na huruka-ruka."
+  },
+  {
+   "id": "wanyama_018",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama anayelia kama anacheka usiku na kula mizoga ni yupi?",
+   "options": [
+    "FISI",
+    "CHUI",
+    "NYANI",
+    "SWALA"
+   ],
+   "correctAnswer": "FISI",
+   "explanation": "Fisi hula mizoga na sauti yake hufanana na kicheko."
+  },
+  {
+   "id": "wanyama_019",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama mwenye manyoya mengi ambaye sufu yake hutengeneza nguo ni yupi?",
+   "options": [
+    "KONDOO",
+    "MBUZI",
+    "NG'OMBE",
+    "PUNDA"
+   ],
+   "correctAnswer": "KONDOO",
+   "explanation": "Sufu ya kondoo hutumika kutengeneza nguo."
+  },
+  {
+   "id": "wanyama_020",
+   "category": "wanyama",
+   "difficulty": 2,
+   "question": "Mnyama anayefanana kidogo na binadamu, anayeishi kwa makundi na kupanda miti, ni yupi?",
+   "options": [
+    "NYANI",
+    "KIBOKO",
+    "KONDOO",
+    "NGURUWE"
+   ],
+   "correctAnswer": "NYANI",
+   "explanation": "Nyani huishi kwa makundi na hupanda miti."
+  },
+  {
+   "id": "wanyama_021",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mtoto wa ng'ombe huitwaje?",
+   "options": [
+    "NDAMA",
+    "KIFARANGA",
+    "BEBERU",
+    "JOGOO"
+   ],
+   "correctAnswer": "NDAMA",
+   "explanation": "Mtoto wa ng'ombe huitwa ndama."
+  },
+  {
+   "id": "wanyama_022",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mtoto wa kuku huitwaje?",
+   "options": [
+    "KIFARANGA",
+    "NDAMA",
+    "BEBERU",
+    "MTOTO"
+   ],
+   "correctAnswer": "KIFARANGA",
+   "explanation": "Mtoto wa kuku huitwa kifaranga."
+  },
+  {
+   "id": "wanyama_023",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mnyama mwenye kasi kuliko wote nchi kavu ni yupi?",
+   "options": [
+    "DUMA",
+    "CHUI",
+    "SIMBA",
+    "SWALA"
+   ],
+   "correctAnswer": "DUMA",
+   "explanation": "Duma ndiye mnyama mwenye kasi zaidi nchi kavu."
+  },
+  {
+   "id": "wanyama_024",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Ndege mkubwa kuliko wote, asiyeweza kuruka, ni yupi?",
+   "options": [
+    "MBUNI",
+    "TAI",
+    "BATA",
+    "KUNGURU"
+   ],
+   "correctAnswer": "MBUNI",
+   "explanation": "Mbuni ni ndege mkubwa kuliko wote na hawezi kuruka."
+  },
+  {
+   "id": "wanyama_025",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mnyama mkubwa wa porini anayefanana na ng'ombe, mwenye pembe nzito, ni yupi?",
+   "options": [
+    "NYATI",
+    "FARU",
+    "SWALA",
+    "NGIRI"
+   ],
+   "correctAnswer": "NYATI",
+   "explanation": "Nyati ni kama ng'ombe wa porini mwenye pembe nzito."
+  },
+  {
+   "id": "wanyama_026",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mnyama anayehama kwa makundi makubwa Serengeti kila mwaka ni yupi?",
+   "options": [
+    "NYUMBU",
+    "KIBOKO",
+    "TWIGA",
+    "CHUI"
+   ],
+   "correctAnswer": "NYUMBU",
+   "explanation": "Nyumbu huhama kwa mamilioni kati ya Serengeti na Masai Mara."
+  },
+  {
+   "id": "wanyama_027",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mnyama wa porini mwenye meno makubwa ya nje, anayekimbia na mkia wima, ni yupi?",
+   "options": [
+    "NGIRI",
+    "SWALA",
+    "FISI",
+    "SUNGURA"
+   ],
+   "correctAnswer": "NGIRI",
+   "explanation": "Ngiri hukimbia na mkia wake ukiwa umesimama wima."
+  },
+  {
+   "id": "wanyama_028",
+   "category": "wanyama",
+   "difficulty": 3,
+   "question": "Mbuzi dume huitwaje?",
+   "options": [
+    "BEBERU",
+    "NDAMA",
+    "JOGOO",
+    "KIFARANGA"
+   ],
+   "correctAnswer": "BEBERU",
+   "explanation": "Mbuzi dume huitwa beberu."
+  },
+  {
+   "id": "vyakula_001",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Chakula kikuu kinachopikwa kwa unga wa mahindi na maji ni kipi?",
+   "options": [
+    "UGALI",
+    "WALI",
+    "CHAPATI",
+    "MAANDAZI"
+   ],
+   "correctAnswer": "UGALI",
+   "explanation": "Ugali hupikwa kwa unga wa mahindi na maji."
+  },
+  {
+   "id": "vyakula_002",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Tunda refu la njano linalomenywa kabla ya kuliwa ni lipi?",
+   "options": [
+    "NDIZI",
+    "EMBE",
+    "PAPAI",
+    "NANASI"
+   ],
+   "correctAnswer": "NDIZI",
+   "explanation": "Ndizi ni tunda refu la njano."
+  },
+  {
+   "id": "vyakula_003",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Mchele uliopikwa huitwaje?",
+   "options": [
+    "WALI",
+    "UGALI",
+    "UJI",
+    "MCHUZI"
+   ],
+   "correctAnswer": "WALI",
+   "explanation": "Mchele ukipikwa huitwa wali."
+  },
+  {
+   "id": "vyakula_004",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Kinywaji cha moto kinachotengenezwa kwa majani na kunywewa asubuhi ni kipi?",
+   "options": [
+    "CHAI",
+    "JUISI",
+    "MAJI",
+    "SODA"
+   ],
+   "correctAnswer": "CHAI",
+   "explanation": "Chai hutengenezwa kwa majani ya chai."
+  },
+  {
+   "id": "vyakula_005",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Kuku hutaga nini?",
+   "options": [
+    "MAYAI",
+    "MAZIWA",
+    "NYAMA",
+    "ASALI"
+   ],
+   "correctAnswer": "MAYAI",
+   "explanation": "Kuku hutaga mayai."
+  },
+  {
+   "id": "vyakula_006",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Tunda gumu lenye maji matamu ndani linalotoka kwenye mnazi ni lipi?",
+   "options": [
+    "NAZI",
+    "EMBE",
+    "CHUNGWA",
+    "TIKITI"
+   ],
+   "correctAnswer": "NAZI",
+   "explanation": "Nazi hutoka kwenye mnazi na ina maji ndani."
+  },
+  {
+   "id": "vyakula_007",
+   "category": "vyakula",
+   "difficulty": 1,
+   "question": "Tunda la njano lenye kokwa kubwa, hupendwa sana wakati wa joto, ni lipi?",
+   "options": [
+    "EMBE",
+    "NDIZI",
+    "NAZI",
+    "NDIMU"
+   ],
+   "correctAnswer": "EMBE",
+   "explanation": "Embe lina kokwa kubwa katikati."
+  },
+  {
+   "id": "vyakula_008",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Mkate wa bapa unaopikwa kwenye kikaango kwa unga wa ngano ni upi?",
+   "options": [
+    "CHAPATI",
+    "MAANDAZI",
+    "UGALI",
+    "WALI"
+   ],
+   "correctAnswer": "CHAPATI",
+   "explanation": "Chapati ni mkate wa bapa wa unga wa ngano."
+  },
+  {
+   "id": "vyakula_009",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Chakula kitamu cha unga kinachokaangwa kwenye mafuta na kuliwa na chai ni kipi?",
+   "options": [
+    "MAANDAZI",
+    "UGALI",
+    "WALI",
+    "MAHARAGE"
+   ],
+   "correctAnswer": "MAANDAZI",
+   "explanation": "Maandazi hukaangwa kwenye mafuta na huliwa na chai."
+  },
+  {
+   "id": "vyakula_010",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Wali uliopikwa kwa viungo kama mdalasini na karafuu huitwaje?",
+   "options": [
+    "PILAU",
+    "UJI",
+    "MCHUZI",
+    "UGALI"
+   ],
+   "correctAnswer": "PILAU",
+   "explanation": "Pilau ni wali uliopikwa kwa viungo."
+  },
+  {
+   "id": "vyakula_011",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Chakula laini cha kunywa kinachopikwa kwa unga na maji, hasa asubuhi, ni kipi?",
+   "options": [
+    "UJI",
+    "PILAU",
+    "CHIPSI",
+    "MAANDAZI"
+   ],
+   "correctAnswer": "UJI",
+   "explanation": "Uji ni chakula laini cha kunywa."
+  },
+  {
+   "id": "vyakula_012",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Mbegu nyekundu au kahawia zinazopikwa na kuliwa na wali au ugali ni zipi?",
+   "options": [
+    "MAHARAGE",
+    "MCHELE",
+    "NAZI",
+    "NDIZI"
+   ],
+   "correctAnswer": "MAHARAGE",
+   "explanation": "Maharage huliwa na wali au ugali."
+  },
+  {
+   "id": "vyakula_013",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Tunda kubwa la kijani nje na jekundu ndani, lenye maji mengi, ni lipi?",
+   "options": [
+    "TIKITI",
+    "PAPAI",
+    "PERA",
+    "EMBE"
+   ],
+   "correctAnswer": "TIKITI",
+   "explanation": "Tikiti maji ni jekundu ndani na lina maji mengi."
+  },
+  {
+   "id": "vyakula_014",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Tunda lenye ngozi yenye miiba midogo na taji la majani juu ni lipi?",
+   "options": [
+    "NANASI",
+    "PAPAI",
+    "ZABIBU",
+    "CHUNGWA"
+   ],
+   "correctAnswer": "NANASI",
+   "explanation": "Nanasi lina taji la majani juu yake."
+  },
+  {
+   "id": "vyakula_015",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Tunaweka nini kwenye chakula ili kiwe na ladha ya chumvi?",
+   "options": [
+    "CHUMVI",
+    "SUKARI",
+    "MAFUTA",
+    "UNGA"
+   ],
+   "correctAnswer": "CHUMVI",
+   "explanation": "Chumvi huongeza ladha ya chumvi."
+  },
+  {
+   "id": "vyakula_016",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Kitu kitamu tunachoweka kwenye chai ni kipi?",
+   "options": [
+    "SUKARI",
+    "CHUMVI",
+    "PILIPILI",
+    "NDIMU"
+   ],
+   "correctAnswer": "SUKARI",
+   "explanation": "Sukari hufanya chai kuwa tamu."
+  },
+  {
+   "id": "vyakula_017",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Kitu kinachowasha mdomoni na kuongeza ukali wa chakula ni kipi?",
+   "options": [
+    "PILIPILI",
+    "SUKARI",
+    "ASALI",
+    "MAZIWA"
+   ],
+   "correctAnswer": "PILIPILI",
+   "explanation": "Pilipili huwasha mdomoni."
+  },
+  {
+   "id": "vyakula_018",
+   "category": "vyakula",
+   "difficulty": 2,
+   "question": "Kinywaji kinachotengenezwa kwa kukamua matunda huitwaje?",
+   "options": [
+    "JUISI",
+    "CHAI",
+    "KAHAWA",
+    "UJI"
+   ],
+   "correctAnswer": "JUISI",
+   "explanation": "Juisi hutengenezwa kwa kukamua matunda."
+  },
+  {
+   "id": "vyakula_019",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Mboga ya rangi ya chungwa inayoliwa mbichi au kupikwa ni ipi?",
+   "options": [
+    "KAROTI",
+    "KABICHI",
+    "NYANYA",
+    "BAMIA"
+   ],
+   "correctAnswer": "KAROTI",
+   "explanation": "Karoti ina rangi ya chungwa."
+  },
+  {
+   "id": "vyakula_020",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Tunda dogo la kijani lenye uchachu, linalokamuliwa juu ya samaki au kachumbari, ni lipi?",
+   "options": [
+    "NDIMU",
+    "PAPAI",
+    "NDIZI",
+    "EMBE"
+   ],
+   "correctAnswer": "NDIMU",
+   "explanation": "Ndimu ni chachu na hukamuliwa juu ya chakula."
+  },
+  {
+   "id": "vyakula_021",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Vipande vya nyama vilivyochomekwa kwenye vijiti na kuchomwa motoni huitwaje?",
+   "options": [
+    "MISHKAKI",
+    "MAANDAZI",
+    "UJI",
+    "MAHARAGE"
+   ],
+   "correctAnswer": "MISHKAKI",
+   "explanation": "Mishkaki ni nyama iliyochomekwa kwenye vijiti na kuchomwa."
+  },
+  {
+   "id": "vyakula_022",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Chakula cha pembe tatu kilichojazwa nyama au mboga na kukaangwa ni kipi?",
+   "options": [
+    "SAMBUSA",
+    "CHAPATI",
+    "WALI",
+    "UJI"
+   ],
+   "correctAnswer": "SAMBUSA",
+   "explanation": "Sambusa ina pembe tatu na imejazwa nyama au mboga."
+  },
+  {
+   "id": "vyakula_023",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Majani ya mhogo yaliyopondwa na kupikwa kama mboga huitwaje?",
+   "options": [
+    "KISAMVU",
+    "KAROTI",
+    "VIAZI",
+    "NYANYA"
+   ],
+   "correctAnswer": "KISAMVU",
+   "explanation": "Kisamvu ni majani ya mhogo yaliyopikwa."
+  },
+  {
+   "id": "vyakula_024",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Mzizi mkubwa mweupe ndani unaochemshwa au kukaangwa ni upi?",
+   "options": [
+    "MUHOGO",
+    "NDIZI",
+    "MCHELE",
+    "MAHARAGE"
+   ],
+   "correctAnswer": "MUHOGO",
+   "explanation": "Muhogo ni mzizi unaoliwa kwa kuchemshwa au kukaangwa."
+  },
+  {
+   "id": "vyakula_025",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Kinywaji kichungu cha moto kinachotengenezwa kwa mbegu zilizokaangwa ni kipi?",
+   "options": [
+    "KAHAWA",
+    "CHAI",
+    "JUISI",
+    "MAZIWA"
+   ],
+   "correctAnswer": "KAHAWA",
+   "explanation": "Kahawa hutengenezwa kwa mbegu zilizokaangwa na kusagwa."
+  },
+  {
+   "id": "vyakula_026",
+   "category": "vyakula",
+   "difficulty": 3,
+   "question": "Mchanganyiko wa nyanya, vitunguu na pilipili mbichi unaoliwa na pilau huitwaje?",
+   "options": [
+    "KACHUMBARI",
+    "MCHUZI",
+    "UJI",
+    "MAANDAZI"
+   ],
+   "correctAnswer": "KACHUMBARI",
+   "explanation": "Kachumbari ni nyanya, vitunguu na pilipili mbichi."
+  },
+  {
+   "id": "vitu_001",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunatumia nini kuandika kwenye karatasi?",
+   "options": [
+    "KALAMU",
+    "KIKOMBE",
+    "KIJIKO",
+    "SAHANI"
+   ],
+   "correctAnswer": "KALAMU",
+   "explanation": "Kalamu hutumika kuandika."
+  },
+  {
+   "id": "vitu_002",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunakunywa chai kwa kutumia nini?",
+   "options": [
+    "KIKOMBE",
+    "KALAMU",
+    "UFUNGUO",
+    "KIATU"
+   ],
+   "correctAnswer": "KIKOMBE",
+   "explanation": "Chai hunywewa kwa kikombe."
+  },
+  {
+   "id": "vitu_003",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunalala juu ya nini usiku?",
+   "options": [
+    "KITANDA",
+    "MEZA",
+    "KITI",
+    "DIRISHA"
+   ],
+   "correctAnswer": "KITANDA",
+   "explanation": "Tunalala kitandani."
+  },
+  {
+   "id": "vitu_004",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunakaa juu ya nini tunapokula mezani?",
+   "options": [
+    "KITI",
+    "KITABU",
+    "KIKOMBE",
+    "SAA"
+   ],
+   "correctAnswer": "KITI",
+   "explanation": "Tunakaa kwenye kiti."
+  },
+  {
+   "id": "vitu_005",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunavaa nini miguuni tunapotembea?",
+   "options": [
+    "VIATU",
+    "KOFIA",
+    "SHATI",
+    "MKANDA"
+   ],
+   "correctAnswer": "VIATU",
+   "explanation": "Viatu huvaliwa miguuni."
+  },
+  {
+   "id": "vitu_006",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Kitu tunachovaa mkononi au kutundika ukutani ili kujua muda ni kipi?",
+   "options": [
+    "SAA",
+    "KITI",
+    "KIJIKO",
+    "SABUNI"
+   ],
+   "correctAnswer": "SAA",
+   "explanation": "Saa hutuonyesha muda."
+  },
+  {
+   "id": "vitu_007",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunafungua kufuli la mlango kwa kutumia nini?",
+   "options": [
+    "UFUNGUO",
+    "KALAMU",
+    "KIKOMBE",
+    "MSWAKI"
+   ],
+   "correctAnswer": "UFUNGUO",
+   "explanation": "Ufunguo hufungua kufuli."
+  },
+  {
+   "id": "vitu_008",
+   "category": "vitu",
+   "difficulty": 1,
+   "question": "Tunasoma hadithi kwenye nini?",
+   "options": [
+    "KITABU",
+    "KIKOMBE",
+    "KIATU",
+    "KIJIKO"
+   ],
+   "correctAnswer": "KITABU",
+   "explanation": "Hadithi husomwa kwenye kitabu."
+  },
+  {
+   "id": "vitu_009",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunasafisha meno kwa kutumia nini?",
+   "options": [
+    "MSWAKI",
+    "SABUNI",
+    "KITANA",
+    "TAULO"
+   ],
+   "correctAnswer": "MSWAKI",
+   "explanation": "Mswaki husafisha meno."
+  },
+  {
+   "id": "vitu_010",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunachana nywele kwa kutumia nini?",
+   "options": [
+    "KITANA",
+    "MSWAKI",
+    "KIJIKO",
+    "SINDANO"
+   ],
+   "correctAnswer": "KITANA",
+   "explanation": "Kitana hutumika kuchana nywele."
+  },
+  {
+   "id": "vitu_011",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunajikausha mwili baada ya kuoga kwa kutumia nini?",
+   "options": [
+    "TAULO",
+    "SABUNI",
+    "KITANA",
+    "MTO"
+   ],
+   "correctAnswer": "TAULO",
+   "explanation": "Taulo hukausha mwili."
+  },
+  {
+   "id": "vitu_012",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunajiangalia uso wetu kwenye nini?",
+   "options": [
+    "KIOO",
+    "MLANGO",
+    "KITI",
+    "SAHANI"
+   ],
+   "correctAnswer": "KIOO",
+   "explanation": "Kioo hutuonyesha sura yetu."
+  },
+  {
+   "id": "vitu_013",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Kitu kikali kinachotumika kukata mboga jikoni ni kipi?",
+   "options": [
+    "KISU",
+    "KIJIKO",
+    "SAHANI",
+    "KIKOMBE"
+   ],
+   "correctAnswer": "KISU",
+   "explanation": "Kisu hukata mboga na nyama."
+  },
+  {
+   "id": "vitu_014",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunakula supu kwa kutumia nini?",
+   "options": [
+    "KIJIKO",
+    "KALAMU",
+    "UFUNGUO",
+    "NDOO"
+   ],
+   "correctAnswer": "KIJIKO",
+   "explanation": "Supu huliwa kwa kijiko."
+  },
+  {
+   "id": "vitu_015",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunachota na kubeba maji kisimani kwa kutumia nini?",
+   "options": [
+    "NDOO",
+    "KIKAPU",
+    "MKOBA",
+    "KITI"
+   ],
+   "correctAnswer": "NDOO",
+   "explanation": "Ndoo hubeba maji."
+  },
+  {
+   "id": "vitu_016",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Kitu tunachotumia kupiga simu na kutuma ujumbe ni kipi?",
+   "options": [
+    "SIMU",
+    "REDIO",
+    "SAA",
+    "TOCHI"
+   ],
+   "correctAnswer": "SIMU",
+   "explanation": "Simu hutumika kupiga simu na kutuma ujumbe."
+  },
+  {
+   "id": "vitu_017",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Kitu kidogo kinachotoa mwanga gizani na kubebwa mkononi ni kipi?",
+   "options": [
+    "TOCHI",
+    "REDIO",
+    "KIOO",
+    "KITABU"
+   ],
+   "correctAnswer": "TOCHI",
+   "explanation": "Tochi hutoa mwanga gizani."
+  },
+  {
+   "id": "vitu_018",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Tunafua nguo na kuoga kwa kutumia nini?",
+   "options": [
+    "SABUNI",
+    "MAFUTA",
+    "SUKARI",
+    "CHUMVI"
+   ],
+   "correctAnswer": "SABUNI",
+   "explanation": "Sabuni husafisha nguo na mwili."
+  },
+  {
+   "id": "vitu_019",
+   "category": "vitu",
+   "difficulty": 2,
+   "question": "Kitu kinachofungwa kiunoni kushikilia suruali ni kipi?",
+   "options": [
+    "MKANDA",
+    "KOFIA",
+    "SOKSI",
+    "SHATI"
+   ],
+   "correctAnswer": "MKANDA",
+   "explanation": "Mkanda hushikilia suruali kiunoni."
+  },
+  {
+   "id": "vitu_020",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Tunashona nguo kwa kutumia nini?",
+   "options": [
+    "SINDANO",
+    "KISU",
+    "KITANA",
+    "UMA"
+   ],
+   "correctAnswer": "SINDANO",
+   "explanation": "Sindano na uzi hutumika kushona."
+  },
+  {
+   "id": "vitu_021",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Kitu kinachotukinga na mvua tukiwa njiani ni kipi?",
+   "options": [
+    "MWAVULI",
+    "SAHANI",
+    "KIOO",
+    "UFAGIO"
+   ],
+   "correctAnswer": "MWAVULI",
+   "explanation": "Mwavuli hutukinga na mvua."
+  },
+  {
+   "id": "vitu_022",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Tunafagia uwanja na nyumba kwa kutumia nini?",
+   "options": [
+    "UFAGIO",
+    "NDOO",
+    "SINDANO",
+    "MSWAKI"
+   ],
+   "correctAnswer": "UFAGIO",
+   "explanation": "Ufagio hutumika kufagia."
+  },
+  {
+   "id": "vitu_023",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Kitu laini tunachoweka kichwa juu yake tunapolala ni kipi?",
+   "options": [
+    "MTO",
+    "KITI",
+    "MEZA",
+    "DIRISHA"
+   ],
+   "correctAnswer": "MTO",
+   "explanation": "Mto huwekwa chini ya kichwa tunapolala."
+  },
+  {
+   "id": "vitu_024",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Kifaa kinachotumika kusikiliza habari na muziki bila picha ni kipi?",
+   "options": [
+    "REDIO",
+    "RUNINGA",
+    "KALAMU",
+    "KITANDA"
+   ],
+   "correctAnswer": "REDIO",
+   "explanation": "Redio hutoa sauti tu, bila picha."
+  },
+  {
+   "id": "vitu_025",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Kifaa cha nyumbani kinachoonyesha picha na habari, kinachoitwa pia TV, ni kipi?",
+   "options": [
+    "RUNINGA",
+    "REDIO",
+    "TOCHI",
+    "KIOO"
+   ],
+   "correctAnswer": "RUNINGA",
+   "explanation": "Runinga ni neno la Kiswahili la TV."
+  },
+  {
+   "id": "vitu_026",
+   "category": "vitu",
+   "difficulty": 3,
+   "question": "Mfuko unaobebwa mgongoni na wanafunzi kubeba vitabu ni upi?",
+   "options": [
+    "MKOBA",
+    "NDOO",
+    "KIKAPU",
+    "SANDUKU"
+   ],
+   "correctAnswer": "MKOBA",
+   "explanation": "Wanafunzi hubeba vitabu kwenye mkoba."
+  },
+  {
+   "id": "asili_001",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Kitu kinachong'aa angani mchana na kutupa joto ni kipi?",
+   "options": [
+    "JUA",
+    "MWEZI",
+    "NYOTA",
+    "WINGU"
+   ],
+   "correctAnswer": "JUA",
+   "explanation": "Jua hutupa mwanga na joto mchana."
+  },
+  {
+   "id": "asili_002",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Kitu kinachong'aa angani usiku na kubadilika umbo kila wiki ni kipi?",
+   "options": [
+    "MWEZI",
+    "JUA",
+    "MVUA",
+    "UPEPO"
+   ],
+   "correctAnswer": "MWEZI",
+   "explanation": "Mwezi hubadilika umbo siku hadi siku."
+  },
+  {
+   "id": "asili_003",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Maji yanayoshuka kutoka mawinguni huitwaje?",
+   "options": [
+    "MVUA",
+    "JUA",
+    "UPEPO",
+    "MOSHI"
+   ],
+   "correctAnswer": "MVUA",
+   "explanation": "Mvua hushuka kutoka mawinguni."
+  },
+  {
+   "id": "asili_004",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Rangi ya majani ya miti ni ipi?",
+   "options": [
+    "KIJANI",
+    "NYEKUNDU",
+    "NYEUSI",
+    "NJANO"
+   ],
+   "correctAnswer": "KIJANI",
+   "explanation": "Majani ya miti ni ya kijani."
+  },
+  {
+   "id": "asili_005",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Vitu vidogo vingi vinavyometameta angani usiku ni vipi?",
+   "options": [
+    "NYOTA",
+    "MAWINGU",
+    "MVUA",
+    "MAWE"
+   ],
+   "correctAnswer": "NYOTA",
+   "explanation": "Nyota huonekana angani usiku."
+  },
+  {
+   "id": "asili_006",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Mti mrefu wa pwani unaozaa nazi ni upi?",
+   "options": [
+    "MNAZI",
+    "MWEMBE",
+    "MBUYU",
+    "MPAPAI"
+   ],
+   "correctAnswer": "MNAZI",
+   "explanation": "Mnazi huzaa nazi."
+  },
+  {
+   "id": "asili_007",
+   "category": "asili",
+   "difficulty": 1,
+   "question": "Kinachotoka kwenye moto na kupanda juu kama wingu jeusi ni nini?",
+   "options": [
+    "MOSHI",
+    "MAJI",
+    "UDONGO",
+    "JIWE"
+   ],
+   "correctAnswer": "MOSHI",
+   "explanation": "Moshi hutoka kwenye moto."
+  },
+  {
+   "id": "asili_008",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Mlima mrefu kuliko yote barani Afrika ni upi?",
+   "options": [
+    "KILIMANJARO",
+    "MERU",
+    "RUWENZORI",
+    "ULUGURU"
+   ],
+   "correctAnswer": "KILIMANJARO",
+   "explanation": "Kilimanjaro ndio mlima mrefu zaidi Afrika."
+  },
+  {
+   "id": "asili_009",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Hewa inayovuma na kutikisa miti huitwaje?",
+   "options": [
+    "UPEPO",
+    "MVUA",
+    "MOTO",
+    "UDONGO"
+   ],
+   "correctAnswer": "UPEPO",
+   "explanation": "Upepo ni hewa inayovuma."
+  },
+  {
+   "id": "asili_010",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Maji mengi ya chumvi yanayozunguka nchi kavu huitwaje?",
+   "options": [
+    "BAHARI",
+    "ZIWA",
+    "MTO",
+    "KISIMA"
+   ],
+   "correctAnswer": "BAHARI",
+   "explanation": "Bahari ina maji ya chumvi."
+  },
+  {
+   "id": "asili_011",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Maji yanayotiririka kutoka milimani kwenda baharini huitwaje?",
+   "options": [
+    "MTO",
+    "ZIWA",
+    "BAHARI",
+    "KISIMA"
+   ],
+   "correctAnswer": "MTO",
+   "explanation": "Mto hutiririka kuelekea ziwani au baharini."
+  },
+  {
+   "id": "asili_012",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Ziwa kubwa kuliko yote Afrika, lililo karibu na Mwanza, ni lipi?",
+   "options": [
+    "VIKTORIA",
+    "TANGANYIKA",
+    "NYASA",
+    "RUKWA"
+   ],
+   "correctAnswer": "VIKTORIA",
+   "explanation": "Ziwa Viktoria ndilo ziwa kubwa zaidi Afrika."
+  },
+  {
+   "id": "asili_013",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Sehemu kubwa yenye miti mingi sana huitwaje?",
+   "options": [
+    "MSITU",
+    "JANGWA",
+    "BAHARI",
+    "SHAMBA"
+   ],
+   "correctAnswer": "MSITU",
+   "explanation": "Msitu una miti mingi sana."
+  },
+  {
+   "id": "asili_014",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Sehemu kavu yenye mchanga mwingi na mvua chache sana huitwaje?",
+   "options": [
+    "JANGWA",
+    "MSITU",
+    "ZIWA",
+    "BONDE"
+   ],
+   "correctAnswer": "JANGWA",
+   "explanation": "Jangwa ni kavu na lina mchanga mwingi."
+  },
+  {
+   "id": "asili_015",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Rangi ya anga siku isiyo na mawingu ni ipi?",
+   "options": [
+    "BLUU",
+    "NYEKUNDU",
+    "KIJIVU",
+    "KAHAWIA"
+   ],
+   "correctAnswer": "BLUU",
+   "explanation": "Anga safi lina rangi ya bluu."
+  },
+  {
+   "id": "asili_016",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Mti mkubwa wenye shina nene sana unaoishi miaka mingi ni upi?",
+   "options": [
+    "MBUYU",
+    "MNAZI",
+    "MWEMBE",
+    "MCHUNGWA"
+   ],
+   "correctAnswer": "MBUYU",
+   "explanation": "Mbuyu una shina nene na huishi miaka mingi sana."
+  },
+  {
+   "id": "asili_017",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Wakati jua linapochomoza asubuhi huitwaje?",
+   "options": [
+    "MAAWIO",
+    "MACHWEO",
+    "USIKU",
+    "ADHUHURI"
+   ],
+   "correctAnswer": "MAAWIO",
+   "explanation": "Maawio ni jua linapochomoza."
+  },
+  {
+   "id": "asili_018",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Wakati jua linapozama jioni huitwaje?",
+   "options": [
+    "MACHWEO",
+    "MAAWIO",
+    "ALFAJIRI",
+    "ASUBUHI"
+   ],
+   "correctAnswer": "MACHWEO",
+   "explanation": "Machweo ni jua linapozama."
+  },
+  {
+   "id": "asili_019",
+   "category": "asili",
+   "difficulty": 2,
+   "question": "Ardhi iliyozungukwa na maji pande zote huitwaje?",
+   "options": [
+    "KISIWA",
+    "BONDE",
+    "MLIMA",
+    "JANGWA"
+   ],
+   "correctAnswer": "KISIWA",
+   "explanation": "Kisiwa kimezungukwa na maji pande zote."
+  },
+  {
+   "id": "asili_020",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Kipindi cha mvua nyingi za muda mrefu huitwaje?",
+   "options": [
+    "MASIKA",
+    "KIANGAZI",
+    "MCHANA",
+    "ALFAJIRI"
+   ],
+   "correctAnswer": "MASIKA",
+   "explanation": "Masika ni msimu wa mvua ndefu."
+  },
+  {
+   "id": "asili_021",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Kipindi cha jua kali na ukame huitwaje?",
+   "options": [
+    "KIANGAZI",
+    "MASIKA",
+    "VULI",
+    "USIKU"
+   ],
+   "correctAnswer": "KIANGAZI",
+   "explanation": "Kiangazi ni msimu wa jua kali na ukame."
+  },
+  {
+   "id": "asili_022",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Mvua fupi zinazonyesha kati ya Oktoba na Desemba huitwaje?",
+   "options": [
+    "VULI",
+    "MASIKA",
+    "KIANGAZI",
+    "KIPUPWE"
+   ],
+   "correctAnswer": "VULI",
+   "explanation": "Vuli ni mvua fupi za mwisho wa mwaka."
+  },
+  {
+   "id": "asili_023",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Rangi nyingi zinazojipinda angani baada ya mvua huitwaje?",
+   "options": [
+    "UPINDE WA MVUA",
+    "MAWINGU",
+    "NYOTA",
+    "UKUNGU"
+   ],
+   "correctAnswer": "UPINDE WA MVUA",
+   "explanation": "Upinde wa mvua huonekana jua likiangaza baada ya mvua."
+  },
+  {
+   "id": "asili_024",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Kitu cheupe na baridi kinachofunika kilele cha Kilimanjaro ni nini?",
+   "options": [
+    "THELUJI",
+    "MCHANGA",
+    "MAJANI",
+    "MOTO"
+   ],
+   "correctAnswer": "THELUJI",
+   "explanation": "Kilele cha Kilimanjaro kina theluji."
+  },
+  {
+   "id": "asili_025",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Wingu zito la chini linalofunika ardhi asubuhi na kuzuia kuona mbali huitwaje?",
+   "options": [
+    "UKUNGU",
+    "UPEPO",
+    "MVUA",
+    "JUA"
+   ],
+   "correctAnswer": "UKUNGU",
+   "explanation": "Ukungu huzuia kuona mbali asubuhi."
+  },
+  {
+   "id": "asili_026",
+   "category": "asili",
+   "difficulty": 3,
+   "question": "Mlima unaotoa moto na majivu kutoka ndani ya ardhi huitwaje?",
+   "options": [
+    "VOLKANO",
+    "BONDE",
+    "KISIWA",
+    "PANGO"
+   ],
+   "correctAnswer": "VOLKANO",
+   "explanation": "Volkano hutoa moto na majivu."
+  },
+  {
+   "id": "kazi_001",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayetibu wagonjwa hospitalini ni nani?",
+   "options": [
+    "DAKTARI",
+    "MWALIMU",
+    "DEREVA",
+    "MPISHI"
+   ],
+   "correctAnswer": "DAKTARI",
+   "explanation": "Daktari hutibu wagonjwa."
+  },
+  {
+   "id": "kazi_002",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayefundisha wanafunzi shuleni ni nani?",
+   "options": [
+    "MWALIMU",
+    "DAKTARI",
+    "MKULIMA",
+    "FUNDI"
+   ],
+   "correctAnswer": "MWALIMU",
+   "explanation": "Mwalimu hufundisha wanafunzi."
+  },
+  {
+   "id": "kazi_003",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayeendesha gari au basi ni nani?",
+   "options": [
+    "DEREVA",
+    "MPISHI",
+    "ASKARI",
+    "MVUVI"
+   ],
+   "correctAnswer": "DEREVA",
+   "explanation": "Dereva huendesha gari."
+  },
+  {
+   "id": "kazi_004",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayelima shamba na kupanda mazao ni nani?",
+   "options": [
+    "MKULIMA",
+    "MVUVI",
+    "DEREVA",
+    "MWALIMU"
+   ],
+   "correctAnswer": "MKULIMA",
+   "explanation": "Mkulima hulima shamba."
+  },
+  {
+   "id": "kazi_005",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayevua samaki baharini au ziwani ni nani?",
+   "options": [
+    "MVUVI",
+    "MKULIMA",
+    "SEREMALA",
+    "MSHONAJI"
+   ],
+   "correctAnswer": "MVUVI",
+   "explanation": "Mvuvi huvua samaki."
+  },
+  {
+   "id": "kazi_006",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayepika chakula hotelini ni nani?",
+   "options": [
+    "MPISHI",
+    "MUUGUZI",
+    "SEREMALA",
+    "DEREVA"
+   ],
+   "correctAnswer": "MPISHI",
+   "explanation": "Mpishi hupika chakula."
+  },
+  {
+   "id": "kazi_007",
+   "category": "kazi",
+   "difficulty": 1,
+   "question": "Mtu anayesoma shuleni ni nani?",
+   "options": [
+    "MWANAFUNZI",
+    "MWALIMU",
+    "DAKTARI",
+    "DEREVA"
+   ],
+   "correctAnswer": "MWANAFUNZI",
+   "explanation": "Mwanafunzi husoma shuleni."
+  },
+  {
+   "id": "kazi_008",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayeshona nguo kwa cherehani ni nani?",
+   "options": [
+    "MSHONAJI",
+    "SEREMALA",
+    "MVUVI",
+    "MWALIMU"
+   ],
+   "correctAnswer": "MSHONAJI",
+   "explanation": "Mshonaji hushona nguo."
+  },
+  {
+   "id": "kazi_009",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Fundi anayetengeneza meza na viti kwa mbao ni nani?",
+   "options": [
+    "SEREMALA",
+    "MSHONAJI",
+    "MPISHI",
+    "DAKTARI"
+   ],
+   "correctAnswer": "SEREMALA",
+   "explanation": "Seremala hufanya kazi ya mbao."
+  },
+  {
+   "id": "kazi_010",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayewasaidia madaktari kuwahudumia wagonjwa ni nani?",
+   "options": [
+    "MUUGUZI",
+    "DEREVA",
+    "MKULIMA",
+    "MVUVI"
+   ],
+   "correctAnswer": "MUUGUZI",
+   "explanation": "Muuguzi huwahudumia wagonjwa hospitalini."
+  },
+  {
+   "id": "kazi_011",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayelinda usalama na kukamata wahalifu ni nani?",
+   "options": [
+    "ASKARI",
+    "MPISHI",
+    "MSHONAJI",
+    "MKULIMA"
+   ],
+   "correctAnswer": "ASKARI",
+   "explanation": "Askari hulinda usalama wa watu."
+  },
+  {
+   "id": "kazi_012",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayeuza na kununua bidhaa ili apate faida ni nani?",
+   "options": [
+    "MFANYABIASHARA",
+    "MWANAFUNZI",
+    "MVUVI",
+    "DAKTARI"
+   ],
+   "correctAnswer": "MFANYABIASHARA",
+   "explanation": "Mfanyabiashara hununua na kuuza bidhaa."
+  },
+  {
+   "id": "kazi_013",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayechunga ng'ombe na mbuzi malishoni ni nani?",
+   "options": [
+    "MCHUNGAJI",
+    "MVUVI",
+    "SEREMALA",
+    "DEREVA"
+   ],
+   "correctAnswer": "MCHUNGAJI",
+   "explanation": "Mchungaji huchunga mifugo."
+  },
+  {
+   "id": "kazi_014",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayeendesha ndege angani ni nani?",
+   "options": [
+    "RUBANI",
+    "DEREVA",
+    "NAHODHA",
+    "MKULIMA"
+   ],
+   "correctAnswer": "RUBANI",
+   "explanation": "Rubani huendesha ndege."
+  },
+  {
+   "id": "kazi_015",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayeongoza meli au jahazi baharini ni nani?",
+   "options": [
+    "NAHODHA",
+    "RUBANI",
+    "MWALIMU",
+    "MPISHI"
+   ],
+   "correctAnswer": "NAHODHA",
+   "explanation": "Nahodha huongoza chombo baharini."
+  },
+  {
+   "id": "kazi_016",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Fundi anayejenga kuta za nyumba kwa matofali ni nani?",
+   "options": [
+    "MWASHI",
+    "MSHONAJI",
+    "MVUVI",
+    "RUBANI"
+   ],
+   "correctAnswer": "MWASHI",
+   "explanation": "Mwashi hujenga kwa matofali."
+  },
+  {
+   "id": "kazi_017",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayecheza mpira uwanjani ni nani?",
+   "options": [
+    "MCHEZAJI",
+    "MWIMBAJI",
+    "MWANDISHI",
+    "HAKIMU"
+   ],
+   "correctAnswer": "MCHEZAJI",
+   "explanation": "Mchezaji hucheza mpira."
+  },
+  {
+   "id": "kazi_018",
+   "category": "kazi",
+   "difficulty": 2,
+   "question": "Mtu anayeimba nyimbo mbele ya watu ni nani?",
+   "options": [
+    "MWIMBAJI",
+    "MCHEZAJI",
+    "MPISHI",
+    "MVUVI"
+   ],
+   "correctAnswer": "MWIMBAJI",
+   "explanation": "Mwimbaji huimba nyimbo."
+  },
+  {
+   "id": "kazi_019",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Mtu anayeandika habari kwa ajili ya gazeti au redio ni nani?",
+   "options": [
+    "MWANDISHI WA HABARI",
+    "MWASHI",
+    "MCHUNGAJI",
+    "NAHODHA"
+   ],
+   "correctAnswer": "MWANDISHI WA HABARI",
+   "explanation": "Mwandishi wa habari huandika na kutangaza habari."
+  },
+  {
+   "id": "kazi_020",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Mtu anayewatetea watu mahakamani ni nani?",
+   "options": [
+    "WAKILI",
+    "HAKIMU",
+    "MWALIMU",
+    "MKULIMA"
+   ],
+   "correctAnswer": "WAKILI",
+   "explanation": "Wakili humtetea mteja wake mahakamani."
+  },
+  {
+   "id": "kazi_021",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Mtu anayesikiliza na kuamua kesi mahakamani ni nani?",
+   "options": [
+    "HAKIMU",
+    "WAKILI",
+    "ASKARI",
+    "MWANAFUNZI"
+   ],
+   "correctAnswer": "HAKIMU",
+   "explanation": "Hakimu huamua kesi mahakamani."
+  },
+  {
+   "id": "kazi_022",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Mtu anayenyoa na kukata nywele ni nani?",
+   "options": [
+    "KINYOZI",
+    "MSHONAJI",
+    "MPISHI",
+    "RUBANI"
+   ],
+   "correctAnswer": "KINYOZI",
+   "explanation": "Kinyozi hunyoa nywele."
+  },
+  {
+   "id": "kazi_023",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Fundi anayetengeneza majembe na visu kwa chuma na moto ni nani?",
+   "options": [
+    "MHUNZI",
+    "SEREMALA",
+    "MWASHI",
+    "MFINYANZI"
+   ],
+   "correctAnswer": "MHUNZI",
+   "explanation": "Mhunzi hufua vyuma kwa moto."
+  },
+  {
+   "id": "kazi_024",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Fundi anayetengeneza vyungu kwa udongo ni nani?",
+   "options": [
+    "MFINYANZI",
+    "MHUNZI",
+    "KINYOZI",
+    "WAKILI"
+   ],
+   "correctAnswer": "MFINYANZI",
+   "explanation": "Mfinyanzi hufinyanga vyungu kwa udongo."
+  },
+  {
+   "id": "kazi_025",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Daktari anayetibu meno huitwaje?",
+   "options": [
+    "DAKTARI WA MENO",
+    "MUUGUZI",
+    "KINYOZI",
+    "SEREMALA"
+   ],
+   "correctAnswer": "DAKTARI WA MENO",
+   "explanation": "Daktari wa meno hutibu meno."
+  },
+  {
+   "id": "kazi_026",
+   "category": "kazi",
+   "difficulty": 3,
+   "question": "Fundi anayetengeneza magari yaliyoharibika ni nani?",
+   "options": [
+    "FUNDI MAGARI",
+    "KINYOZI",
+    "MPISHI",
+    "MWALIMU"
+   ],
+   "correctAnswer": "FUNDI MAGARI",
+   "explanation": "Fundi magari hutengeneza magari mabovu."
+  },
+  {
+   "id": "lugha_001",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Kinyume cha “kubwa” ni kipi?",
+   "options": [
+    "NDOGO",
+    "REFU",
+    "NZURI",
+    "PANA"
+   ],
+   "correctAnswer": "NDOGO",
+   "explanation": "Kubwa na ndogo ni vinyume."
+  },
+  {
+   "id": "lugha_002",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Kinyume cha “juu” ni kipi?",
+   "options": [
+    "CHINI",
+    "MBELE",
+    "NDANI",
+    "KANDO"
+   ],
+   "correctAnswer": "CHINI",
+   "explanation": "Juu na chini ni vinyume."
+  },
+  {
+   "id": "lugha_003",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Kinyume cha “moto” ni kipi?",
+   "options": [
+    "BARIDI",
+    "JOTO",
+    "KALI",
+    "KAVU"
+   ],
+   "correctAnswer": "BARIDI",
+   "explanation": "Moto na baridi ni vinyume."
+  },
+  {
+   "id": "lugha_004",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Kinyume cha “mchana” ni kipi?",
+   "options": [
+    "USIKU",
+    "ASUBUHI",
+    "JIONI",
+    "ADHUHURI"
+   ],
+   "correctAnswer": "USIKU",
+   "explanation": "Mchana na usiku ni vinyume."
+  },
+  {
+   "id": "lugha_005",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Kinyume cha “ndiyo” ni kipi?",
+   "options": [
+    "HAPANA",
+    "SAWA",
+    "ASANTE",
+    "KARIBU"
+   ],
+   "correctAnswer": "HAPANA",
+   "explanation": "Ndiyo na hapana ni vinyume."
+  },
+  {
+   "id": "lugha_006",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Siku inayokuja baada ya leo huitwaje?",
+   "options": [
+    "KESHO",
+    "JANA",
+    "JUZI",
+    "LEO"
+   ],
+   "correctAnswer": "KESHO",
+   "explanation": "Kesho ni siku baada ya leo."
+  },
+  {
+   "id": "lugha_007",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Siku iliyopita, kabla ya leo, huitwaje?",
+   "options": [
+    "JANA",
+    "KESHO",
+    "KESHOKUTWA",
+    "SASA"
+   ],
+   "correctAnswer": "JANA",
+   "explanation": "Jana ni siku iliyopita."
+  },
+  {
+   "id": "lugha_008",
+   "category": "lugha",
+   "difficulty": 1,
+   "question": "Rangi ya maziwa ni ipi?",
+   "options": [
+    "NYEUPE",
+    "NYEUSI",
+    "NYEKUNDU",
+    "KIJANI"
+   ],
+   "correctAnswer": "NYEUPE",
+   "explanation": "Maziwa ni meupe."
+  },
+  {
+   "id": "lugha_009",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Wingi wa “mtoto” ni upi?",
+   "options": [
+    "WATOTO",
+    "WATU",
+    "VITU",
+    "MITI"
+   ],
+   "correctAnswer": "WATOTO",
+   "explanation": "Mtoto mmoja, watoto wengi."
+  },
+  {
+   "id": "lugha_010",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Wingi wa “kitabu” ni upi?",
+   "options": [
+    "VITABU",
+    "VITU",
+    "VIATU",
+    "VIKOMBE"
+   ],
+   "correctAnswer": "VITABU",
+   "explanation": "Kitabu kimoja, vitabu vingi."
+  },
+  {
+   "id": "lugha_011",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Wingi wa “mti” ni upi?",
+   "options": [
+    "MITI",
+    "WATU",
+    "VITI",
+    "MAJI"
+   ],
+   "correctAnswer": "MITI",
+   "explanation": "Mti mmoja, miti mingi."
+  },
+  {
+   "id": "lugha_012",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Kinyume cha “rafiki” ni kipi?",
+   "options": [
+    "ADUI",
+    "JIRANI",
+    "NDUGU",
+    "MGENI"
+   ],
+   "correctAnswer": "ADUI",
+   "explanation": "Rafiki na adui ni vinyume."
+  },
+  {
+   "id": "lugha_013",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Kinyume cha “kufungua” ni kipi?",
+   "options": [
+    "KUFUNGA",
+    "KUFUNDISHA",
+    "KUFUA",
+    "KUFIKA"
+   ],
+   "correctAnswer": "KUFUNGA",
+   "explanation": "Kufungua na kufunga ni vinyume."
+  },
+  {
+   "id": "lugha_014",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Kinyume cha “kuingia” ni kipi?",
+   "options": [
+    "KUTOKA",
+    "KUKAA",
+    "KULALA",
+    "KUJA"
+   ],
+   "correctAnswer": "KUTOKA",
+   "explanation": "Kuingia na kutoka ni vinyume."
+  },
+  {
+   "id": "lugha_015",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Kinyume cha “kununua” ni kipi?",
+   "options": [
+    "KUUZA",
+    "KULIPA",
+    "KUBEBA",
+    "KUPIKA"
+   ],
+   "correctAnswer": "KUUZA",
+   "explanation": "Kununua na kuuza ni vinyume."
+  },
+  {
+   "id": "lugha_016",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Neno lenye maana sawa na “haraka” ni lipi?",
+   "options": [
+    "UPESI",
+    "POLEPOLE",
+    "KESHO",
+    "ZAMANI"
+   ],
+   "correctAnswer": "UPESI",
+   "explanation": "Haraka na upesi yana maana moja."
+  },
+  {
+   "id": "lugha_017",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Kinyume cha “mzee” ni kipi?",
+   "options": [
+    "KIJANA",
+    "BIBI",
+    "BABU",
+    "MKUBWA"
+   ],
+   "correctAnswer": "KIJANA",
+   "explanation": "Mzee na kijana ni vinyume."
+  },
+  {
+   "id": "lugha_018",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Unasema nini mtu akikupa zawadi?",
+   "options": [
+    "ASANTE",
+    "POLE",
+    "KWAHERI",
+    "SAMAHANI"
+   ],
+   "correctAnswer": "ASANTE",
+   "explanation": "Tunasema asante tunapopewa kitu."
+  },
+  {
+   "id": "lugha_019",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Unasema nini mtu akiumia au akipata shida?",
+   "options": [
+    "POLE",
+    "HONGERA",
+    "ASANTE",
+    "KARIBU"
+   ],
+   "correctAnswer": "POLE",
+   "explanation": "Pole huonyesha huruma."
+  },
+  {
+   "id": "lugha_020",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Unasema nini rafiki akifaulu mtihani?",
+   "options": [
+    "HONGERA",
+    "POLE",
+    "SAMAHANI",
+    "KWAHERI"
+   ],
+   "correctAnswer": "HONGERA",
+   "explanation": "Hongera humpongeza aliyefaulu."
+  },
+  {
+   "id": "lugha_021",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Unasema nini ukimkosea mtu?",
+   "options": [
+    "SAMAHANI",
+    "HONGERA",
+    "KARIBU",
+    "MARAHABA"
+   ],
+   "correctAnswer": "SAMAHANI",
+   "explanation": "Samahani huomba msamaha."
+  },
+  {
+   "id": "lugha_022",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Mlo wa asubuhi huitwaje?",
+   "options": [
+    "KIFUNGUA KINYWA",
+    "CHAKULA CHA JIONI",
+    "FUTARI",
+    "DAKU"
+   ],
+   "correctAnswer": "KIFUNGUA KINYWA",
+   "explanation": "Kifungua kinywa ni mlo wa asubuhi."
+  },
+  {
+   "id": "lugha_023",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Namba inayofuata baada ya “tisa” ni ipi?",
+   "options": [
+    "KUMI",
+    "NANE",
+    "SABA",
+    "MIA"
+   ],
+   "correctAnswer": "KUMI",
+   "explanation": "Baada ya tisa huja kumi."
+  },
+  {
+   "id": "lugha_024",
+   "category": "lugha",
+   "difficulty": 2,
+   "question": "Siku inayofuata baada ya Jumapili ni ipi?",
+   "options": [
+    "JUMATATU",
+    "JUMAMOSI",
+    "IJUMAA",
+    "ALHAMISI"
+   ],
+   "correctAnswer": "JUMATATU",
+   "explanation": "Jumatatu huja baada ya Jumapili."
+  },
+  {
+   "id": "lugha_025",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Kinyume cha “tajiri” ni kipi?",
+   "options": [
+    "MASKINI",
+    "MFALME",
+    "MGENI",
+    "MZEE"
+   ],
+   "correctAnswer": "MASKINI",
+   "explanation": "Tajiri na maskini ni vinyume."
+  },
+  {
+   "id": "lugha_026",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Wingi wa “jicho” ni upi?",
+   "options": [
+    "MACHO",
+    "MAJANI",
+    "MAYAI",
+    "MATUNDA"
+   ],
+   "correctAnswer": "MACHO",
+   "explanation": "Jicho moja, macho mawili."
+  },
+  {
+   "id": "lugha_027",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Wingi wa “jino” ni upi?",
+   "options": [
+    "MENO",
+    "MAJINA",
+    "MAJI",
+    "MANENO"
+   ],
+   "correctAnswer": "MENO",
+   "explanation": "Jino moja, meno mengi."
+  },
+  {
+   "id": "lugha_028",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Kinyume cha “kweli” ni kipi?",
+   "options": [
+    "UONGO",
+    "HAKI",
+    "AMANI",
+    "FURAHA"
+   ],
+   "correctAnswer": "UONGO",
+   "explanation": "Kweli na uongo ni vinyume."
+  },
+  {
+   "id": "lugha_029",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Kinyume cha “furaha” ni kipi?",
+   "options": [
+    "HUZUNI",
+    "AMANI",
+    "UPENDO",
+    "BAHATI"
+   ],
+   "correctAnswer": "HUZUNI",
+   "explanation": "Furaha na huzuni ni vinyume."
+  },
+  {
+   "id": "lugha_030",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Siku inayofuata baada ya Alhamisi ni ipi?",
+   "options": [
+    "IJUMAA",
+    "JUMANNE",
+    "JUMAMOSI",
+    "JUMATANO"
+   ],
+   "correctAnswer": "IJUMAA",
+   "explanation": "Ijumaa huja baada ya Alhamisi."
+  },
+  {
+   "id": "lugha_031",
+   "category": "lugha",
+   "difficulty": 3,
+   "question": "Siku mbili baada ya leo huitwaje?",
+   "options": [
+    "KESHOKUTWA",
+    "JUZI",
+    "JANA",
+    "KESHO"
+   ],
+   "correctAnswer": "KESHOKUTWA",
+   "explanation": "Keshokutwa ni siku ya pili baada ya leo."
+  },
+  {
+   "id": "tanzania_001",
+   "category": "tanzania",
+   "difficulty": 1,
+   "question": "Mji mkuu wa Tanzania ni upi?",
+   "options": [
+    "DODOMA",
+    "DAR ES SALAAM",
+    "ARUSHA",
+    "MWANZA"
+   ],
+   "correctAnswer": "DODOMA",
+   "explanation": "Dodoma ndio makao makuu ya nchi."
+  },
+  {
+   "id": "tanzania_002",
+   "category": "tanzania",
+   "difficulty": 1,
+   "question": "Lugha ya taifa ya Tanzania ni ipi?",
+   "options": [
+    "KISWAHILI",
+    "KIINGEREZA",
+    "KIARABU",
+    "KIFARANSA"
+   ],
+   "correctAnswer": "KISWAHILI",
+   "explanation": "Kiswahili ni lugha ya taifa ya Tanzania."
+  },
+  {
+   "id": "tanzania_003",
+   "category": "tanzania",
+   "difficulty": 1,
+   "question": "Fedha ya Tanzania huitwaje?",
+   "options": [
+    "SHILINGI",
+    "DOLA",
+    "RANDI",
+    "NAIRA"
+   ],
+   "correctAnswer": "SHILINGI",
+   "explanation": "Tanzania hutumia shilingi."
+  },
+  {
+   "id": "tanzania_004",
+   "category": "tanzania",
+   "difficulty": 1,
+   "question": "Ukiulizwa “Habari za asubuhi?”, jibu la kawaida ni lipi?",
+   "options": [
+    "NZURI",
+    "HAPANA",
+    "KESHO",
+    "POLE"
+   ],
+   "correctAnswer": "NZURI",
+   "explanation": "Jibu la habari ni “nzuri”."
+  },
+  {
+   "id": "tanzania_005",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Salamu ya heshima kwa mtu mzima ni ipi?",
+   "options": [
+    "SHIKAMOO",
+    "MAMBO",
+    "VIPI",
+    "POA"
+   ],
+   "correctAnswer": "SHIKAMOO",
+   "explanation": "Shikamoo ni salamu ya heshima kwa wakubwa."
+  },
+  {
+   "id": "tanzania_006",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Jibu la salamu “Shikamoo” ni lipi?",
+   "options": [
+    "MARAHABA",
+    "POA",
+    "SALAMA",
+    "ASANTE"
+   ],
+   "correctAnswer": "MARAHABA",
+   "explanation": "Mtu mzima hujibu “marahaba”."
+  },
+  {
+   "id": "tanzania_007",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Kisiwa kinachojulikana kwa karafuu na Mji Mkongwe ni kipi?",
+   "options": [
+    "ZANZIBAR",
+    "MAFIA",
+    "UKEREWE",
+    "LAMU"
+   ],
+   "correctAnswer": "ZANZIBAR",
+   "explanation": "Mji Mkongwe uko Zanzibar."
+  },
+  {
+   "id": "tanzania_008",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Mbuga maarufu ambako nyumbu huhama kila mwaka ni ipi?",
+   "options": [
+    "SERENGETI",
+    "MIKUMI",
+    "RUAHA",
+    "SAADANI"
+   ],
+   "correctAnswer": "SERENGETI",
+   "explanation": "Serengeti ni maarufu kwa uhamaji wa nyumbu."
+  },
+  {
+   "id": "tanzania_009",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Rais wa kwanza wa Tanzania alikuwa nani?",
+   "options": [
+    "NYERERE",
+    "MWINYI",
+    "MKAPA",
+    "KIKWETE"
+   ],
+   "correctAnswer": "NYERERE",
+   "explanation": "Mwalimu Julius Nyerere alikuwa rais wa kwanza."
+  },
+  {
+   "id": "tanzania_010",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Siku ya Uhuru wa Tanzania Bara ni tarehe ngapi?",
+   "options": [
+    "9 DESEMBA",
+    "26 APRILI",
+    "7 JULAI",
+    "12 JANUARI"
+   ],
+   "correctAnswer": "9 DESEMBA",
+   "explanation": "Tanganyika ilipata uhuru tarehe 9 Desemba 1961."
+  },
+  {
+   "id": "tanzania_011",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Pikipiki zinazobeba abiria kwa malipo huitwaje?",
+   "options": [
+    "BODABODA",
+    "BAJAJI",
+    "DALADALA",
+    "TEKSI"
+   ],
+   "correctAnswer": "BODABODA",
+   "explanation": "Bodaboda ni pikipiki za abiria."
+  },
+  {
+   "id": "tanzania_012",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Mabasi madogo ya abiria mijini huitwaje?",
+   "options": [
+    "DALADALA",
+    "BODABODA",
+    "BAJAJI",
+    "TRENI"
+   ],
+   "correctAnswer": "DALADALA",
+   "explanation": "Daladala ni mabasi madogo ya abiria."
+  },
+  {
+   "id": "tanzania_013",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Gari dogo la magurudumu matatu linalobeba abiria huitwaje?",
+   "options": [
+    "BAJAJI",
+    "DALADALA",
+    "BODABODA",
+    "LORI"
+   ],
+   "correctAnswer": "BAJAJI",
+   "explanation": "Bajaji ina magurudumu matatu."
+  },
+  {
+   "id": "tanzania_014",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Ziwa refu lililo magharibi mwa Tanzania, karibu na Kigoma, ni lipi?",
+   "options": [
+    "TANGANYIKA",
+    "VIKTORIA",
+    "NYASA",
+    "EYASI"
+   ],
+   "correctAnswer": "TANGANYIKA",
+   "explanation": "Kigoma iko kando ya Ziwa Tanganyika."
+  },
+  {
+   "id": "tanzania_015",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Mji wa kaskazini ulio chini ya Mlima Meru ni upi?",
+   "options": [
+    "ARUSHA",
+    "TANGA",
+    "MTWARA",
+    "MBEYA"
+   ],
+   "correctAnswer": "ARUSHA",
+   "explanation": "Arusha iko chini ya Mlima Meru."
+  },
+  {
+   "id": "tanzania_016",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Mji unaoitwa “Mji wa Miamba”, ulio kando ya Ziwa Viktoria, ni upi?",
+   "options": [
+    "MWANZA",
+    "MOROGORO",
+    "IRINGA",
+    "LINDI"
+   ],
+   "correctAnswer": "MWANZA",
+   "explanation": "Mwanza hujulikana kama Rock City, Mji wa Miamba."
+  },
+  {
+   "id": "tanzania_017",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Bahari inayopakana na Tanzania upande wa mashariki ni ipi?",
+   "options": [
+    "BAHARI YA HINDI",
+    "BAHARI YA SHAMU",
+    "BAHARI YA ATLANTIKI",
+    "BAHARI NYEUSI"
+   ],
+   "correctAnswer": "BAHARI YA HINDI",
+   "explanation": "Pwani ya Tanzania iko kwenye Bahari ya Hindi."
+  },
+  {
+   "id": "tanzania_018",
+   "category": "tanzania",
+   "difficulty": 2,
+   "question": "Timu mbili kubwa za Kariakoo ni Simba na ipi?",
+   "options": [
+    "YANGA",
+    "MTIBWA",
+    "KAGERA",
+    "NAMUNGO"
+   ],
+   "correctAnswer": "YANGA",
+   "explanation": "Simba na Yanga ndio timu za Kariakoo."
+  },
+  {
+   "id": "tanzania_019",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Siku ya Muungano wa Tanganyika na Zanzibar ni tarehe ngapi?",
+   "options": [
+    "26 APRILI",
+    "9 DESEMBA",
+    "7 JULAI",
+    "1 MEI"
+   ],
+   "correctAnswer": "26 APRILI",
+   "explanation": "Muungano ulifanyika tarehe 26 Aprili 1964."
+  },
+  {
+   "id": "tanzania_020",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Kitambaa cha wanawake chenye maandishi ya methali au msemo huitwaje?",
+   "options": [
+    "KANGA",
+    "KITENGE",
+    "KANZU",
+    "KOFIA"
+   ],
+   "correctAnswer": "KANGA",
+   "explanation": "Kanga huwa na msemo ulioandikwa juu yake."
+  },
+  {
+   "id": "tanzania_021",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Vazi refu jeupe la wanaume, huvaliwa hasa Ijumaa na sikukuu, huitwaje?",
+   "options": [
+    "KANZU",
+    "KANGA",
+    "KITENGE",
+    "SHUKA"
+   ],
+   "correctAnswer": "KANZU",
+   "explanation": "Kanzu ni vazi refu jeupe la wanaume."
+  },
+  {
+   "id": "tanzania_022",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Kitambaa chekundu kinachovaliwa na Wamasai huitwaje?",
+   "options": [
+    "SHUKA",
+    "KANZU",
+    "KANGA",
+    "KOFIA"
+   ],
+   "correctAnswer": "SHUKA",
+   "explanation": "Wamasai huvaa shuka nyekundu."
+  },
+  {
+   "id": "tanzania_023",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Mchezo wa mashimo na kete unaochezwa ubaoni huitwaje?",
+   "options": [
+    "BAO",
+    "DRAFTI",
+    "KARATA",
+    "MPIRA"
+   ],
+   "correctAnswer": "BAO",
+   "explanation": "Bao huchezwa kwa mashimo na kete."
+  },
+  {
+   "id": "tanzania_024",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Mlo wa jioni wa kufungua saumu wakati wa Ramadhani huitwaje?",
+   "options": [
+    "FUTARI",
+    "DAKU",
+    "KIFUNGUA KINYWA",
+    "CHAI"
+   ],
+   "correctAnswer": "FUTARI",
+   "explanation": "Futari huliwa wakati wa kufungua saumu."
+  },
+  {
+   "id": "tanzania_025",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Mlo wa usiku wa manane kabla ya kuanza saumu huitwaje?",
+   "options": [
+    "DAKU",
+    "FUTARI",
+    "CHAKULA CHA MCHANA",
+    "UJI"
+   ],
+   "correctAnswer": "DAKU",
+   "explanation": "Daku huliwa kabla ya alfajiri wakati wa Ramadhani."
+  },
+  {
+   "id": "tanzania_026",
+   "category": "tanzania",
+   "difficulty": 3,
+   "question": "Rangi za bendera ya Tanzania ni zipi?",
+   "options": [
+    "KIJANI, NJANO, NYEUSI, BLUU",
+    "NYEKUNDU, NYEUPE, KIJANI",
+    "NYEUSI, NYEKUNDU, KIJANI",
+    "BLUU, NJANO, NYEUPE"
+   ],
+   "correctAnswer": "KIJANI, NJANO, NYEUSI, BLUU",
+   "explanation": "Bendera ya Tanzania ina kijani, njano, nyeusi na bluu."
+  },
+  {
+   "id": "maarifa_001",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Mwaka mmoja una miezi mingapi?",
+   "options": [
+    "KUMI NA MBILI",
+    "KUMI",
+    "SABA",
+    "ISHIRINI"
+   ],
+   "correctAnswer": "KUMI NA MBILI",
+   "explanation": "Mwaka una miezi kumi na mbili."
+  },
+  {
+   "id": "maarifa_002",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Binadamu ana miguu mingapi?",
+   "options": [
+    "MIWILI",
+    "MITATU",
+    "MINNE",
+    "MITANO"
+   ],
+   "correctAnswer": "MIWILI",
+   "explanation": "Binadamu ana miguu miwili."
+  },
+  {
+   "id": "maarifa_003",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Tunasikia kwa kutumia kiungo gani?",
+   "options": [
+    "MASIKIO",
+    "MACHO",
+    "PUA",
+    "MIKONO"
+   ],
+   "correctAnswer": "MASIKIO",
+   "explanation": "Tunasikia kwa masikio."
+  },
+  {
+   "id": "maarifa_004",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Tunaona kwa kutumia kiungo gani?",
+   "options": [
+    "MACHO",
+    "MASIKIO",
+    "MDOMO",
+    "MIGUU"
+   ],
+   "correctAnswer": "MACHO",
+   "explanation": "Tunaona kwa macho."
+  },
+  {
+   "id": "maarifa_005",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Tunanusa harufu kwa kutumia kiungo gani?",
+   "options": [
+    "PUA",
+    "MACHO",
+    "MDOMO",
+    "MASIKIO"
+   ],
+   "correctAnswer": "PUA",
+   "explanation": "Pua hunusa harufu."
+  },
+  {
+   "id": "maarifa_006",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Mbili jumlisha mbili ni ngapi?",
+   "options": [
+    "NNE",
+    "TATU",
+    "TANO",
+    "SITA"
+   ],
+   "correctAnswer": "NNE",
+   "explanation": "2 + 2 = 4."
+  },
+  {
+   "id": "maarifa_007",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Mwezi wa kwanza wa mwaka ni upi?",
+   "options": [
+    "JANUARI",
+    "MACHI",
+    "JUNI",
+    "DESEMBA"
+   ],
+   "correctAnswer": "JANUARI",
+   "explanation": "Januari ni mwezi wa kwanza."
+  },
+  {
+   "id": "maarifa_008",
+   "category": "maarifa",
+   "difficulty": 1,
+   "question": "Wiki moja ina siku ngapi?",
+   "options": [
+    "SABA",
+    "TANO",
+    "SITA",
+    "NANE"
+   ],
+   "correctAnswer": "SABA",
+   "explanation": "Wiki ina siku saba."
+  },
+  {
+   "id": "maarifa_009",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Kumi toa tatu ni ngapi?",
+   "options": [
+    "SABA",
+    "SITA",
+    "NANE",
+    "TANO"
+   ],
+   "correctAnswer": "SABA",
+   "explanation": "10 − 3 = 7."
+  },
+  {
+   "id": "maarifa_010",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Saa moja ina dakika ngapi?",
+   "options": [
+    "SITINI",
+    "THELATHINI",
+    "MIA",
+    "KUMI"
+   ],
+   "correctAnswer": "SITINI",
+   "explanation": "Saa moja ina dakika sitini."
+  },
+  {
+   "id": "maarifa_011",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Siku moja ina saa ngapi?",
+   "options": [
+    "ISHIRINI NA NNE",
+    "KUMI NA MBILI",
+    "THELATHINI",
+    "KUMI"
+   ],
+   "correctAnswer": "ISHIRINI NA NNE",
+   "explanation": "Siku ina saa ishirini na nne."
+  },
+  {
+   "id": "maarifa_012",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Mama wa mama yako ni nani kwako?",
+   "options": [
+    "BIBI",
+    "SHANGAZI",
+    "MAMA MDOGO",
+    "DADA"
+   ],
+   "correctAnswer": "BIBI",
+   "explanation": "Mama wa mama yako ni bibi yako."
+  },
+  {
+   "id": "maarifa_013",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Dada wa baba yako huitwaje?",
+   "options": [
+    "SHANGAZI",
+    "BIBI",
+    "MJOMBA",
+    "BINAMU"
+   ],
+   "correctAnswer": "SHANGAZI",
+   "explanation": "Dada wa baba ni shangazi."
+  },
+  {
+   "id": "maarifa_014",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Kaka wa mama yako huitwaje?",
+   "options": [
+    "MJOMBA",
+    "BABU",
+    "SHANGAZI",
+    "BABA MDOGO"
+   ],
+   "correctAnswer": "MJOMBA",
+   "explanation": "Kaka wa mama ni mjomba."
+  },
+  {
+   "id": "maarifa_015",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Kiungo kinachosukuma damu mwilini ni kipi?",
+   "options": [
+    "MOYO",
+    "TUMBO",
+    "MAPAFU",
+    "KICHWA"
+   ],
+   "correctAnswer": "MOYO",
+   "explanation": "Moyo husukuma damu mwilini."
+  },
+  {
+   "id": "maarifa_016",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Tunapumua kwa kutumia viungo gani vilivyo kifuani?",
+   "options": [
+    "MAPAFU",
+    "MOYO",
+    "FIGO",
+    "INI"
+   ],
+   "correctAnswer": "MAPAFU",
+   "explanation": "Mapafu hutusaidia kupumua."
+  },
+  {
+   "id": "maarifa_017",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Kitu cheupe kinachotumika kuandika ubaoni darasani ni kipi?",
+   "options": [
+    "CHAKI",
+    "KALAMU",
+    "KIJIKO",
+    "KITANA"
+   ],
+   "correctAnswer": "CHAKI",
+   "explanation": "Mwalimu huandika ubaoni kwa chaki."
+  },
+  {
+   "id": "maarifa_018",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Pembetatu ina pande ngapi?",
+   "options": [
+    "TATU",
+    "NNE",
+    "TANO",
+    "SITA"
+   ],
+   "correctAnswer": "TATU",
+   "explanation": "Pembetatu ina pande tatu."
+  },
+  {
+   "id": "maarifa_019",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Rangi gani hupatikana ukichanganya njano na bluu?",
+   "options": [
+    "KIJANI",
+    "NYEKUNDU",
+    "ZAMBARAU",
+    "KAHAWIA"
+   ],
+   "correctAnswer": "KIJANI",
+   "explanation": "Njano na bluu hutoa kijani."
+  },
+  {
+   "id": "maarifa_020",
+   "category": "maarifa",
+   "difficulty": 2,
+   "question": "Mwezi wa mwisho wa mwaka ni upi?",
+   "options": [
+    "DESEMBA",
+    "JANUARI",
+    "NOVEMBA",
+    "OKTOBA"
+   ],
+   "correctAnswer": "DESEMBA",
+   "explanation": "Desemba ni mwezi wa mwisho."
+  },
+  {
+   "id": "maarifa_021",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Mtoto wa shangazi au mjomba wako huitwaje?",
+   "options": [
+    "BINAMU",
+    "MPWA",
+    "KITUKUU",
+    "SHEMEJI"
+   ],
+   "correctAnswer": "BINAMU",
+   "explanation": "Mtoto wa shangazi au mjomba ni binamu."
+  },
+  {
+   "id": "maarifa_022",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Kaka au dada wa mke au mume wako huitwaje?",
+   "options": [
+    "SHEMEJI",
+    "BINAMU",
+    "MPWA",
+    "BABU"
+   ],
+   "correctAnswer": "SHEMEJI",
+   "explanation": "Ndugu wa mwenzi wako ni shemeji."
+  },
+  {
+   "id": "maarifa_023",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Maji yakipozwa sana huganda na kuwa nini?",
+   "options": [
+    "BARAFU",
+    "MVUKE",
+    "MOSHI",
+    "CHUMVI"
+   ],
+   "correctAnswer": "BARAFU",
+   "explanation": "Maji huganda kuwa barafu."
+  },
+  {
+   "id": "maarifa_024",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Maji yakichemka sana hubadilika kuwa nini?",
+   "options": [
+    "MVUKE",
+    "BARAFU",
+    "MCHANGA",
+    "MAFUTA"
+   ],
+   "correctAnswer": "MVUKE",
+   "explanation": "Maji yanayochemka huwa mvuke."
+  },
+  {
+   "id": "maarifa_025",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Mraba una pande ngapi zilizo sawa?",
+   "options": [
+    "NNE",
+    "TATU",
+    "TANO",
+    "NANE"
+   ],
+   "correctAnswer": "NNE",
+   "explanation": "Mraba una pande nne zilizo sawa."
+  },
+  {
+   "id": "maarifa_026",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Sayari tunayoishi huitwaje?",
+   "options": [
+    "DUNIA",
+    "MIRIHI",
+    "ZUHURA",
+    "MWEZI"
+   ],
+   "correctAnswer": "DUNIA",
+   "explanation": "Tunaishi kwenye sayari ya Dunia."
+  },
+  {
+   "id": "maarifa_027",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Tanzania iko katika bara gani?",
+   "options": [
+    "AFRIKA",
+    "ASIA",
+    "ULAYA",
+    "AMERIKA"
+   ],
+   "correctAnswer": "AFRIKA",
+   "explanation": "Tanzania iko Afrika Mashariki."
+  },
+  {
+   "id": "maarifa_028",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Kitu kinachovuta vitu vya chuma huitwaje?",
+   "options": [
+    "SUMAKU",
+    "BETRI",
+    "TOCHI",
+    "KIOO"
+   ],
+   "correctAnswer": "SUMAKU",
+   "explanation": "Sumaku huvuta chuma."
+  },
+  {
+   "id": "maarifa_029",
+   "category": "maarifa",
+   "difficulty": 3,
+   "question": "Mia moja ukigawanya kwa nne ni ngapi?",
+   "options": [
+    "ISHIRINI NA TANO",
+    "ISHIRINI",
+    "THELATHINI",
+    "KUMI NA TANO"
+   ],
+   "correctAnswer": "ISHIRINI NA TANO",
+   "explanation": "100 ÷ 4 = 25."
+  }
+ ]
+}
