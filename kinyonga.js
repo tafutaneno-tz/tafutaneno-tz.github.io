@@ -126,7 +126,8 @@
     const space = ground - inner.bottom - 4;                  // free height between the last row of letters and the screen bottom
     const gi = K.host.grid ? K.host.grid() : null;
     const cs = gi && gi.n ? inner.width / gi.n : 60;
-    K.charH = Math.max(40, Math.min(66, space, cs * 1.3));
+    K.charH = Math.max(44, Math.min(82, space));        // as big as the room under the board allows
+    K.gridDepth = Math.min(1, cs * 1.25 / K.charH);   // shrinks to box size while walking on the letters
     const sameGrid = K.grid && gi && K.grid.n === gi.n;
     K.grid = gi && gi.n ? { left: inner.left, top: inner.top, cs, n: gi.n } : null;
     K.d = K.charH / META.charPx;
@@ -149,7 +150,7 @@
     if (K.lane === 'free') { K.lane = 'bot'; K.depth = 1; ghost(false); }
     if (K.zoom !== 1 && !(K.act && K.act.type === 'zoom')) { K.zoom = 1; K.sink = 0; }
     K.ground = K.lane === 'top' ? K.gTop : K.gBot;
-    if (K.lane === 'grid') { const q = cellPos(K.cell[0], K.cell[1]); K.x = q.x; K.ground = q.g; }
+    if (K.lane === 'grid') { const q = cellPos(K.cell[0], K.cell[1]); K.x = q.x; K.ground = q.g; K.depth = K.gridDepth; }
     K.el.style.width = K.w + 'px'; K.el.style.height = K.h + 'px';
     setLaneX();
     if (K.lane !== 'grid') K.x = Math.max(K.minX, Math.min(K.maxX, K.x));
@@ -232,12 +233,14 @@
       const p = Math.min(1, a.t / (a.ms / 1000)), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       K.x = a.x0 + (a.x1 - a.x0) * e; K.ground = a.g0 + (a.g1 - a.g0) * e;
       if (a.d0 === undefined) a.d0 = K.depth;
-      if (a.lane !== 'free') K.depth = a.d0 + (1 - a.d0) * e;
+      { const dt1 = a.lane === 'grid' ? K.gridDepth : a.lane === 'free' ? depthAt(a.g1) : 1; K.depth = a.d0 + (dt1 - a.d0) * e; }
       K.y = Math.sin(p * Math.PI) * K.charH * (a.h || .3);
       if (p >= 1) { K.y = 0; K.leaping = false; K.lane = a.lane; K.cell = a.cell || null; if (a.lane !== 'grid') { ghost(false); setLaneX(); } done = true; }
     } else if (a.type === 'walk2') {
       if (!a.on) { a.on = true; K.lane = 'free'; }
-      const dx = a.x1 - K.x, dg = a.g1 - K.ground, dist = Math.hypot(dx, dg), step = a.speed * dt * Math.max(.6, K.depth);
+      const hurry = !a.slowOnLetters && overLetters();
+      a.anim = hurry ? 'run' : (a.baseAnim || (a.baseAnim = a.anim));
+      const dx = a.x1 - K.x, dg = a.g1 - K.ground, dist = Math.hypot(dx, dg), step = a.speed * (hurry ? 1.9 : 1) * dt * Math.max(.6, K.depth);
       if (Math.abs(dx) > 2) K.face = Math.sign(dx);
       if (dist <= step) { K.x = a.x1; K.ground = a.g1; done = true; }
       else { K.x += dx / dist * step; K.ground += dg / dist * step; }
@@ -295,23 +298,88 @@
 
   /* ---------- free-time behaviour ---------- */
   function brain(now) {
-    if (!K.act && !K.queue.length && (K.lane === 'grid' || K.lane === 'free') && !K.leaping) { K.queue.push(A.wait(900), leaveGrid()); return; }
-    if (!K.act && !K.queue.length && K.zoom > 1.02) { K.queue.push({ type: 'zoom', to: 1, ms: 500, anim: 'idle', fps: 3 }); return; }   // never left standing on the letters
+    if (K.drag) return;
+    if (!K.act && !K.queue.length && K.lane === 'grid' && !K.leaping) { K.queue.push(A.wait(700), stepOff()); return; }   // never parked on the boxes
+    if (!K.act && !K.queue.length && K.zoom > 1.02) { K.queue.push({ type: 'zoom', to: 1, ms: 500, anim: 'idle', fps: 3 }); return; }
     if (K.act || K.queue.length || now < K.nextBrain) return;
     const r = Math.random();
-    if (!REDUCED && now - K.lastTouch > 8000 && now - K.lastZoom > 50000 && r < .12) { camera(); K.nextBrain = now + 9000; return; }
-    if (!REDUCED && r < .3) { roam(); K.nextBrain = now + rnd(5000, 9000); return; }
-    if (K.grid && !REDUCED && r < .45) { gridTrip(); K.nextBrain = now + rnd(5000, 9000); return; }
-    if (K.topOk && !REDUCED && r < .53) { travel(); K.nextBrain = now + rnd(4000, 7000); return; }
-    if (!REDUCED && now - K.lastSlip > 75000 && r < .58) slip();
-    else if (r < .68) K.queue.push(A.walk(randX()), A.wait(rnd(900, 2200)));
-    else if (r < .74 && !REDUCED) K.queue.push(A.run(randX()), A.wait(900));
-    else if (r < .80 && !REDUCED) K.queue.push(A.hopTo(Math.max(K.minX, Math.min(K.maxX, K.x + rnd(-1, 1) * K.w * 2))), A.wait(700));
-    else if (r < .82) K.queue.push(A.play('idle', 2200, 5));
-    else if (r < .88) K.queue.push(A.pose(pick(['think', 'magnify', 'peek', 'question']), 1800, { fx: 'wobble' }));
-    else if (r < .93) K.queue.push(A.jump(rnd(-1, 1) * K.w * .8));
-    else K.queue.push(A.pose('dance', 1400, { fx: 'bounce' }), A.pose('cheer', 900));
-    K.nextBrain = now + rnd(3500, 7500);
+    if (!REDUCED && now - K.lastTouch > 6000 && now - K.lastZoom > 30000 && r < .15) { camera(); K.nextBrain = now + 2000; return; }
+    if (!REDUCED && now - K.lastSlip > 60000 && r < .22) { slip(); K.nextBrain = now + 2000; return; }
+    explore();
+    K.nextBrain = now + rnd(600, 1600);
+  }
+
+  /* ---------- exploring: a new place every time (never ping-pong between two points) ---------- */
+  // places: above the board (photo / landscape), the top edge, the left and right sides, along a row of letters,
+  // down a column, over the boxes step by step, and the strip under the board
+  const ZONES = ['photo', 'topEdge', 'left', 'right', 'row', 'column', 'boxes', 'bottom', 'climb'];
+  function zoneOk(z) {
+    if (!K.innerBox) return z === 'bottom';
+    if (z === 'photo') return K.boardTop - K.freeTop > K.charH * .3;
+    if (z === 'climb') return K.topOk;
+    if (z === 'boxes' || z === 'row' || z === 'column') return !!K.grid;
+    return true;
+  }
+  const clampX = x => Math.max(-K.w * .1, Math.min(innerWidth - K.w * .9, x));
+  function explore() {
+    K.lastZones = K.lastZones || [];
+    let options = ZONES.filter(z => zoneOk(z) && !K.lastZones.includes(z));
+    if (!options.length) options = ZONES.filter(zoneOk);
+    // after a visit to the letters, the next stop is always off the letters (words are never hidden for long)
+    const ON = ['boxes', 'row', 'column', 'left', 'right'], prev = K.lastZones[K.lastZones.length - 1];
+    if (ON.includes(prev)) { const off = options.filter(z => !ON.includes(z)); if (off.length) options = off; }
+    if (REDUCED) options = options.filter(z => z === 'bottom' || z === 'photo' || z === 'topEdge');
+    // a little bias: more time on and around the board
+    const weights = { photo: 3, topEdge: 2.5, left: .6, right: .6, row: 1, column: .8, boxes: 1.6, bottom: 2, climb: 1 };
+    let sum = options.reduce((a, z) => a + (weights[z] || 1), 0), roll = Math.random() * sum, zone = options[0];
+    for (const z of options) { roll -= weights[z] || 1; if (roll <= 0) { zone = z; break; } }
+    K.lastZones.push(zone); if (K.lastZones.length > 3) K.lastZones.shift();
+    K.zone = zone;
+    if (K.lane === 'grid' && zone !== 'boxes') K.queue.push(stepOff());
+    const ib = K.innerBox, g = K.grid, after = () => {
+      const t = Math.random();
+      return t < .25 ? A.pose(pick(['magnify', 'think', 'question', 'peek']), 1400, { fx: 'wobble' })
+           : t < .5 ? A.play('talk', 1400, 9, { say: Math.random() < .45 ? pick(CHAT) : '' })
+           : t < .65 ? A.jump(rnd(-1, 1) * K.w * .5, .4)
+           : t < .75 ? A.pose('dance', 1100, { fx: 'bounce' })
+           : A.play('idle', 1100, 4);
+    };
+    const fast = Math.random() < .3, sp = fast ? { speed: K.charH * 2, anim: 'run', fps: 10 } : {};
+    switch (zone) {
+      case 'photo': K.queue.push(W2(clampX(rnd(0, innerWidth - K.w)), rnd(K.freeTop, K.boardTop - 4), 'free', sp), after()); break;
+      case 'topEdge': K.queue.push(W2(clampX(rnd(ib.left, ib.right - K.w)), K.boardTop + 3 * K.d, 'free', sp), after()); break;
+      case 'left': case 'right': {
+        const x = zone === 'left' ? -K.w * .1 : innerWidth - K.w * .9;
+        K.queue.push(W2(x, rnd(ib.top + K.charH * .8, ib.bottom), 'free', sp), A.pose('peek', 1000)); break;
+      }
+      case 'row': {     // walk between two rows of letters from one side to the other
+        const rr = Math.floor(rnd(1, g.n)), y = g.top + rr * g.cs + 2 * K.d;
+        const fromLeft = K.x + K.w / 2 < innerWidth / 2;
+        K.queue.push(W2(clampX(fromLeft ? ib.left - K.w * .3 : ib.right - K.w * .7), y), W2(clampX(fromLeft ? ib.right - K.w * .7 : ib.left - K.w * .3), y, 'free', { speed: K.charH * 1.4, slowOnLetters: true }), after()); break;
+      }
+      case 'column': {  // down (or up) a column of letters
+        const cc = Math.floor(rnd(0, g.n)), x = clampX(g.left + (cc + .5) * g.cs - K.w / 2);
+        const y1 = ib.top + K.charH * .8, y2 = ib.bottom;
+        const down = Math.random() < .5;
+        K.queue.push(W2(x, down ? y1 : y2), W2(x, down ? y2 : y1, 'free', { speed: K.charH * 1.3, slowOnLetters: true }), after()); break;
+      }
+      case 'boxes': gridTrip(); break;
+      case 'climb': travel(); break;
+      default: K.queue.push(W2(clampX(rnd(0, innerWidth - K.w)), K.gBot, 'bot', sp), after());
+    }
+  }
+  // the nearest spot off the letters: the top edge if it is closer, otherwise under the board
+  function stepOff(sayText) {
+    const ib = K.innerBox;
+    const feet = K.ground, toTop = ib ? Math.abs(feet - K.boardTop) < Math.abs(K.gBot - feet) : false;
+    if (toTop && K.boardTop - K.freeTop > K.charH * .3)
+      return { type: 'leap', lane: 'free', x1: clampX(K.x), g1: K.boardTop + 3 * K.d, ms: 700, h: .45, anim: 'jump', fps: 9, say: sayText || '' };
+    return { type: 'leap', lane: 'bot', ms: 750, h: .5, anim: 'jump', fps: 9, say: sayText || '' };
+  }
+  function overLetters() {
+    const ib = K.innerBox; if (!ib) return false;
+    const sc = S(), hw = K.charH * .7 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink;
+    return !(cx + hw / 2 <= ib.left || cx - hw / 2 >= ib.right || feet <= ib.top || feet - K.charH * sc >= ib.bottom);
   }
   // ---------- on the letter boxes: step from box to box, sit down, chat, then hop back down ----------
   const CHAT = ['Hapa ni pazuri!', 'Unaona neno lolote?', 'Mimi ni Kinyonga!', 'Herufi hizi ni nyingi!', 'Nimekaa kidogo.', 'Tafuta pamoja nami!', 'Je, umeliona hili?'];
@@ -341,16 +409,16 @@
     const free = freeCells() || [];
     const goal = target || (free.length ? pick(free) : at);
     let prev = at;
-    for (const st of steps(at, goal, 7)) { list.push(stepTo(st), A.wait(260)); prev = st; }
-    list.push(...(then || [A.pose('sit', 2200), A.play('talk', 1800, 9, { say: pick(CHAT) }), A.wait(800)]));
+    for (const st of steps(at, goal, target ? 7 : 4)) { list.push(stepTo(st), A.wait(200)); prev = st; }
+    list.push(...(then || [A.pose('sit', 1600), A.play('talk', 1500, 9, { say: pick(CHAT) })]));
     if (!then) {     // maybe a few more steps before going home
-      if (Math.random() < .5 && free.length) { const g2 = pick(free); for (const st of steps(prev, g2, 4)) list.push(stepTo(st), A.wait(260)); list.push(A.pose('think', 1500)); }
-      list.push(leaveGrid());
+      if (Math.random() < .2 && free.length) { const g2 = pick(free); for (const st of steps(prev, g2, 4)) list.push(stepTo(st), A.wait(260)); list.push(A.pose('think', 1500)); }
+      list.push(stepOff());
     }
     K.queue.push(...list);
     return true;
   }
-  function offGrid(sayText) { return K.lane === 'grid' || K.lane === 'free' || K.leaping ? [leaveGrid(sayText)] : []; }
+  function offGrid(sayText) { return K.lane === 'grid' || K.leaping || overLetters() ? [stepOff(sayText)] : []; }
   const offStage = offGrid;
 
   // ---------- roaming the whole screen: above the board, across it, along the sides, with depth ----------
@@ -429,7 +497,23 @@
       (host.parent || document.body).appendChild(layer);
       Object.assign(K, { layer, el: layer.querySelector('.kin'), spr: layer.querySelector('.kin-spr'), hit: layer.querySelector('.kin-hit'), bubble: layer.querySelector('.kin-say') });
       layer.style.visibility = 'hidden';
-      K.hit.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); Kin.tap(); });
+      // press: tap = a reaction; press and move = carry Kinyonga somewhere else
+      K.hit.addEventListener('pointerdown', e => {
+        e.preventDefault(); e.stopPropagation();
+        K.press = { id: e.pointerId, x: e.clientX, y: e.clientY };
+        try { K.hit.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+      addEventListener('pointermove', e => {
+        if (K.drag && e.pointerId === K.drag.id) { moveDrag(e.clientX, e.clientY); return; }
+        if (K.press && e.pointerId === K.press.id && Math.hypot(e.clientX - K.press.x, e.clientY - K.press.y) > 7) { startDrag(K.press.x, K.press.y, e.pointerId); K.press = null; moveDrag(e.clientX, e.clientY); return; }
+        if (K.lp && e.pointerId === K.lp.id && Math.hypot(e.clientX - K.lp.x, e.clientY - K.lp.y) > 10) { clearTimeout(K.lp.t); K.lp = null; Kin.activity(); }   // it was a letter swipe after all
+      }, { passive: true });
+      const up = e => {
+        if (K.drag && e.pointerId === K.drag.id) { endDrag(); return; }
+        if (K.press && e.pointerId === K.press.id) { K.press = null; if (e.type === 'pointerup') Kin.tap(); return; }
+        if (K.lp && e.pointerId === K.lp.id) { clearTimeout(K.lp.t); K.lp = null; if (e.type === 'pointerup') Kin.tap(); }
+      };
+      addEventListener('pointerup', up); addEventListener('pointercancel', up);
       // both sprite sheets must be loaded before Kinyonga shows up
       let n = 0; const done = () => { if (++n === 2) { K.ready = true;
           const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url; K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
@@ -440,8 +524,8 @@
     layout,
     activity(fromEvent) {
       K.lastTouch = performance.now();
-      if (!fromEvent && K.ready && (K.lane === 'grid' || K.lane === 'free' || K.zoom > 1.02 || (K.leaping && K.act && K.act.lane !== 'bot'))) {
-        K.hintStage = 0; ghost(true); doNow([leaveGrid(Math.random() < .5 ? 'Samahani! Nakupisha!' : '')], 900); return;
+      if (!fromEvent && K.ready && !K.drag && (K.lane === 'grid' || K.zoom > 1.02 || overLetters() || (K.leaping && K.act && K.act.lane === 'grid'))) {
+        K.hintStage = 0; ghost(true); doNow([stepOff(Math.random() < .5 ? 'Samahani! Nakupisha!' : '')], 900); return;
       }
       const sleeping = K.hintStage >= 4 && K.act && (K.act.anim === 'sleep' || K.act.pose === 'yawn');
       K.hintStage = 0;
@@ -475,7 +559,7 @@
     },
     tap() {
       if (!K.ready || K.y > 2) return;
-      Kin.activity();
+      Kin.activity(true);
       try { K.host.sfx && K.host.sfx.select && K.host.sfx.select(); } catch (_) {}
       const T = SAY.tap, choices = [
         () => [A.play('shy', 1500, 9, { say: T.shy, hearts: 2 })],
@@ -491,9 +575,52 @@
       K.lastTap = i;
       doNow(choices[i](), 1400);
     },
+    // a finger went down on the letter board: if it is on Kinyonga, a long press picks him up
+    // (a normal swipe still selects letters; returns true while it waits to see which one it is)
+    boardDown(e) {
+      if (!K.ready || K.drag || K.layer.style.display === 'none') return false;
+      const sc = S(), hw = K.charH * .8 * sc, hh = K.charH * .95 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink - K.y;
+      if (e.clientX < cx - hw / 2 || e.clientX > cx + hw / 2 || e.clientY < feet - hh || e.clientY > feet) return false;
+      clearTimeout(K.lp && K.lp.t);
+      K.lp = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      K.lp.t = setTimeout(() => {
+        if (!K.lp) return; const lp = K.lp; K.lp = null;
+        try { K.host.cancelSelection && K.host.cancelSelection(); } catch (_) {}
+        startDrag(lp.x, lp.y, lp.id);
+      }, 380);
+      return true;
+    },
     // exposed for tests
-    _K: K, _say: say, _camera: () => camera(), _roam: () => roam(), _gridTrip: () => gridTrip()
+    _K: K, _say: say, _camera: () => camera(), _roam: () => roam(), _gridTrip: () => gridTrip(), _over: () => overLetters()
   };
+
+  /* ---------- carrying Kinyonga with a finger ---------- */
+  const DRAG_SAY = ['Lo! Unanipeleka wapi?', 'Wee! Naruka!', 'Hehe! Polepole!', 'Niweke chini!'];
+  const DROP_SAY = ['Asante!', 'Nimefika!', 'Hapa ni pazuri!', 'Tuendelee!'];
+  function startDrag(px, py, id) {
+    const feet = K.ground + K.sink;
+    doNow([], 0); K.queue = [];
+    K.leaping = false; K.climbing = false; K.zoom = 1; K.sink = 0; K.y = 0; ghost(false);
+    K.lane = 'free'; K.cell = null;
+    K.drag = { id, ox: K.x + K.w / 2 - px, oy: feet - py, lx: px };
+    K.act = start({ type: 'drag', anim: 'surprise', fps: 8, hold: true, ms: 1e12, fx: 'wobble', say: pick(DRAG_SAY), sayMs: 1600 });
+    K.lastTouch = performance.now(); K.hintStage = 0;
+  }
+  function moveDrag(px, py) {
+    const d = K.drag; if (!d) return;
+    const sc = S();
+    const minG = Math.max(K.charH * sc + 4, 0), maxG = innerHeight - 2;
+    K.x = Math.max(-K.w * .1, Math.min(innerWidth - K.w * .9, px + d.ox - K.w / 2));
+    K.ground = Math.max(minG, Math.min(maxG, py + d.oy));
+    K.depth = depthAt(K.ground);
+    if (Math.abs(px - d.lx) > 3) { K.face = Math.sign(px - d.lx); d.lx = px; }
+  }
+  function endDrag() {
+    K.drag = null; K.act = null;
+    if (K.ground >= K.gBot - 2) { K.lane = 'bot'; K.ground = K.gBot; K.depth = 1; setLaneX(); } else K.lane = 'free';
+    K.queue = [A.jump(0, .3), A.play('talk', 1300, 9, { say: pick(DROP_SAY), sayMs: 1500 }), A.wait(500)];
+    K.nextBrain = performance.now() + 900; K.lastTouch = performance.now();
+  }
 
   /* ---------- main loop: one requestAnimationFrame, paused when hidden or not playing ---------- */
   function loop() {
@@ -514,6 +641,7 @@
   }
   // the player has not touched anything for a while: offer help, then point at a letter
   function stuck(now) {
+    if (K.drag) return;
     if (!K.lastTouch) K.lastTouch = now;
     const idle = now - K.lastTouch;
     if (K.hintStage === 0 && idle > 20000) {
@@ -528,7 +656,7 @@
         const hx = K.grid.left + (hc[1] + .5) * K.grid.cs;
         doNow([], 6000);
         gridTrip(nb, [A.pose('point', 2600, { fx: 'bounce', say: pick(SAY.hint2), sayMs: 2600,
-          onStart: () => { K.face = hx >= K.x + K.w / 2 ? 1 : -1; flash(); } }), A.wait(700), leaveGrid()]);
+          onStart: () => { K.face = hx >= K.x + K.w / 2 ? 1 : -1; flash(); } }), A.wait(700), stepOff()]);
       } else doNow([A.pose('point', 2200, { fx: 'bounce', say: pick(SAY.hint2), sayMs: 2600, onStart: flash })], 2200);
     } else if (K.hintStage === 2 && idle > 60000) {
       K.hintStage = 3; doNow([A.pose('cheer', 1600, { fx: 'bounce', say: pick(SAY.cheer), sayMs: 2400 })], 1600);
