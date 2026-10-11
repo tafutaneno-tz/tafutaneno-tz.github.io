@@ -46,6 +46,7 @@
   const CSS = `
   .kin-layer{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
   .kin{position:absolute;left:0;top:0;will-change:transform;pointer-events:none;transform-origin:50% 100%}
+  .kin-bob{width:100%;height:100%;transform-origin:50% 100%}
   .kin-spr{width:100%;height:100%;background-repeat:no-repeat;transform-origin:50% 100%}
   .kin-spr.flip{transform:scaleX(-1)}
   .kin-hit{position:absolute;left:0;top:0;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
@@ -239,8 +240,8 @@
     } else if (a.type === 'walk2') {
       if (!a.on) { a.on = true; K.lane = 'free'; }
       const hurry = !a.slowOnLetters && overLetters();
-      a.anim = hurry ? 'run' : (a.baseAnim || (a.baseAnim = a.anim));
-      const dx = a.x1 - K.x, dg = a.g1 - K.ground, dist = Math.hypot(dx, dg), step = a.speed * (hurry ? 1.9 : 1) * dt * Math.max(.6, K.depth);
+      a.fast = hurry ? 1.5 : 1;          // a little quicker over the letters, but still walking
+      const dx = a.x1 - K.x, dg = a.g1 - K.ground, dist = Math.hypot(dx, dg), step = a.speed * a.fast * dt * Math.max(.6, K.depth);
       if (Math.abs(dx) > 2) K.face = Math.sign(dx);
       if (dist <= step) { K.x = a.x1; K.ground = a.g1; done = true; }
       else { K.x += dx / dist * step; K.ground += dg / dist * step; }
@@ -273,11 +274,44 @@
     if (a.hold) i = Math.min(i, n - 1);
     return ['a', seq[from + (i % n)]];
   }
-  function draw() { const [k, i] = frameFor(K.act || K.idleAct); setFrame(k, i); }
+  // walking: the face stays turned to the player (the front walking picture with a step bounce);
+  // now and then it turns its head to look where it is going (the side walking frames)
+  const isWalk = a => !!a && !a.pose && a.anim === 'walk' && ((a.type === 'move' && !a.hop) || a.type === 'walk2' || a.type === 'leap' || a.type === 'zoom');
+  function walkRate(a) {          // steps per second, from the speed
+    if (a.type === 'leap') return 1000 / a.ms * 1.6;
+    if (a.type === 'zoom') return 1.7;
+    return Math.max(1.3, Math.min(3.2, (a.speed || K.charH) * (a.fast || 1) / (K.charH * .45)));
+  }
+  function stepAnim(dt, now) {
+    const a = K.act, wk = isWalk(a) && !REDUCED;
+    if (wk) {
+      if (!K.wasWalking) { K.nextTurn = now + rnd(1600, 3000); K.turnUntil = 0; }
+      if (now > K.nextTurn) { K.turnUntil = now + rnd(650, 1050); K.nextTurn = K.turnUntil + rnd(2400, 4500); }
+      K.turning = now < K.turnUntil;
+      K.stepPh = (K.stepPh || 0) + dt * walkRate(a);
+    } else { K.turning = false; }
+    K.wasWalking = wk;
+    K.front = wk && !K.turning;
+    let tf = '';
+    if (wk) {
+      const s = Math.sin(K.stepPh * Math.PI), up = Math.abs(s), lean = K.front ? 5 : 2.5;
+      const q = (1 - up) * .035;   // tiny squash when the foot lands
+      tf = `translateY(${(-up * K.charH * .07).toFixed(1)}px) rotate(${(s * lean).toFixed(2)}deg) scale(${(1 + q).toFixed(3)},${(1 - q).toFixed(3)})`;
+    }
+    if (tf !== K.bobTf) { K.bob.style.transform = tf; K.bobTf = tf; }
+  }
+  function draw() {
+    if (K.front) {
+      const close = K.zoom > 1.35 && K.closeReady;
+      setFrame(close ? 'c' : 'p', close ? META.close.index.winkwalk : META.poses.index.winkwalk);
+      return;
+    }
+    const [k, i] = frameFor(K.act || K.idleAct); setFrame(k, i);
+  }
 
   const A = {
-    walk: to => ({ type: 'move', to, speed: K.charH * .7, anim: 'walk', fps: 7 }),
-    run: to => ({ type: 'move', to, speed: K.charH * 1.7, anim: 'run', fps: 10 }),
+    walk: to => ({ type: 'move', to, speed: K.charH * .65, anim: 'walk', fps: 7 }),
+    run: to => ({ type: 'move', to, speed: K.charH * .95, anim: 'walk', fps: 8 }),
     hopTo: to => ({ type: 'move', to, speed: K.charH * 1.1, anim: 'jump', fps: 9, hop: .8 }),
     jump: (dx, h) => ({ type: 'jump', ms: 950, dx: dx || 0, height: h || .45, anim: 'jump', fps: 9 }),
     climb: to => ({ type: 'climb', to, ms: 1500, anim: 'jump', fps: 8 }),
@@ -330,7 +364,7 @@
     if (ON.includes(prev)) { const off = options.filter(z => !ON.includes(z)); if (off.length) options = off; }
     if (REDUCED) options = options.filter(z => z === 'bottom' || z === 'photo' || z === 'topEdge');
     // a little bias: more time on and around the board
-    const weights = { photo: 3, topEdge: 2.5, left: .6, right: .6, row: 1, column: .8, boxes: 1.6, bottom: 2, climb: 1 };
+    const weights = { photo: 3, topEdge: 2.5, left: .5, right: .5, row: .8, column: .6, boxes: 1.3, bottom: 2.4, climb: 1.2 };
     let sum = options.reduce((a, z) => a + (weights[z] || 1), 0), roll = Math.random() * sum, zone = options[0];
     for (const z of options) { roll -= weights[z] || 1; if (roll <= 0) { zone = z; break; } }
     K.lastZones.push(zone); if (K.lastZones.length > 3) K.lastZones.shift();
@@ -344,7 +378,7 @@
            : t < .75 ? A.pose('dance', 1100, { fx: 'bounce' })
            : A.play('idle', 1100, 4);
     };
-    const fast = Math.random() < .3, sp = fast ? { speed: K.charH * 2, anim: 'run', fps: 10 } : {};
+    const sp = {};
     switch (zone) {
       case 'photo': K.queue.push(W2(clampX(rnd(0, innerWidth - K.w)), rnd(K.freeTop, K.boardTop - 4), 'free', sp), after()); break;
       case 'topEdge': K.queue.push(W2(clampX(rnd(ib.left, ib.right - K.w)), K.boardTop + 3 * K.d, 'free', sp), after()); break;
@@ -355,13 +389,15 @@
       case 'row': {     // walk between two rows of letters from one side to the other
         const rr = Math.floor(rnd(1, g.n)), y = g.top + rr * g.cs + 2 * K.d;
         const fromLeft = K.x + K.w / 2 < innerWidth / 2;
-        K.queue.push(W2(clampX(fromLeft ? ib.left - K.w * .3 : ib.right - K.w * .7), y), W2(clampX(fromLeft ? ib.right - K.w * .7 : ib.left - K.w * .3), y, 'free', { speed: K.charH * 1.4, slowOnLetters: true }), after()); break;
+        const part = rnd(.4, .6) * (ib.right - ib.left);          // only part of the row, then off the letters again
+        const xa = fromLeft ? ib.left - K.w * .3 : ib.right - K.w * .7, xb = fromLeft ? xa + part : xa - part;
+        K.queue.push(W2(clampX(xa), y), W2(clampX(xb), y, 'free', { speed: K.charH * 1.05, slowOnLetters: true }), A.play('talk', 900, 9)); break;
       }
       case 'column': {  // down (or up) a column of letters
         const cc = Math.floor(rnd(0, g.n)), x = clampX(g.left + (cc + .5) * g.cs - K.w / 2);
-        const y1 = ib.top + K.charH * .8, y2 = ib.bottom;
+        const half = (ib.bottom - ib.top) * rnd(.4, .55), y1 = Math.random() < .5 ? ib.top + K.charH * .8 : ib.bottom - half, y2 = Math.min(ib.bottom, y1 + half);
         const down = Math.random() < .5;
-        K.queue.push(W2(x, down ? y1 : y2), W2(x, down ? y2 : y1, 'free', { speed: K.charH * 1.3, slowOnLetters: true }), after()); break;
+        K.queue.push(W2(x, down ? y1 : y2), W2(x, down ? y2 : y1, 'free', { speed: K.charH * 1.0, slowOnLetters: true }), A.play('talk', 900, 9)); break;
       }
       case 'boxes': gridTrip(); break;
       case 'climb': travel(); break;
@@ -426,7 +462,7 @@
     const t = Math.max(0, Math.min(1, (g - K.freeTop) / Math.max(1, K.gBot - K.freeTop)));
     return .72 + .28 * t;
   }
-  const W2 = (x1, g1, lane, extra) => Object.assign({ type: 'walk2', x1, g1, lane: lane || 'free', speed: K.charH * 1.1, anim: 'walk', fps: 8 }, extra || {});
+  const W2 = (x1, g1, lane, extra) => Object.assign({ type: 'walk2', x1, g1, lane: lane || 'free', speed: K.charH * .85, anim: 'walk', fps: 8 }, extra || {});
   function roam() {
     if (!K.innerBox) return false;
     const pts = [], ib = K.innerBox, xr = () => rnd(-K.w * .1, innerWidth - K.w * .9);
@@ -455,7 +491,7 @@
     const Z = Math.max(1.8, Math.min(3.4, innerHeight * .4 / K.charH));
     const [p1, s1] = pick(CAMERA), [p2, s2] = pick(CAMERA.filter(c => c[0] !== p1));
     K.lastZoom = performance.now();
-    K.queue.push(W2(innerWidth / 2 - K.w / 2, K.gBot, 'bot', { speed: K.charH * 1.2 }),
+    K.queue.push(W2(innerWidth / 2 - K.w / 2, K.gBot, 'bot', { speed: K.charH * .9 }),
       { type: 'zoom', to: Z, ms: 1300, anim: 'walk', fps: 6 },
       A.pose(p1, 1700, { say: s1, sayMs: 1700, hearts: p1 === 'kiss' ? 4 : 0 }),
       A.pose(p2, 1500, { say: s2, sayMs: 1500, hearts: p2 === 'kiss' ? 4 : 0 }),
@@ -493,9 +529,9 @@
       K.host = host;
       const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
       const layer = document.createElement('div'); layer.className = 'kin-layer'; layer.setAttribute('aria-hidden', 'true');
-      layer.innerHTML = '<div class="kin"><div class="kin-spr"></div></div><div class="kin-hit"></div><div class="kin-say"></div>';
+      layer.innerHTML = '<div class="kin"><div class="kin-bob"><div class="kin-spr"></div></div></div><div class="kin-hit"></div><div class="kin-say"></div>';
       (host.parent || document.body).appendChild(layer);
-      Object.assign(K, { layer, el: layer.querySelector('.kin'), spr: layer.querySelector('.kin-spr'), hit: layer.querySelector('.kin-hit'), bubble: layer.querySelector('.kin-say') });
+      Object.assign(K, { layer, el: layer.querySelector('.kin'), spr: layer.querySelector('.kin-spr'), bob: layer.querySelector('.kin-bob'), hit: layer.querySelector('.kin-hit'), bubble: layer.querySelector('.kin-say') });
       layer.style.visibility = 'hidden';
       // press: tap = a reaction; press and move = carry Kinyonga somewhere else
       K.hit.addEventListener('pointerdown', e => {
@@ -591,7 +627,7 @@
       return true;
     },
     // exposed for tests
-    _K: K, _say: say, _camera: () => camera(), _roam: () => roam(), _gridTrip: () => gridTrip(), _over: () => overLetters()
+    _K: K, _say: say, _camera: () => camera(), _roam: () => roam(), _gridTrip: () => gridTrip(), _over: () => overLetters(), _isWalk: isWalk
   };
 
   /* ---------- carrying Kinyonga with a finger ---------- */
@@ -618,8 +654,23 @@
   function endDrag() {
     K.drag = null; K.act = null;
     if (K.ground >= K.gBot - 2) { K.lane = 'bot'; K.ground = K.gBot; K.depth = 1; setLaneX(); } else K.lane = 'free';
-    K.queue = [A.jump(0, .3), A.play('talk', 1300, 9, { say: pick(DROP_SAY), sayMs: 1500 }), A.wait(500)];
+    K.queue = [A.jump(0, .3), A.play('talk', 1300, 9, { say: pick(DROP_SAY), sayMs: 1500 })].concat(stroll(K.x, K.ground, K.lane === 'bot'));
     K.nextBrain = performance.now() + 900; K.lastTouch = performance.now();
+  }
+  // a few slow steps around one spot, stopping to look at the player in between
+  function stroll(hx, hg, onBot) {
+    const out = [], n = 3 + (Math.random() < .5 ? 1 : 0), R = K.charH;
+    for (let i = 0; i < n; i++) {
+      const x = clampX(hx + rnd(-1.4, 1.4) * R);
+      const g = onBot ? K.gBot : Math.max(K.freeTop, Math.min(K.gBot, hg + rnd(-.5, .5) * R));
+      out.push(W2(x, g, onBot ? 'bot' : 'free', { speed: R * .6, slowOnLetters: true }));
+      const t = Math.random();
+      out.push(t < .3 ? A.pose(pick(['think', 'question', 'magnify']), 1300, { fx: 'wobble' })
+             : t < .55 ? A.play('talk', 1300, 9, { say: Math.random() < .4 ? pick(CHAT) : '' })
+             : t < .7 ? A.pose('point', 1100)
+             : A.play('idle', 1100, 4));
+    }
+    return out;
   }
 
   /* ---------- main loop: one requestAnimationFrame, paused when hidden or not playing ---------- */
@@ -634,7 +685,7 @@
       const dt = K.last ? Math.min(.06, (now - K.last) / 1000) : 0; K.last = now;
       if (!K.act && !K.queue.length) { K.idleAct = K.idleAct || { anim: 'idle', fps: 3, t: 0 }; K.idleAct.t += dt; }
       update(dt); brain(now); stuck(now);
-      draw(); place();
+      stepAnim(dt, now); draw(); place();
       K.raf = requestAnimationFrame(tick);
     };
     K.raf = requestAnimationFrame(tick);
