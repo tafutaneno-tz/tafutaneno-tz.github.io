@@ -464,7 +464,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script src="haraka.js?v=2"></script>
-<script src="kinyonga.js?v=3"></script>
+<script src="kinyonga.js?v=4"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1827,6 +1827,8 @@ if(window.Kinyonga) Kinyonga.init({
   grid: ()=>{ if(!words||!size) return {n:0,free:[]}; const busy=new Set(); words.forEach(w=>{ if(!w.found) w.cells.forEach(([r,c])=>busy.add(r*size+c)); });
               const free=[]; for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(!busy.has(r*size+c)) free.push([r,c]); return {n:size,free}; },
   hintCell: ()=>{ const w=words && words.find(x=>!x.found); return w ? w.cells[0] : null; },
+  // things it must never take touches from
+  protect: ()=>['homeBtn','bonusBtn','musicBtnGame','hintBtn','category'].map(id=>$(id)).filter(Boolean).map(e=>e.getBoundingClientRect()),
   isPlaying: ()=> document.querySelector('.app').style.visibility!=='hidden' && !$('overlay').classList.contains('show')
                   && !$('sheet').classList.contains('show') && !(window.Haraka && Haraka.isOpen()),
   softHint: ()=>{ const w=words && words.find(x=>!x.found); if(!w) return; const e=cellEl(w.cells[0][0],w.cells[0][1]);

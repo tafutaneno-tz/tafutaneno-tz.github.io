@@ -13,7 +13,7 @@
 (function () {
   'use strict';
 
-  const VER = 1;
+  const VER = 1;   // sprite sheet version (bump when the .webp files change)
   const META = {
     cell: [176, 140], k: 1.6, charPx: 112,         // character is ~112px tall inside a 176×140 cell
     anim: { cols: 12, url: 'images/kinyonga-anim.webp?v=' + VER, seq: {
@@ -23,7 +23,8 @@
       shy: [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86], joke: [87, 88, 89, 90, 91], surprise: [92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102] } },
     poses: { cols: 6, url: 'images/kinyonga-poses.webp?v=' + VER, index: {
       magnify: 0, point: 1, winkwalk: 2, cheer: 3, dash: 4, think: 5, shock: 6, slip: 7, dizzy: 8, kiss: 9, laughpoint: 10, cry: 11,
-      cool: 12, dance: 13, peek: 14, crawl: 15, yawn: 16, sit: 17, question: 18, confetti: 19, dash2: 20, sleep: 21 } }
+      cool: 12, dance: 13, peek: 14, crawl: 15, yawn: 16, sit: 17, question: 18, confetti: 19, dash2: 20, sleep: 21 } },
+    close: { cols: 4, url: 'images/kinyonga-close.webp?v=' + VER, index: { point: 0, winkwalk: 1, cheer: 2, kiss: 3, laughpoint: 4, magnify: 5, think: 6, shock: 7 } }
   };
 
   const SAY = {
@@ -44,7 +45,7 @@
 
   const CSS = `
   .kin-layer{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
-  .kin{position:absolute;left:0;top:0;will-change:transform;pointer-events:none}
+  .kin{position:absolute;left:0;top:0;will-change:transform;pointer-events:none;transform-origin:50% 100%}
   .kin-spr{width:100%;height:100%;background-repeat:no-repeat;transform-origin:50% 100%}
   .kin-spr.flip{transform:scaleX(-1)}
   .kin-hit{position:absolute;left:0;top:0;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -73,7 +74,8 @@
     ready: false, host: null, layer: null, el: null, spr: null, hit: null, bubble: null,
     d: .5, w: 88, h: 70, charH: 56, ground: 0, minX: 4, maxX: 200,
     x: 40, y: 0, face: 1, lane: 'bot', cell: null, grid: null, leaping: false, gBot: 0, gTop: 0, topOk: false, climbing: false, queue: [], act: null, frameKey: '', raf: 0, last: 0,
-    lastTouch: 0, hintStage: 0, nextBrain: 0, lastSlip: 0, lastSay: 0, sayT: 0, busyUntil: 0
+    lastTouch: 0, hintStage: 0, nextBrain: 0, lastSlip: 0, lastSay: 0, sayT: 0, busyUntil: 0,
+    depth: 1, zoom: 1, sink: 0, closeReady: false, lastZoom: -1e9, protect: [], freeTop: 0
   };
 
   /* ---------- drawing ---------- */
@@ -85,6 +87,11 @@
       s.backgroundImage = `url(${META.anim.url})`;
       s.backgroundSize = `${META.anim.cols * CW * d}px auto`;
       s.backgroundPosition = `${-c * CW * d}px ${-r * CH * d}px`;
+    } else if (kind === 'c') {
+      const c = idx % META.close.cols, r = Math.floor(idx / META.close.cols), d = K.d;
+      s.backgroundImage = `url(${META.close.url})`;
+      s.backgroundSize = `${META.close.cols * CW * d}px auto`;
+      s.backgroundPosition = `${-c * CW * d}px ${-r * CH * d}px`;
     } else {
       const c = idx % META.poses.cols, r = Math.floor(idx / META.poses.cols), d = K.d;   // pose cells are k× bigger, shown at the same size
       s.backgroundImage = `url(${META.poses.url})`;
@@ -92,16 +99,20 @@
       s.backgroundPosition = `${-c * CW * d}px ${-r * CH * d}px`;
     }
   }
+  const S = () => K.depth * K.zoom;
   function place() {
-    const top = K.ground - K.h - K.y;
-    K.el.style.transform = `translate3d(${K.x.toFixed(1)}px,${top.toFixed(1)}px,0)`;
+    const sc = S(), feet = K.ground + K.sink;
+    const top = feet - K.h - K.y;
+    K.el.style.transform = `translate3d(${K.x.toFixed(1)}px,${top.toFixed(1)}px,0) scale(${sc.toFixed(3)})`;
     K.spr.classList.toggle('flip', K.face < 0);
-    // the touch area covers only the body and is switched off while it is in the air (never blocks letters)
-    const hw = K.charH * .85, hh = K.charH * .95;
-    const hx = K.x + K.w / 2 - hw / 2, hy = K.ground - hh;
+    // the touch area covers only the body; it is off in the air, near the camera, and wherever it would cover
+    // letters or buttons – a finger there always reaches the game underneath
+    const hw = K.charH * .85 * sc, hh = K.charH * .95 * sc;
+    const hx = K.x + K.w / 2 - hw / 2, hy = feet - K.y - hh;
     Object.assign(K.hit.style, { width: hw + 'px', height: hh + 'px', transform: `translate3d(${hx}px,${hy}px,0)` });
-    // on the letters it never takes touches: a finger there always reaches the letter underneath
-    K.hit.style.pointerEvents = (K.y > 2 || K.climbing || K.leaping || K.lane === 'grid') ? 'none' : 'auto';
+    const box = { left: hx, top: hy, right: hx + hw, bottom: hy + hh };
+    const blocked = K.protect.some(r => !(box.right <= r.left || box.left >= r.right || box.bottom <= r.top || box.top >= r.bottom));
+    K.hit.style.pointerEvents = (K.y > 2 || K.climbing || K.leaping || K.lane === 'grid' || K.zoom > 1.05 || blocked) ? 'none' : 'auto';
     if (K.bubble.classList.contains('on')) placeBubble();
   }
 
@@ -129,8 +140,14 @@
     K.topMaxX = avoid.length ? Math.min(...avoid.map(r => r.left)) - K.w * .82 : innerWidth - K.w * .88;
     K.topMinX = Math.max(-K.w * .12, board.left - K.w * .2);
     K.topOk = topSpace >= K.charH * .95 && K.topMaxX - K.topMinX > K.w * 1.2;
+    K.protect = (K.host.protect ? K.host.protect() : []).filter(r => r && r.width).map(r => ({ left: r.left, top: r.top, right: r.right, bottom: r.bottom }));
+    K.protect.push({ left: inner.left, top: inner.top, right: inner.right, bottom: inner.bottom });
+    K.freeTop = topLimit + K.charH * .8;            // highest the feet may go: the head stays under the word card
+    K.boardTop = board.top; K.innerBox = { left: inner.left, top: inner.top, right: inner.right, bottom: inner.bottom };
     if (!K.topOk && K.lane === 'top') K.lane = 'bot';
     if (K.lane === 'grid' && !(sameGrid && K.cell)) { K.lane = 'bot'; K.cell = null; ghost(false); }
+    if (K.lane === 'free') { K.lane = 'bot'; K.depth = 1; ghost(false); }
+    if (K.zoom !== 1 && !(K.act && K.act.type === 'zoom')) { K.zoom = 1; K.sink = 0; }
     K.ground = K.lane === 'top' ? K.gTop : K.gBot;
     if (K.lane === 'grid') { const q = cellPos(K.cell[0], K.cell[1]); K.x = q.x; K.ground = q.g; }
     K.el.style.width = K.w + 'px'; K.el.style.height = K.h + 'px';
@@ -160,14 +177,17 @@
   function placeBubble() {
     const b = K.bubble, cx = K.x + K.w / 2;
     const room = innerWidth - 8;
-    const leftSpace = K.x + K.w * .2 - 8, rightSpace = room - (K.x + K.w * .8);
+    const hs = K.w * S() / 2, cxm = K.x + K.w / 2;
+    const leftSpace = cxm - hs * .6 - 8, rightSpace = room - (cxm + hs * .6);
     const right = rightSpace >= leftSpace;
     b.style.maxWidth = Math.max(110, Math.min(240, (right ? rightSpace : leftSpace) - 6)) + 'px';
     const bw = b.offsetWidth, bh = b.offsetHeight;
-    let bx = right ? K.x + K.w * .78 : K.x + K.w * .22 - bw;
+    const half = K.w * S() / 2, mid = K.x + K.w / 2;
+    let bx = right ? mid + half * .56 : mid - half * .56 - bw;
     bx = Math.max(6, Math.min(room - bw, bx));
-    let by = K.ground - K.charH * .78 - bh / 2;
-    by = Math.min(by, K.ground - bh - 2);
+    const sc = S(), feet = K.ground + K.sink - K.y;
+    let by = feet - K.charH * sc * .78 - bh / 2;
+    by = Math.max(6, Math.min(by, innerHeight - bh - 6));
     b.style.transform = `translate3d(${bx}px,${by}px,0)`;
     b.style.transformOrigin = right ? '0% 50%' : '100% 50%';
     void cx;
@@ -206,13 +226,28 @@
     } else if (a.type === 'leap') {
       if (a.x0 === undefined) {
         if (a.cell && K.grid) { const q = cellPos(a.cell[0], a.cell[1]); a.x1 = q.x; a.g1 = q.g; }
-        if (a.lane === 'bot') { a.g1 = K.gBot; if (a.x1 === undefined) a.x1 = K.x; }
+        if (a.lane === 'bot') { a.g1 = K.gBot; if (a.x1 === undefined) a.x1 = Math.max(-K.w * .12, Math.min(innerWidth - K.w * .88, K.x)); }
         a.x0 = K.x; a.g0 = K.ground; K.leaping = true; if (Math.abs(a.x1 - a.x0) > 1) K.face = Math.sign(a.x1 - a.x0);
       }
       const p = Math.min(1, a.t / (a.ms / 1000)), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       K.x = a.x0 + (a.x1 - a.x0) * e; K.ground = a.g0 + (a.g1 - a.g0) * e;
+      if (a.d0 === undefined) a.d0 = K.depth;
+      if (a.lane !== 'free') K.depth = a.d0 + (1 - a.d0) * e;
       K.y = Math.sin(p * Math.PI) * K.charH * (a.h || .3);
       if (p >= 1) { K.y = 0; K.leaping = false; K.lane = a.lane; K.cell = a.cell || null; if (a.lane !== 'grid') { ghost(false); setLaneX(); } done = true; }
+    } else if (a.type === 'walk2') {
+      if (!a.on) { a.on = true; K.lane = 'free'; }
+      const dx = a.x1 - K.x, dg = a.g1 - K.ground, dist = Math.hypot(dx, dg), step = a.speed * dt * Math.max(.6, K.depth);
+      if (Math.abs(dx) > 2) K.face = Math.sign(dx);
+      if (dist <= step) { K.x = a.x1; K.ground = a.g1; done = true; }
+      else { K.x += dx / dist * step; K.ground += dg / dist * step; }
+      K.depth = depthAt(K.ground);
+      if (done && a.lane === 'bot') { K.lane = 'bot'; K.depth = 1; K.ground = K.gBot; setLaneX(); ghost(false); }
+    } else if (a.type === 'zoom') {
+      if (a.z0 === undefined) a.z0 = K.zoom;
+      const p = Math.min(1, a.t / (a.ms / 1000)), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      K.zoom = a.z0 + (a.to - a.z0) * e; K.sink = (K.zoom - 1) * K.charH * .42;
+      if (p >= 1) { K.zoom = a.to; if (a.to === 1) K.sink = 0; done = true; }
     } else if (a.type === 'climb') {
       if (a.g0 === undefined) { a.g0 = K.ground; a.g1 = a.to === 'top' ? K.gTop : K.gBot; K.climbing = true; }
       const p = Math.min(1, a.t / (a.ms / 1000)), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
@@ -226,7 +261,10 @@
   }
   function frameFor(a) {
     if (!a) return ['a', META.anim.seq.idle[0]];
-    if (a.pose) return ['p', META.poses.index[a.pose]];
+    if (a.pose) {
+      if (K.zoom > 1.35 && K.closeReady && META.close.index[a.pose] != null) return ['c', META.close.index[a.pose]];   // sharp picture when close to the camera
+      return ['p', META.poses.index[a.pose]];
+    }
     const seq = META.anim.seq[a.anim || 'idle'], from = Math.min(a.from || 0, seq.length - 1), n = seq.length - from;
     let i = Math.floor((a.t || 0) * (a.fps || 10));
     if (a.hold) i = Math.min(i, n - 1);
@@ -251,20 +289,24 @@
       if (a && a.x1 !== undefined) { K.x = a.x1; K.ground = a.g1; K.lane = a.lane; K.cell = a.cell || null; }
       if (K.lane !== 'grid') { ghost(false); setLaneX(); }
     }
-    K.queue = list.slice(); K.act = null; K.y = 0; K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(800, 2000); }
+    K.queue = list.slice(); K.act = null; K.y = 0;
+    if (K.zoom > 1.02 && !(K.queue[0] && K.queue[0].type === 'zoom')) K.queue.unshift({ type: 'zoom', to: 1, ms: 320, anim: 'idle', fps: 3 }); K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(800, 2000); }
   const randX = () => rnd(K.minX + 10, K.maxX - 10);
 
   /* ---------- free-time behaviour ---------- */
   function brain(now) {
-    if (!K.act && !K.queue.length && K.lane === 'grid' && !K.leaping) { K.queue.push(A.wait(900), leaveGrid()); return; }   // never left standing on the letters
+    if (!K.act && !K.queue.length && (K.lane === 'grid' || K.lane === 'free') && !K.leaping) { K.queue.push(A.wait(900), leaveGrid()); return; }
+    if (!K.act && !K.queue.length && K.zoom > 1.02) { K.queue.push({ type: 'zoom', to: 1, ms: 500, anim: 'idle', fps: 3 }); return; }   // never left standing on the letters
     if (K.act || K.queue.length || now < K.nextBrain) return;
     const r = Math.random();
-    if (K.grid && !REDUCED && r < .3) { gridTrip(); K.nextBrain = now + rnd(5000, 9000); return; }
-    if (K.topOk && !REDUCED && r < .42) { travel(); K.nextBrain = now + rnd(4000, 7000); return; }
-    if (!REDUCED && now - K.lastSlip > 75000 && r < .49) slip();
-    else if (r < .62) K.queue.push(A.walk(randX()), A.wait(rnd(900, 2200)));
-    else if (r < .70 && !REDUCED) K.queue.push(A.run(randX()), A.wait(900));
-    else if (r < .78 && !REDUCED) K.queue.push(A.hopTo(Math.max(K.minX, Math.min(K.maxX, K.x + rnd(-1, 1) * K.w * 2))), A.wait(700));
+    if (!REDUCED && now - K.lastTouch > 8000 && now - K.lastZoom > 50000 && r < .12) { camera(); K.nextBrain = now + 9000; return; }
+    if (!REDUCED && r < .3) { roam(); K.nextBrain = now + rnd(5000, 9000); return; }
+    if (K.grid && !REDUCED && r < .45) { gridTrip(); K.nextBrain = now + rnd(5000, 9000); return; }
+    if (K.topOk && !REDUCED && r < .53) { travel(); K.nextBrain = now + rnd(4000, 7000); return; }
+    if (!REDUCED && now - K.lastSlip > 75000 && r < .58) slip();
+    else if (r < .68) K.queue.push(A.walk(randX()), A.wait(rnd(900, 2200)));
+    else if (r < .74 && !REDUCED) K.queue.push(A.run(randX()), A.wait(900));
+    else if (r < .80 && !REDUCED) K.queue.push(A.hopTo(Math.max(K.minX, Math.min(K.maxX, K.x + rnd(-1, 1) * K.w * 2))), A.wait(700));
     else if (r < .82) K.queue.push(A.play('idle', 2200, 5));
     else if (r < .88) K.queue.push(A.pose(pick(['think', 'magnify', 'peek', 'question']), 1800, { fx: 'wobble' }));
     else if (r < .93) K.queue.push(A.jump(rnd(-1, 1) * K.w * .8));
@@ -308,7 +350,50 @@
     K.queue.push(...list);
     return true;
   }
-  function offGrid(sayText) { return K.lane === 'grid' || K.leaping ? [leaveGrid(sayText)] : []; }
+  function offGrid(sayText) { return K.lane === 'grid' || K.lane === 'free' || K.leaping ? [leaveGrid(sayText)] : []; }
+  const offStage = offGrid;
+
+  // ---------- roaming the whole screen: above the board, across it, along the sides, with depth ----------
+  function depthAt(g) {           // farther up the screen = a little smaller, like walking away from the camera
+    const t = Math.max(0, Math.min(1, (g - K.freeTop) / Math.max(1, K.gBot - K.freeTop)));
+    return .72 + .28 * t;
+  }
+  const W2 = (x1, g1, lane, extra) => Object.assign({ type: 'walk2', x1, g1, lane: lane || 'free', speed: K.charH * 1.1, anim: 'walk', fps: 8 }, extra || {});
+  function roam() {
+    if (!K.innerBox) return false;
+    const pts = [], ib = K.innerBox, xr = () => rnd(-K.w * .1, innerWidth - K.w * .9);
+    const photoRoom = K.boardTop - K.freeTop;
+    const kinds = ['across', 'side']; if (photoRoom > K.charH * .3) kinds.push('photo', 'photo');
+    const n = Math.random() < .5 ? 2 : 3;
+    for (let i = 0; i < n; i++) {
+      const k = pick(kinds);
+      if (k === 'photo') pts.push([xr(), rnd(K.freeTop, K.boardTop - 4)]);
+      else if (k === 'side') pts.push([Math.random() < .5 ? -K.w * .2 : innerWidth - K.w * .8, rnd(ib.top + K.charH, ib.bottom)]);
+      else pts.push([xr(), rnd(ib.top + K.charH * .6, ib.bottom)]);
+    }
+    for (const [x, g] of pts) {
+      K.queue.push(W2(x, g));
+      const r = Math.random();
+      K.queue.push(r < .3 ? A.pose(pick(['magnify', 'think', 'question', 'peek']), 1500, { fx: 'wobble' })
+                 : r < .55 ? A.play('talk', 1500, 9, { say: Math.random() < .5 ? pick(CHAT) : '' })
+                 : A.play('idle', 1200, 4));
+    }
+    K.queue.push(W2(xr(), K.gBot, 'bot'), A.wait(900));
+    return true;
+  }
+  // walk to the middle and lean in towards the player, as if coming up to the camera
+  const CAMERA = [['winkwalk', 'Nakuona!'], ['kiss', 'Nakupenda, rafiki!'], ['laughpoint', 'Hehe! Ni mimi tena!'], ['point', 'Wewe ni hodari!'], ['cheer', 'Twende tena!']];
+  function camera() {
+    const Z = Math.max(1.8, Math.min(3.4, innerHeight * .4 / K.charH));
+    const [p1, s1] = pick(CAMERA), [p2, s2] = pick(CAMERA.filter(c => c[0] !== p1));
+    K.lastZoom = performance.now();
+    K.queue.push(W2(innerWidth / 2 - K.w / 2, K.gBot, 'bot', { speed: K.charH * 1.2 }),
+      { type: 'zoom', to: Z, ms: 1300, anim: 'walk', fps: 6 },
+      A.pose(p1, 1700, { say: s1, sayMs: 1700, hearts: p1 === 'kiss' ? 4 : 0 }),
+      A.pose(p2, 1500, { say: s2, sayMs: 1500, hearts: p2 === 'kiss' ? 4 : 0 }),
+      { type: 'zoom', to: 1, ms: 1000, anim: 'walk', fps: 6 },
+      A.walk(rnd(K.minX, K.maxX)));
+  }
 
   // walk to one side of the board, climb up (or down) along it, and wander on the other edge
   function travel() {
@@ -346,7 +431,8 @@
       layer.style.visibility = 'hidden';
       K.hit.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); Kin.tap(); });
       // both sprite sheets must be loaded before Kinyonga shows up
-      let n = 0; const done = () => { if (++n === 2) { K.ready = true; K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
+      let n = 0; const done = () => { if (++n === 2) { K.ready = true;
+          const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url; K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
       [META.anim.url, META.poses.url].forEach(u => { const im = new Image(); im.onload = done; im.onerror = () => { layer.remove(); }; im.src = u; });
       addEventListener('resize', () => layout());
       document.addEventListener('visibilitychange', () => { if (!document.hidden) { K.last = 0; loop(); } });
@@ -354,7 +440,7 @@
     layout,
     activity(fromEvent) {
       K.lastTouch = performance.now();
-      if (!fromEvent && K.ready && (K.lane === 'grid' || (K.leaping && K.act && K.act.lane === 'grid'))) {
+      if (!fromEvent && K.ready && (K.lane === 'grid' || K.lane === 'free' || K.zoom > 1.02 || (K.leaping && K.act && K.act.lane !== 'bot'))) {
         K.hintStage = 0; ghost(true); doNow([leaveGrid(Math.random() < .5 ? 'Samahani! Nakupisha!' : '')], 900); return;
       }
       const sleeping = K.hintStage >= 4 && K.act && (K.act.anim === 'sleep' || K.act.pose === 'yawn');
@@ -406,7 +492,7 @@
       doNow(choices[i](), 1400);
     },
     // exposed for tests
-    _K: K, _say: say
+    _K: K, _say: say, _camera: () => camera(), _roam: () => roam(), _gridTrip: () => gridTrip()
   };
 
   /* ---------- main loop: one requestAnimationFrame, paused when hidden or not playing ---------- */
