@@ -155,7 +155,6 @@
     K.gBot = ground + 3 * K.d;
     const topLimit = K.host.topLimit ? K.host.topLimit() : 0;
     K.protect = (K.host.protect ? K.host.protect() : []).filter(r => r && r.width).map(r => ({ left: r.left, top: r.top, right: r.right, bottom: r.bottom }));
-    K.protect.push({ left: inner.left, top: inner.top, right: inner.right, bottom: inner.bottom });
     K.freeTop = topLimit + K.charH * .8;            // highest the feet may go: the head stays under the word card
     K.boardTop = board.top; K.innerBox = { left: inner.left, top: inner.top, right: inner.right, bottom: inner.bottom };
     K.topEdgeOk = K.boardTop - topLimit >= K.charH * .8;
@@ -446,6 +445,10 @@
     if (toTop && K.topEdgeOk) return { type: 'leap', lane: 'free', x1: clampX(K.x), g1: K.boardTop + 3 * K.d, ms: 700, h: .45, say: sayText || '' };
     return { type: 'leap', lane: 'bot', ms: 750, h: .5, say: sayText || '' };
   }
+  function onBody(px, py) {
+    const sc = S(), hw = K.charH * .85 * sc, hh = K.charH * .95 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink - K.y;
+    return px >= cx - hw / 2 && px <= cx + hw / 2 && py >= feet - hh && py <= feet;
+  }
   function overLetters() {
     const ib = K.innerBox; if (!ib) return false;
     const sc = S(), hw = K.charH * .7 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink;
@@ -531,6 +534,21 @@
         if (K.lp && e.pointerId === K.lp.id) { clearTimeout(K.lp.t); K.lp = null; if (e.type === 'pointerup') Kin.tap(); }
       };
       addEventListener('pointerup', up); addEventListener('pointercancel', up);
+      // a finger on his body where the touch area is off (on the boxes, in the middle of a hop) still presses him:
+      // move = carry him, short tap = a reaction. Real buttons under him keep working.
+      addEventListener('pointerdown', e => {
+        if (!K.ready || K.drag || K.press || e.target === K.hit || K.layer.style.display === 'none' || K.layer.style.visibility === 'hidden') return;
+        if (K.host.isPlaying && !K.host.isPlaying()) return;
+        if (e.target.closest && e.target.closest('button,a,input,[role=button]')) return;
+        if (!onBody(e.clientX, e.clientY)) return;
+        clearTimeout(K.lp && K.lp.t);
+        K.lp = { id: e.pointerId, x: e.clientX, y: e.clientY };
+        K.lp.t = setTimeout(() => {
+          if (!K.lp) return; const lp = K.lp; K.lp = null;
+          try { K.host.cancelSelection && K.host.cancelSelection(); } catch (_) {}
+          startDrag(lp.x, lp.y, lp.id);
+        }, 380);
+      }, true);
       // the sprite sheets must be loaded before Kinyonga shows up
       const need = [META.front.url, META.poses.url];
       let n = 0; const done = () => { if (++n === need.length) { K.ready = true;
@@ -614,19 +632,8 @@
       K.nextVar = now + rnd(9000, 14000);
     },
     // a finger went down on the letter board: if it is on Kinyonga, a long press picks him up
-    boardDown(e) {
-      if (!K.ready || K.drag || K.layer.style.display === 'none') return false;
-      const sc = S(), hw = K.charH * .8 * sc, hh = K.charH * .95 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink - K.y;
-      if (e.clientX < cx - hw / 2 || e.clientX > cx + hw / 2 || e.clientY < feet - hh || e.clientY > feet) return false;
-      clearTimeout(K.lp && K.lp.t);
-      K.lp = { id: e.pointerId, x: e.clientX, y: e.clientY };
-      K.lp.t = setTimeout(() => {
-        if (!K.lp) return; const lp = K.lp; K.lp = null;
-        try { K.host.cancelSelection && K.host.cancelSelection(); } catch (_) {}
-        startDrag(lp.x, lp.y, lp.id);
-      }, 380);
-      return true;
-    },
+    // the letter board asks: is this finger pressing Kinyonga? (then it is not the start of a letter swipe)
+    boardDown(e) { return !!(K.lp && K.lp.id === e.pointerId); },
     // exposed for tests
     _K: K, _say: say, _hint: () => hintVisit(), _over: () => overLetters(), _home: () => K.home
   };
