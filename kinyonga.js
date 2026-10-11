@@ -508,7 +508,12 @@
       addEventListener('pointermove', e => {
         if (K.drag && e.pointerId === K.drag.id) { moveDrag(e.clientX, e.clientY); return; }
         if (K.press && e.pointerId === K.press.id && Math.hypot(e.clientX - K.press.x, e.clientY - K.press.y) > 7) { startDrag(K.press.x, K.press.y, e.pointerId); K.press = null; moveDrag(e.clientX, e.clientY); return; }
-        if (K.lp && e.pointerId === K.lp.id && Math.hypot(e.clientX - K.lp.x, e.clientY - K.lp.y) > 10) { clearTimeout(K.lp.t); K.lp = null; Kin.activity(); }   // it was a letter swipe after all
+        // finger on him over the letters and moving: he is picked up (the letter selection under him is cancelled)
+        if (K.lp && e.pointerId === K.lp.id && Math.hypot(e.clientX - K.lp.x, e.clientY - K.lp.y) > 7) {
+          const lp = K.lp; clearTimeout(lp.t); K.lp = null;
+          try { K.host.cancelSelection && K.host.cancelSelection(); } catch (_) {}
+          startDrag(lp.x, lp.y, lp.id); moveDrag(e.clientX, e.clientY);
+        }
       }, { passive: true });
       const up = e => {
         if (K.ghostHold) { K.ghostHold = false; clearTimeout(K.ghostT); K.ghostT = setTimeout(() => { if (!K.drag && K.lane !== 'grid' && !K.leaping) ghost(false); }, 700); }
