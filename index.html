@@ -464,7 +464,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script src="haraka.js?v=2"></script>
-<script src="kinyonga.js?v=10"></script>
+<script src="kinyonga.js?v=11"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1828,6 +1828,9 @@ if(window.Kinyonga) Kinyonga.init({
               const free=[]; for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(!busy.has(r*size+c)) free.push([r,c]); return {n:size,free}; },
   cancelSelection: ()=>{ if(!sel) return; if(tempCap) tempCap.remove(); lightPath([]); bubble.classList.remove('show'); sel=null; tempCap=null; },
   hintCell: ()=>{ const w=words && words.find(x=>!x.found); return w ? w.cells[0] : null; },
+  // first letters of the words still hidden (Kinyonga walks to one of them and points at it)
+  starts: ()=> words ? words.filter(x=>!x.found).map(x=>x.cells[0]) : [],
+  flashCell: (r,c)=>{ const e=cellEl(r,c); if(!e) return; e.classList.remove('kin-flash'); void e.offsetWidth; e.classList.add('kin-flash'); setTimeout(()=>e.classList.remove('kin-flash'),2600); },
   // things it must never take touches from
   protect: ()=>['homeBtn','bonusBtn','musicBtnGame','hintBtn','category'].map(id=>$(id)).filter(Boolean).map(e=>e.getBoundingClientRect()),
   isPlaying: ()=> document.querySelector('.app').style.visibility!=='hidden' && !$('overlay').classList.contains('show')

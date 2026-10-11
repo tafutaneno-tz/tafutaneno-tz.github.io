@@ -87,7 +87,7 @@
     x: 40, y: 0, lift: 0, face: 1, lane: 'bot', cell: null, grid: null, leaping: false, gBot: 0, queue: [], act: null, frameKey: '', sprKind: '', raf: 0, last: 0,
     lastTouch: 0, hintStage: 0, nextBrain: 0, lastSlip: 0, lastSay: 0, lastChat: 0, sayT: 0, busyUntil: 0, stepN: 0, clock: 0,
     depth: 1, zoom: 1, sink: 0, closeReady: false, lastZoom: -1e9, protect: [], freeTop: 0,
-    pinned: null, hangLeft: 0, lastFun: '', idlePose: 'cute', ghosted: false
+    home: null, idlePose: 'cute', ghosted: false, sleeping: false, nextZ: 0, nextVar: 0, lastFind: 0, wrongStreak: 0, lastHint: -1e9, lastWake: 0
   };
 
   /* ---------- drawing ---------- */
@@ -162,15 +162,13 @@
     K.minX = -K.w * .12; K.maxX = innerWidth - K.w * .88;
     if (K.lane === 'grid' && !(sameGrid && K.cell)) { K.lane = 'bot'; K.cell = null; ghost(false); }
     if (K.zoom !== 1 && !(K.act && K.act.type === 'zoom')) { K.zoom = 1; K.sink = 0; }
-    if (K.pinned) {                // he stays where the player put him (kept on the screen)
-      K.pinned.x = Math.max(K.minX, Math.min(K.maxX, K.pinned.x));
-      K.pinned.g = Math.max(K.charH + 4, Math.min(K.gBot, K.pinned.g));
-      if (K.pinned.bot) K.pinned.g = K.gBot;
-      if (!K.drag && !(K.act && K.act.type === 'walk')) { K.x = K.pinned.x; K.ground = K.pinned.g; K.lane = K.pinned.bot ? 'bot' : 'free'; }
-    } else if (K.lane === 'free') {
-      // a spot above the board stays valid only if it is still above the board
-      if (!(K.ground <= K.boardTop + 6 * K.d && K.ground >= K.freeTop)) { K.lane = 'bot'; }
-    }
+    // his home spot (under the board unless the player carried him somewhere else); kept on the screen
+    if (!K.home) K.home = { x: clampX(K.x), g: K.gBot, bot: true };
+    const h = K.home;
+    h.x = Math.max(K.minX, Math.min(K.maxX, h.x));
+    h.g = h.bot ? K.gBot : Math.max(K.charH + 4, Math.min(K.gBot, h.g));
+    if (!h.bot && homeOnLetters()) { h.bot = true; h.g = K.gBot; }      // the board grew over it: back under the board
+    if (!K.drag && !(K.act && (K.act.type === 'walk' || K.act.type === 'leap'))) { K.x = h.x; K.ground = h.g; K.lane = h.bot ? 'bot' : 'free'; K.cell = null; }
     if (K.lane === 'bot') { K.ground = K.gBot; K.depth = 1; }
     else if (K.lane === 'free') K.depth = depthAt(K.ground);
     if (K.lane === 'grid') { const q = cellPos(K.cell[0], K.cell[1]); K.x = q.x; K.ground = q.g; K.depth = K.gridDepth; }
@@ -211,11 +209,11 @@
     b.style.transform = `translate3d(${bx}px,${by}px,0)`;
     b.style.transformOrigin = right ? '0% 50%' : '100% 50%';
   }
-  function hearts(n, glyph) {
+  function hearts(n, glyph, colors) {
     const sc = S();
     for (let i = 0; i < (n || 3); i++) {
       const h = document.createElement('div'); h.className = 'kin-heart'; h.textContent = glyph || '❤';
-      h.style.color = pick(['#ff4d6d', '#ff8fab', '#f43f5e']);
+      h.style.color = pick(colors || ['#ff4d6d', '#ff8fab', '#f43f5e']);
       h.style.left = (K.x + K.w * (.45 + Math.random() * .3)) + 'px';
       h.style.top = (K.ground - K.charH * .9 * sc) + 'px';
       h.style.setProperty('--dx', rnd(-26, 26).toFixed(0) + 'px');
@@ -293,6 +291,8 @@
       K.zoom = a.z0 + (a.to - a.z0) * e; K.sink = (K.zoom - 1) * K.charH * .42;
       if (a.walking) { const sp = (a.t % (STEP.ms / 1000)) / (STEP.ms / 1000); K.lift = Math.sin(sp * Math.PI) * K.charH * .05; K.stepN = Math.floor(a.t / (STEP.ms / 1000)); }
       if (p >= 1) { K.zoom = a.to; if (a.to === 1) K.sink = 0; done = true; }
+    } else if (a.type === 'call') {    // decides the next steps at the moment it runs
+      const more = a.fn() || []; K.queue.unshift(...more); done = true;
     } else {                       // 'pose', 'seq', 'talk', 'wait'
       if (a.t * 1000 >= a.ms) done = true;
     }
@@ -348,76 +348,97 @@
     K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(600, 1400);
   }
 
-  /* ---------- free time: stay in one place for a good while and play there ---------- */
-  // every block faces the player: talking, laughing, joking, dancing, thinking, sitting…
-  const FUN = [
-    { k: 'talk', w: 3, make: () => A.talk(pick(['hi', 'cute', 'thumbs', 'wave', 'tada']), 2400, chat()) },
-    { k: 'giggle', w: 1.4, make: () => A.pose('giggle', 1700, { fx: 'shake', say: Math.random() < .4 ? 'Hihihi!' : '' }) },
-    { k: 'tease', w: 1, make: () => A.pose('tease', 1500, { fx: 'wobble', say: Math.random() < .5 ? 'Hehe! Nakuona!' : '' }) },
-    { k: 'laughpoint', w: 1, make: () => A.pose('laughpoint', 1600, { fx: 'bounce' }) },
-    { k: 'dance', w: 1.3, make: () => A.seq(['dance', 'party', 'jumpjoy', 'dance', 'cheer', 'party'], 420, 2500, { fx: 'bounce', say: Math.random() < .35 ? 'Tucheze!' : '' }) },
-    { k: 'think', w: 1.2, make: () => A.pose(pick(['think', 'question', 'idea', 'magnify', 'map']), 2200, { fx: 'wobble' }) },
-    { k: 'cool', w: .8, make: () => A.pose('cool', 2200, { say: Math.random() < .3 ? 'Poa sana!' : '' }) },
-    { k: 'love', w: 1, make: () => { const p = pick(['handheart', 'hearts', 'love', 'kiss']); return A.pose(p, 1900, { hearts: 3, say: Math.random() < .3 ? 'Nakupenda, rafiki!' : '' }); } },
-    { k: 'shy', w: .8, make: () => A.pose(pick(['shy', 'shy2', 'kiss2']), 1800) },
-    { k: 'sit', w: 1.4, make: () => A.pose('sit', 3200, { say: Math.random() < .3 ? 'Nimekaa kidogo.' : '' }) },
-    { k: 'calm', w: 2, make: () => A.pose(pick(['cute', 'hi', 'thumbs']), 2600) },
-    { k: 'yay', w: .35, make: () => A.jump(0, .35, 'yay') }
+  /* ---------- a calm friend: lives at his home spot, rests, sleeps when the player rests ---------- */
+  const SLEEP_AFTER = 10000;     // no touch for 10 s: he lies down and sleeps
+  const STRUGGLE = 35000;        // no new word for 35 s while the player keeps trying: he shows where a word starts
+  const HINT_GAP = 30000;        // at most one shown word start every 30 s
+  // calm variations, each held for several seconds (no flickering from picture to picture)
+  const CALM = [
+    () => A.pose('thumbs', 4500),
+    () => A.pose('hi', 4000, { say: chat() }),
+    () => A.pose('think', 5000),
+    () => A.pose('sit', 7000),
+    () => A.pose('cool', 5000),
+    () => A.pose('giggle', 3500),
+    () => A.pose('handheart', 4000, { hearts: 2 }),
+    () => A.talk('cute', 3500, chat())
   ];
   function chat() {
     const now = performance.now();
-    if (now - K.lastChat < 9000 || Math.random() < .35) return '';
+    if (now - K.lastChat < 20000 || Math.random() < .5) return '';
     K.lastChat = now; return pick(CHAT);
   }
-  function funBlock() {
-    let opts = FUN.filter(f => f.k !== K.lastFun);
-    if (REDUCED) opts = opts.filter(f => f.k !== 'dance' && f.k !== 'yay');
-    let sum = opts.reduce((s, f) => s + f.w, 0), r = Math.random() * sum, f = opts[0];
-    for (const o of opts) { r -= o.w; if (r <= 0) { f = o; break; } }
-    K.lastFun = f.k;
-    return [f.make(), A.wait(rnd(500, 1200))];
+  const call = fn => ({ type: 'call', fn });
+  const dist = (x, g) => Math.hypot(K.x - x, K.ground - g);
+  function atHome() { const h = K.home; return !!h && K.lane !== 'grid' && dist(h.x, h.g) < 3; }
+  function homeOnLetters() {
+    const h = K.home, ib = K.innerBox; if (!h || !ib) return false;
+    const cx = h.x + K.w / 2, hw = K.charH * .35;
+    return !(cx + hw <= ib.left || cx - hw >= ib.right || h.g <= ib.top || h.g - K.charH >= ib.bottom);
   }
-  function brain(now) {
-    if (K.drag) return;
-    if (!K.act && !K.queue.length && K.lane === 'grid' && !K.leaping) { K.queue.push(A.wait(600), stepOff()); return; }   // never parked on the boxes
-    if (!K.act && !K.queue.length && K.zoom > 1.02) { K.queue.push({ type: 'zoom', to: 1, ms: 500 }); return; }
-    if (K.act || K.queue.length || now < K.nextBrain) return;
-    if (K.pinned || K.hangLeft > 0) { K.hangLeft--; K.queue.push(...funBlock()); return; }
-    // time for a small trip, then a long stay at the new place
-    const r = Math.random();
-    if (!REDUCED && now - K.lastTouch > 6000 && now - K.lastZoom > 45000 && r < .18) camera();
-    else if (K.grid && r < .36) gridTrip();
-    else { wander(); if (!REDUCED && now - K.lastSlip > 90000 && r > .9) slip(); }
-    K.hangLeft = Math.floor(rnd(4, 7));          // 4–6 play blocks ≈ 10–20 seconds in the new spot
+  function crossesLetters(x1, g1) {        // would a straight walk pass over the letters?
+    const ib = K.innerBox; if (!ib) return false;
+    for (let i = 1; i < 12; i++) {
+      const t = i / 12, x = K.x + (x1 - K.x) * t + K.w / 2, g = K.ground + (g1 - K.ground) * t;
+      if (x > ib.left && x < ib.right && g > ib.top && g - K.charH * .5 < ib.bottom) return true;
+    }
+    return false;
+  }
+  // back home: hop off the letters, then walk – or one big hop when the way home crosses the letters
+  function routeHome() {
+    const h = K.home;
+    if (K.lane === 'grid' || overLetters()) return [stepOff(), call(routeHome)];
+    if (dist(h.x, h.g) < 3) { K.lane = h.bot ? 'bot' : 'free'; K.onHint = false; return []; }
+    if (crossesLetters(h.x, h.g) || Math.abs(K.ground - h.g) > K.charH * 2.5)
+      return [{ type: 'leap', lane: h.bot ? 'bot' : 'free', x1: h.x, g1: h.g, ms: 1000, h: .6 }, call(routeHome)];
+    return [A.walkTo(h.x, h.g, h.bot ? 'bot' : 'free'), call(routeHome)];
+  }
+  const goHome = () => call(routeHome);
+
+  function sleepNow() {
+    K.sleeping = true; K.nextZ = performance.now() + 900;
+    K.queue.push(A.pose('sleep', 1e12, { say: Math.random() < .3 ? 'Nalala kidogo… Niamshe!' : '', sayMs: 2200 }));
+  }
+  function wake(quiet) {
+    if (!K.sleeping) return false;
+    K.sleeping = false; K.lastWake = performance.now();
+    if (K.act && K.act.pose === 'sleep') K.act = null;
+    if (!quiet) doNow([A.pose('oh', 1100, { fx: 'bounce', say: Math.random() < .5 ? pick(['Lo! Nimeamka!', 'Habari! Niko hapa!', 'Aah… nimeamka!']) : '', sayMs: 1500 })], 1100);
+    return true;
+  }
+  function zzz(now) {
+    if (!K.sleeping || !K.act || K.act.pose !== 'sleep' || now < K.nextZ || REDUCED) return;
+    K.nextZ = now + 1900;
+    hearts(1, 'z', ['#60a5fa', '#93c5fd', '#3b82f6']);
   }
 
-  // a new spot not far away: along the strip under the board, the top edge of the board, or the picture above it
-  function region() { return K.lane === 'bot' || K.ground > (K.innerBox ? K.innerBox.bottom : 0) ? 'below' : 'above'; }
-  function wander() {
-    const ib = K.innerBox, W = innerWidth;
-    // walk a real distance (several steps), towards the side with more room
-    const dir = K.x + K.w / 2 < W / 2 ? (Math.random() < .75 ? 1 : -1) : (Math.random() < .75 ? -1 : 1);
-    const near = () => { const x = clampX(K.x + dir * rnd(.22, .45) * W); return Math.abs(x - K.x) < W * .15 ? clampX(K.x - dir * rnd(.22, .4) * W) : x; };
-    const tx = near();
-    const spots = [['bot', 3]];
-    if (ib && K.topEdgeOk) spots.push(['edge', 1.6]);
-    if (ib && K.boardTop - K.freeTop > K.charH * .3) spots.push(['photo', 1.6]);
-    let sum = spots.reduce((s, x) => s + x[1], 0), r = Math.random() * sum, kind = 'bot';
-    for (const [k, w] of spots) { r -= w; if (r <= 0) { kind = k; break; } }
-    const here = region();
-    if (kind === 'bot') {
-      if (here === 'above') K.queue.push(hopDown(clampX(K.x)));
-      K.queue.push(A.walkTo(tx, K.gBot, 'bot'));
-    } else {
-      const edgeG = K.boardTop + 3 * K.d;
-      if (here === 'below') K.queue.push(hopUp(clampX(K.x)));
-      if (kind === 'edge') K.queue.push(A.walkTo(Math.max(ib.left - K.w * .3, Math.min(ib.right - K.w * .7, tx)), edgeG, 'free'));
-      else K.queue.push(A.walkTo(tx, rnd(K.freeTop, K.boardTop - 4), 'free'));
-    }
+  function brain(now) {
+    if (K.act && K.act.calm && !K.queue.length && now - K.lastTouch > SLEEP_AFTER) K.act = null;   // time to sleep: the calm pose may end early
+    if (K.drag || K.act || K.queue.length) return;
+    if (K.zoom > 1.02) { K.queue.push({ type: 'zoom', to: 1, ms: 500 }); return; }
+    if (!atHome()) { K.queue.push(goHome()); return; }
+    K.onHint = false;
+    const idle = now - K.lastTouch;
+    if (K.sleeping || idle > SLEEP_AFTER) { sleepNow(); return; }
+    // the player keeps trying but finds nothing: he goes and shows where a word starts
+    if (now - K.lastHint > HINT_GAP && ((now - K.lastFind > STRUGGLE && idle < 8000) || K.wrongStreak >= 3)) { if (hintVisit()) return; }
+    if (now < K.nextVar) return;              // standing calmly, breathing, looking at the player
+    K.nextVar = now + rnd(9000, 15000);
+    const c = pick(CALM)(); c.calm = true; K.queue.push(c);
   }
-  // a big hop over the letters (quick, in the air – never stands on the words)
-  function hopUp(x) { return { type: 'leap', lane: 'free', x1: x, g1: K.boardTop + 3 * K.d, ms: 1000, h: .7, say: Math.random() < .25 ? 'Hop!' : '' }; }
-  function hopDown(x) { return { type: 'leap', lane: 'bot', x1: x, ms: 950, h: .5 }; }
+
+  // ---------- the boxes ----------
+  const neighbours = (r, c) => [[r, c + 1], [r, c - 1], [r + 1, c], [r - 1, c]].filter(([a, b]) => a >= 0 && b >= 0 && a < K.grid.n && b < K.grid.n);
+  function freeCells() { try { const f = K.host.grid().free; return f && f.length ? f : null; } catch (_) { return null; } }
+  function steps(from, to, max) {          // box-by-box path (row first, then column)
+    const out = []; let [r, c] = from;
+    while ((r !== to[0] || c !== to[1]) && out.length < (max || 7)) {
+      if (c !== to[1]) c += Math.sign(to[1] - c); else r += Math.sign(to[0] - r);
+      out.push([r, c]);
+    }
+    return out;
+  }
+  const stepTo = cell => ({ type: 'leap', lane: 'grid', cell, ms: 560, h: .12, step: true });
   // the nearest spot off the letters: the top edge if it is closer, otherwise under the board
   function stepOff(sayText) {
     const ib = K.innerBox;
@@ -430,64 +451,52 @@
     const sc = S(), hw = K.charH * .7 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink;
     return !(cx + hw / 2 <= ib.left || cx - hw / 2 >= ib.right || feet <= ib.top || feet - K.charH * sc >= ib.bottom);
   }
+  function offLetters() { return K.lane === 'grid' || K.leaping || overLetters() ? [stepOff()] : []; }
 
-  // ---------- on the letter boxes: step from box to box, sit, chat, then hop back down ----------
-  const neighbours = (r, c) => [[r, c + 1], [r, c - 1], [r + 1, c], [r - 1, c]].filter(([a, b]) => a >= 0 && b >= 0 && a < K.grid.n && b < K.grid.n);
-  function freeCells() { try { const f = K.host.grid().free; return f && f.length ? f : null; } catch (_) { return null; } }
-  function steps(from, to, max) {
-    const out = []; let [r, c] = from;
-    while ((r !== to[0] || c !== to[1]) && out.length < (max || 7)) {
-      if (c !== to[1]) c += Math.sign(to[1] - c); else r += Math.sign(to[0] - r);
-      out.push([r, c]);
-    }
-    return out;
-  }
-  const stepTo = cell => ({ type: 'leap', lane: 'grid', cell, ms: 560, h: .12, step: true });
-  function enterGrid() {
-    const g = K.grid, cx = K.x + K.w / 2;
-    const c = Math.max(0, Math.min(g.n - 1, Math.floor((cx - g.left) / g.cs)));
-    const above = region() === 'above', r = above ? 0 : g.n - 1;
-    const colX = g.left + (c + .5) * g.cs - K.w / 2, list = [];
-    if (!above) list.push(A.walkTo(colX, K.gBot, 'bot')); else list.push(A.walkTo(colX, K.ground, 'free'));
-    list.push({ type: 'leap', lane: 'grid', cell: [r, c], ms: 800, h: .5 });
-    return { at: [r, c], list };
-  }
-  function gridTrip(target, then) {
-    if (!K.grid) return false;
-    let at, list = [];
-    if (K.lane === 'grid' && K.cell) at = K.cell; else { const e = enterGrid(); at = e.at; list = e.list; }
-    const free = freeCells() || [];
-    const goal = target || (free.length ? pick(free) : at);
-    for (const st of steps(at, goal, target ? 7 : 3)) list.push(stepTo(st));
-    list.push(...(then || [A.pose('sit', 1800), A.talk('hi', 1600, pick(CHAT)), stepOff()]));
+  // ---------- showing where a hidden word starts: walks onto the boxes and points at its first letter ----------
+  function hintVisit() {
+    if (!K.grid || REDUCED) return false;
+    let starts = []; try { starts = (K.host.starts && K.host.starts()) || []; } catch (_) {}
+    if (!starts.length) return false;
+    const g = K.grid, above = K.ground <= g.top;
+    const entryRow = above ? 0 : g.n - 1;
+    const cx = Math.max(0, Math.min(g.n - 1, Math.floor((K.x + K.w / 2 - g.left) / g.cs)));
+    const cost = ([r, c]) => Math.abs(r - entryRow) + Math.abs(c - cx) * .6;
+    const target = starts.slice().sort((a, b) => cost(a) - cost(b))[0];          // the word start that is quickest to reach
+    const free = freeCells() || [], isFree = ([a, b]) => free.some(([x, y]) => x === a && y === b);
+    const nb = neighbours(target[0], target[1])
+      .sort((p, q) => (isFree(q) - isFree(p)) || (Math.abs(p[0] - entryRow) - Math.abs(q[0] - entryRow)))[0] || target;
+    K.lastHint = performance.now(); K.wrongStreak = 0; K.onHint = true;
+    const entry = [entryRow, nb[1]], colX = clampX(g.left + (nb[1] + .5) * g.cs - K.w / 2);
+    const list = [call(() => {             // to the column of the box it enters by
+      if (K.ground <= g.top) return [A.walkTo(colX, K.ground, 'free')];
+      if (K.lane === 'bot') return [A.walkTo(colX, K.gBot, 'bot')];
+      return [{ type: 'leap', lane: 'bot', x1: colX, ms: 900, h: .5 }];
+    })];
+    list.push({ type: 'leap', lane: 'grid', cell: entry, ms: 800, h: .5, say: pick(['Nifuate!', 'Ngoja, nakuonyesha!', 'Nimeona kitu!']), sayMs: 1600 });
+    for (const st of steps(entry, nb, 12)) list.push(stepTo(st));
+    const tx = g.left + (target[1] + .5) * g.cs;
+    list.push(A.pose('point', 3400, { fx: 'bounce', say: pick(['Anza hapa!', 'Neno linaanza hapa!', 'Tazama herufi hii!']), sayMs: 3000,
+      onStart: () => { K.face = tx >= K.x + K.w / 2 ? 1 : -1; try { K.host.flashCell ? K.host.flashCell(target[0], target[1]) : K.host.softHint(); } catch (_) {} } }));
+    list.push(A.wait(400), goHome());
     K.queue.push(...list);
     return true;
   }
-  function offGrid(sayText) { return !K.pinned && (K.lane === 'grid' || K.leaping || overLetters()) ? [stepOff(sayText)] : []; }
 
-  // ---------- coming up to the camera: walks to the middle, grows big, looks the player in the eye ----------
-  const CAMERA = [['hi', 'Nakuona!'], ['kiss', 'Nakupenda, rafiki!'], ['laughpoint', 'Hehe! Ni mimi tena!'], ['point', 'Wewe ni hodari!'], ['cheer', 'Twende tena!']];
-  function camera() {
-    const Z = Math.max(1.7, Math.min(2.6, innerHeight * .32 / K.charH));
-    const [p1, s1] = pick(CAMERA), [p2, s2] = pick(CAMERA.filter(c => c[0] !== p1));
-    K.lastZoom = performance.now();
-    if (region() === 'above') K.queue.push(hopDown(clampX(K.x)));
-    K.queue.push(A.walkTo(innerWidth / 2 - K.w / 2, K.gBot, 'bot'),
-      { type: 'zoom', to: Z, ms: 1800, walking: true },
-      A.pose(p1, 1800, { say: s1, sayMs: 1800, hearts: p1 === 'kiss' ? 4 : 0 }),
-      A.pose(p2, 1600, { say: s2, sayMs: 1600, hearts: p2 === 'kiss' ? 4 : 0 }),
-      { type: 'zoom', to: 1, ms: 1100, pose: 'hi' });
-  }
-  function slip() {          // trips over, sits up crying a little, gets back up – all in place
-    K.lastSlip = performance.now();
-    K.queue.push(A.pose('slip', 700, { fx: 'shake', say: pick(SAY.slip), sayMs: 1200 }),
-      A.pose('fall', 1300, { fx: 'wobble' }),
-      A.pose('sob', 1300),
-      A.pose('sad', 1100, { say: pick(SAY.up), sayMs: 1800 }),
-      A.jump(0, .35, 'yay'));
+  // ---------- put down on the letters: a slow little walk there, then back home ----------
+  function strollOnLetters() {
+    const ib = K.innerBox, out = [A.pose('oh', 900, { say: pick(['Lo! Herufi nyingi!', 'Hapa kuna maneno!']), sayMs: 1400 })];
+    let x = K.x, g = K.ground;
+    for (let i = 0; i < 3; i++) {
+      x = Math.max(ib.left - K.w * .4, Math.min(ib.right - K.w * .6, x + rnd(-1, 1) * K.charH * .9));
+      g = Math.max(ib.top + K.charH * .6, Math.min(ib.bottom, g + rnd(-.5, .5) * K.charH));
+      out.push(A.walkTo(x, g, 'free', { stepMs: 720 }), A.pose(pick(['magnify', 'think', 'question']), 1600));
+    }
+    out.push(goHome());
+    return out;
   }
 
-  /* ---------- reactions to the game (always in place, looking at the player) ---------- */
+  /* ---------- reactions to the game (in place, looking at the player) ---------- */
   const Kin = {
     init(host) {
       if (K.ready || !host) return;
@@ -533,65 +542,76 @@
     layout,
     activity(fromEvent) {
       K.lastTouch = performance.now();
-      if (!fromEvent && K.ready && !K.drag) {
-        if (K.pinned && (overLetters() || K.zoom > 1.02)) {      // he stays, but lets the player see the letters under him
-          ghost(true); K.ghostHold = true; clearTimeout(K.ghostT);
-        } else if (!K.pinned && (K.lane === 'grid' || K.zoom > 1.02 || overLetters() || (K.leaping && K.act && K.act.lane === 'grid'))) {
-          K.hintStage = 0; ghost(true); doNow([stepOff(Math.random() < .5 ? 'Samahani! Nakupisha!' : '')], 900); K.hangLeft = 3; return;
-        }
+      if (!K.ready || K.drag) return;
+      wake(!!fromEvent);
+      if (fromEvent) return;
+      if (K.lane === 'grid' || overLetters() || (K.leaping && K.act && K.act.lane === 'grid')) {
+        ghost(true); K.ghostHold = true; clearTimeout(K.ghostT);      // the letters under him stay readable and selectable
+        if (!K.onHint) doNow([goHome()], 600);
       }
-      const sleeping = K.hintStage >= 4 && K.act && K.act.pose === 'sleep';
-      K.hintStage = 0;
-      if (sleeping) doNow([A.pose('wow', 1100, { fx: 'bounce', say: 'Lo! Nimeamka!', sayMs: 1500 })], 1100);
     },
     onLevelStart(first) {
-      Kin.activity(true); if (!K.ready) return;
+      K.lastTouch = K.lastFind = performance.now(); K.wrongStreak = 0;
+      if (!K.ready) return;
+      wake(true);
       if (K.lane === 'grid' || K.leaping) { K.leaping = false; K.lane = 'bot'; K.cell = null; ghost(false); }
+      K.onHint = false;
       layout();
-      doNow([A.talk('hi', 2000, first ? SAY.greet[0] : (Math.random() < .4 ? pick(SAY.greet) : ''))], 2000);
-      K.hangLeft = Math.max(K.hangLeft, 3);
+      const r = Math.random();
+      const text = first ? SAY.greet[0] : r < .3 ? pick(SAY.greet) : r < .5 ? 'Ukikwama, niguse!' : '';
+      doNow([A.talk('hi', 2400, text)], 2400);
+      K.nextVar = performance.now() + rnd(9000, 14000);
     },
     onCorrect() {
-      Kin.activity(true); if (!K.ready) return; const off = offGrid();
+      K.lastTouch = K.lastFind = performance.now(); K.wrongStreak = 0;
+      if (!K.ready) return; wake(true);
       const r = Math.random();
-      const list = r < .3 ? [A.jump(0, .5, 'jumpjoy'), A.pose('cheer', 900, { fx: 'bounce' })]
-                 : r < .55 ? [A.seq(['party', 'dance', 'party'], 380, 1300, { fx: 'bounce' })]
-                 : r < .8 ? [A.pose('thumbs', 1300, { fx: 'bounce' })]
-                 : [A.jump(0, .45, 'yay'), A.pose('tada', 900)];
-      if (Math.random() < .6) list[0].say = pick(SAY.correct);
-      doNow(off.concat(list), 1600);
+      const list = r < .35 ? [A.jump(0, .45, 'jumpjoy'), A.pose('cheer', 1300)]
+                 : r < .7 ? [A.pose('thumbs', 2000, { fx: 'bounce' })]
+                 : [A.pose('yay', 1800, { fx: 'bounce' })];
+      if (Math.random() < .65) list[0].say = pick(SAY.correct);
+      K.onHint = false;
+      doNow(offLetters().concat(list, [goHome()]), 2000);
     },
-    onBonus() { if (!K.ready) return; doNow(offGrid().concat([A.pose('magnify', 1300, { fx: 'wobble', say: 'Neno la ziada! Safi!' })]), 1300); },
+    onBonus() { if (!K.ready) return; wake(true); doNow(offLetters().concat([A.pose('magnify', 1800, { fx: 'wobble', say: 'Neno la ziada! Safi!' }), goHome()]), 1800); },
     onWrong() {
-      Kin.activity(true); if (!K.ready) return; const off = offGrid();
+      K.lastTouch = performance.now(); K.wrongStreak++;
+      if (!K.ready) return; wake(true);
+      if (K.onHint) return;                               // he is already on his way to help
       const r = Math.random();
-      const list = r < .4 ? [A.pose('giggle', 1400, { fx: 'shake' })] : r < .7 ? [A.pose('laughpoint', 1400, { fx: 'bounce' })] : [A.pose('tease', 1400, { fx: 'wobble' })];
-      if (Math.random() < .7) list[0].say = pick(SAY.wrong);
-      doNow(off.concat(list), 1400);
+      const list = r < .45 ? [A.pose('giggle', 2000, { fx: 'shake', say: Math.random() < .7 ? pick(SAY.wrong) : '' })]
+                 : r < .7 ? [A.pose('tease', 1800, { fx: 'wobble', say: 'Hehe! Si hilo!' })]
+                 : [A.pose('thumbs', 2000, { say: pick(['Jaribu tena!', 'Umekaribia!', 'Unaweza!']) })];
+      doNow(offLetters().concat(list, [goHome()]), 2000);
     },
     onWin() {
-      if (!K.ready) return;
-      doNow([...offGrid(), A.jump(0, .55, 'jumpjoy'), A.seq(['party', 'dance', 'cheer', 'party'], 400, 1600, { fx: 'bounce', say: pick(SAY.win) }), A.jump(0, .45, 'yay')], 3200);
+      if (!K.ready) return; wake(true); K.onHint = false;
+      doNow([...offLetters(), A.jump(0, .55, 'jumpjoy'), A.seq(['party', 'dance', 'cheer', 'party'], 500, 2000, { fx: 'bounce', say: pick(SAY.win) }), A.pose('tada', 1200), goHome()], 3500);
     },
     tap() {
       if (!K.ready || K.y > 2) return;
-      Kin.activity(true);
+      K.lastTouch = performance.now();
       try { K.host.sfx && K.host.sfx.select && K.host.sfx.select(); } catch (_) {}
+      if (wake(false)) return;                            // a tap on a sleeping Kinyonga wakes him up
+      const now = performance.now();
+      // stuck for a while? a tap is a call for help: he shows where a word starts
+      if (!K.onHint && now - K.lastFind > 15000 && now - K.lastHint > 12000 && atHome()) {
+        doNow([A.talk('hi', 1200, 'Nikusaidie? Twende!')], 1200); hintVisit(); return;
+      }
       const T = SAY.tap, choices = [
-        () => [A.pose('shy', 1500, { say: T.shy, hearts: 2 })],
-        () => [A.pose('kiss', 1400, { fx: 'bounce', say: T.kiss, hearts: 4 })],
-        () => [A.pose('inlove', 1500, { fx: 'bounce', say: T.inlove, hearts: 3 })],
-        () => [A.pose('handheart', 1500, { say: T.handheart, hearts: 3 })],
-        () => [A.pose('tease', 1300, { fx: 'wobble', say: T.tease })],
-        () => [A.pose('wow', 1300, { fx: 'shake', say: T.wow })],
-        () => [A.pose('cool', 1400, { say: T.cool })],
-        () => [A.jump(0, .6, 'yay'), A.pose('cheer', 700, { say: T.yay })],
-        () => [A.seq(['dance', 'party', 'dance'], 400, 1300, { fx: 'bounce', say: T.dance })]
+        () => [A.pose('shy', 2000, { say: T.shy, hearts: 2 })],
+        () => [A.pose('kiss', 2000, { fx: 'bounce', say: T.kiss, hearts: 4 })],
+        () => [A.pose('inlove', 2000, { fx: 'bounce', say: T.inlove, hearts: 3 })],
+        () => [A.pose('handheart', 2000, { say: T.handheart, hearts: 3 })],
+        () => [A.pose('tease', 1800, { fx: 'wobble', say: T.tease })],
+        () => [A.pose('wow', 1800, { fx: 'shake', say: T.wow })],
+        () => [A.pose('cool', 2000, { say: T.cool })],
+        () => [A.jump(0, .6, 'yay'), A.pose('cheer', 1200, { say: T.yay })]
       ];
       let i; do { i = Math.floor(Math.random() * choices.length); } while (i === K.lastTap && choices.length > 1);
       K.lastTap = i;
-      doNow(choices[i](), 1500);
-      K.hangLeft = Math.max(K.hangLeft, 2);
+      doNow(choices[i](), 2000);
+      K.nextVar = now + rnd(9000, 14000);
     },
     // a finger went down on the letter board: if it is on Kinyonga, a long press picks him up
     boardDown(e) {
@@ -608,18 +628,19 @@
       return true;
     },
     // exposed for tests
-    _K: K, _say: say, _camera: () => camera(), _gridTrip: () => gridTrip(), _wander: () => wander(), _over: () => overLetters(), _slip: () => slip()
+    _K: K, _say: say, _hint: () => hintVisit(), _over: () => overLetters(), _home: () => K.home
   };
 
-  /* ---------- carrying Kinyonga with a finger: he stays exactly where he is put ---------- */
+  /* ---------- carrying Kinyonga with a finger ---------- */
   function startDrag(px, py, id) {
     const feet = K.ground + K.sink;
+    wake(true);
     doNow([], 0); K.queue = [];
-    K.leaping = false; K.zoom = 1; K.sink = 0; K.y = 0; K.lift = 0; ghost(false); K.ghostHold = false;
+    K.leaping = false; K.zoom = 1; K.sink = 0; K.y = 0; K.lift = 0; ghost(false); K.ghostHold = false; K.onHint = false;
     K.lane = 'free'; K.cell = null;
     K.drag = { id, ox: K.x + K.w / 2 - px, oy: feet - py, lx: px };
     K.act = start({ type: 'drag', pose: 'wow', ms: 1e12, fx: 'wobble', say: pick(DRAG_SAY), sayMs: 1600 });
-    K.lastTouch = performance.now(); K.hintStage = 0;
+    K.lastTouch = performance.now();
   }
   function moveDrag(px, py) {
     const d = K.drag; if (!d) return;
@@ -634,10 +655,11 @@
     K.drag = null; K.act = null;
     const bot = K.ground >= K.gBot - K.charH * .15;
     if (bot) { K.lane = 'bot'; K.ground = K.gBot; K.depth = 1; } else K.lane = 'free';
-    K.pinned = { x: K.x, g: K.ground, bot };
-    K.face = K.x + K.w / 2 < innerWidth / 2 ? 1 : -1;             // turns towards the middle of the screen
-    K.queue = [A.pose('tada', 1500, { fx: 'bounce', say: pick(DROP_SAY), sayMs: 1800 }), A.pose('sit', 2600)];
-    K.nextBrain = performance.now() + 600; K.lastTouch = performance.now();
+    K.lastTouch = performance.now(); K.nextVar = performance.now() + rnd(9000, 13000);
+    if (!bot && overLetters()) { K.queue = strollOnLetters(); return; }     // on the letters: a slow walk, then back home
+    K.home = { x: K.x, g: K.ground, bot };                                // anywhere else: this is his new home
+    K.face = K.x + K.w / 2 < innerWidth / 2 ? 1 : -1;
+    K.queue = [A.pose('tada', 1800, { fx: 'bounce', say: pick(DROP_SAY), sayMs: 1800 })];
   }
 
   /* ---------- main loop ---------- */
@@ -650,36 +672,11 @@
       if (!playing) { K.raf = requestAnimationFrame(tick); return; }
       if (LITE && K.last && now - K.last < 30) { K.raf = requestAnimationFrame(tick); return; }
       const dt = K.last ? Math.min(.06, (now - K.last) / 1000) : 0; K.last = now;
-      update(dt); brain(now); stuck(now);
+      update(dt); brain(now); zzz(now);
       bobAnim(dt); draw(); place();
       K.raf = requestAnimationFrame(tick);
     };
     K.raf = requestAnimationFrame(tick);
-  }
-  // the player has not touched anything for a while: offer help, then point at a letter
-  function stuck(now) {
-    if (K.drag) return;
-    if (!K.lastTouch) K.lastTouch = now;
-    const idle = now - K.lastTouch;
-    if (K.hintStage === 0 && idle > 20000) {
-      K.hintStage = 1; doNow([A.talk('think', 2400, pick(SAY.hint1))], 2400);
-    } else if (K.hintStage === 1 && idle > 34000) {
-      K.hintStage = 2;
-      const flash = () => { try { K.host.softHint && K.host.softHint(); } catch (_) {} };
-      let hc = null; try { hc = K.host.hintCell && K.host.hintCell(); } catch (_) {}
-      if (hc && K.grid && !REDUCED && !K.pinned) {
-        const free = freeCells() || [], isFree = ([a, b]) => free.some(([x, y]) => x === a && y === b);
-        const nb = neighbours(hc[0], hc[1]).sort((p, q) => isFree(q) - isFree(p))[0] || hc;
-        const hx = K.grid.left + (hc[1] + .5) * K.grid.cs;
-        doNow([], 7000);
-        gridTrip(nb, [A.pose('point', 2600, { fx: 'bounce', say: pick(SAY.hint2), sayMs: 2600,
-          onStart: () => { K.face = hx >= K.x + K.w / 2 ? 1 : -1; flash(); } }), A.wait(700), stepOff()]);
-      } else doNow([A.pose('point', 2400, { fx: 'bounce', say: pick(SAY.hint2), sayMs: 2600, onStart: flash })], 2400);
-    } else if (K.hintStage === 2 && idle > 60000) {
-      K.hintStage = 3; doNow([A.pose('cheer', 1800, { fx: 'bounce', say: pick(SAY.cheer), sayMs: 2400 })], 1800);
-    } else if (K.hintStage === 3 && idle > 90000) {
-      K.hintStage = 4; doNow([A.pose('sleep', 8000, { say: 'Zzz…', sayMs: 2000 })], 8000);   // falls asleep; any touch wakes him
-    }
   }
 
   window.Kinyonga = Kin;
