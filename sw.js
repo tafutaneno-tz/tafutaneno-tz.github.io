@@ -1,6 +1,6 @@
 // Tafuta Neno service worker
 // index.html: network first (updates show immediately), images, sounds & icons: cache first.
-const CACHE = 'tafuta-neno-v5';
+const CACHE = 'tafuta-neno-v6';
 const CORE = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -16,7 +16,8 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if (req.headers.has('range')) return;            // audio streaming: let the browser handle it
   if (req.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
-    e.respondWith(fetch(req).then(res => {
+    // always ask GitHub whether the page changed (cheap when it did not), so updates show up at once
+    e.respondWith(fetch(req, { cache: 'no-cache' }).then(res => {
       const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); return res;
     }).catch(() => caches.match(req).then(r => r || caches.match('index.html'))));
     return;
