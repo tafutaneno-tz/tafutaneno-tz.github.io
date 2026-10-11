@@ -63,6 +63,8 @@ body{
   display:flex;align-items:center;gap:4px;box-shadow:0 4px 0 #075985,0 6px 12px rgba(0,0,0,.3)}
 .hint-btn:active{transform:translateY(calc(-50% + 2px));box-shadow:0 2px 0 #075985}
 .hint-btn:disabled{filter:grayscale(1);opacity:.6;cursor:default}
+.cell.kin-flash{animation:kinflash .6s ease-in-out 4}
+@keyframes kinflash{0%,100%{transform:scale(1)}50%{transform:scale(1.18);color:#f59e0b;text-shadow:0 0 10px #fde68a}}
 .cell.hint::after{content:"";position:absolute;inset:8%;border-radius:50%;border:4px solid #f59e0b;animation:hintpulse .8s ease-in-out infinite}
 @keyframes hintpulse{0%,100%{transform:scale(.85);opacity:1}50%{transform:scale(1.1);opacity:.5}}
 .hand{position:absolute;z-index:3;pointer-events:none;font-size:var(--hs,40px);line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));transform:translate(-20%,-10%)}
@@ -462,6 +464,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script src="haraka.js?v=2"></script>
+<script src="kinyonga.js?v=1"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1055,6 +1058,9 @@ function generate(){
 
 /* ---------- Render ---------- */
 let mode='level', dailyKey='', dailySeed=0;
+/* ---------- Kinyonga (kinyonga.js): the chameleon friend under the board ---------- */
+let kinGreeted=false;
+function kin(fn, arg){ try{ if(window.Kinyonga) Kinyonga[fn](arg); }catch(e){ console.error(e); } }
 /* ---------- Resume: a half-finished level comes back exactly as it was (grid, found words, colours) ---------- */
 const RESUME_KEY='tn_resume', RESUME_MAX=6;
 const resumeId=()=> mode==='daily' ? 'D'+dailyKey : 'L'+levelIdx;
@@ -1111,6 +1117,7 @@ function startLevel(custom){
       if(!L.methali){ const sp=$('w'+i); if(sp) sp.classList.add('found'); } });
     toast('Endelea ulipoachia 👍'); }
   stopHand(); if(mode==='level' && levelIdx===0 && !rs) setTimeout(startHand,400);
+  kin('onLevelStart', !kinGreeted); kinGreeted=true;
 }
 function updateCount(){$('countLbl').textContent=foundCount+'/'+words.length}
 
@@ -1122,6 +1129,7 @@ function fitBoard(){
   gridEl.style.fontSize=(cs*0.64)+'px';
   redrawCaps();
   placeFocus();
+  kin('layout');
 }
 
 /* ---------- Capsules ---------- */
@@ -1173,6 +1181,7 @@ function lightPath(cells){
 
 const board=$('board');
 board.addEventListener('pointerdown',e=>{
+  kin('activity');
   if($('overlay').classList.contains('show')) return;
   board.setPointerCapture(e.pointerId);
   const s=cellFromPoint(e.clientX,e.clientY);
@@ -1209,7 +1218,7 @@ function endSel(){
     if(!maanaTip){ let t=null; try{ t=localStorage.getItem('tn_maanatip'); }catch(_){}
       if(!t){ maanaTip=true; try{ localStorage.setItem('tn_maanatip','1'); }catch(_){} setTimeout(()=>toast('📖 Gusa neno ulilopata kuona maana yake'),1400); } else maanaTip=true; }
     if(navigator.vibrate) try{navigator.vibrate(25)}catch(_){}
-    if(foundCount===words.length) setTimeout(showWin,1250); else sfx.correct();
+    if(foundCount===words.length) setTimeout(showWin,1250); else { sfx.correct(); kin('onCorrect'); }
     stopHand(); clearHint();
   }else{
     const dead=tempCap; lightPath([]);
@@ -1217,8 +1226,8 @@ function endSel(){
     const bw = cells.length>=3 ? (DICT.has(str)?str:DICT.has(rev)?rev:null) : null;
     if(again){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Umeshalipata neno hili!'); sfx.wrong(); }
     else if(bw && bonus.has(bw)){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Tayari ni neno lako la ziada ⭐'); }
-    else if(bw){ addBonus(bw); dead.classList.add('gold'); setTimeout(()=>dead.remove(),900); sfx.bonus(); }
-    else if(cells.length>1){ dead.classList.remove('temp'); dead.classList.add('bad'); setTimeout(()=>dead.remove(),720); sfx.wrong();
+    else if(bw){ addBonus(bw); dead.classList.add('gold'); setTimeout(()=>dead.remove(),900); sfx.bonus(); kin('onBonus'); }
+    else if(cells.length>1){ dead.classList.remove('temp'); dead.classList.add('bad'); setTimeout(()=>dead.remove(),720); sfx.wrong(); kin('onWrong');
       cells.forEach(([r,c])=>{ const e=cellEl(r,c); e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); setTimeout(()=>e.classList.remove('shake'),460); });
       if(navigator.vibrate) try{navigator.vibrate(60)}catch(_){} }
     else { dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); }
@@ -1568,7 +1577,7 @@ $('bonusBtn').addEventListener('click',()=>{
 });
 let hintCell=null;
 function clearHint(){ if(hintCell){ hintCell.classList.remove('hint'); hintCell=null; } }
-$('hintBtn').addEventListener('click',()=>{
+$('hintBtn').addEventListener('click',()=>{ kin('activity');
   const left=words.filter(w=>!w.found); if(!left.length) return;
   if(coins<HINT_COST){ sfx.wrong(); toast(`Huna sarafu za kutosha (${HINT_COST} 🪙). Maliza viwango upate zaidi!`); return; }
   clearHint();
@@ -1619,7 +1628,7 @@ function openHaraka(n, then){
   Haraka.open({ sfx, sound:()=>soundOn, onClose: ()=>then() });
 }
 function showWin(){
-  confetti();
+  confetti(); kin('onWin');
   if(mode==='daily') return showDailyWin();
   { const earn = L.methali||L.orodha||L.picha ? 15 : 10; addCoins(earn); $('winCoinsTxt').textContent=`+${earn}  ·  ${coins.toLocaleString('sw-TZ')}`; }
   const q=$('winQuote'); q.hidden=!L.methali;
@@ -1811,6 +1820,13 @@ $('levelGrid').addEventListener('click',e=>{
 $('homeBtn').addEventListener('click',()=>{ sfx.back(); showMenu('home'); });
 
 window.addEventListener('resize',fitBoard);
+if(window.Kinyonga) Kinyonga.init({
+  parent: document.querySelector('.app'), inner: ()=>innerEl, sfx,
+  isPlaying: ()=> document.querySelector('.app').style.visibility!=='hidden' && !$('overlay').classList.contains('show')
+                  && !$('sheet').classList.contains('show') && !(window.Haraka && Haraka.isOpen()),
+  softHint: ()=>{ const w=words && words.find(x=>!x.found); if(!w) return; const e=cellEl(w.cells[0][0],w.cells[0][1]);
+                  e.classList.remove('kin-flash'); void e.offsetWidth; e.classList.add('kin-flash'); setTimeout(()=>e.classList.remove('kin-flash'),2600); }
+});
 showMenu();
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
 
