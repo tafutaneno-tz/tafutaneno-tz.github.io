@@ -62,7 +62,7 @@
   .kin-fx-bounce{animation:kinBounce .5s ease-out}
   .kin-fx-shake{animation:kinShake .45s ease-in-out}
   .kin-fx-wobble{animation:kinWobble .9s ease-in-out}
-  @keyframes kinBounce{0%{transform:translateY(0) scale(1,1)}30%{transform:translateY(-14px) scale(.95,1.06)}60%{transform:translateY(0) scale(1.06,.94)}100%{transform:translateY(0) scale(1,1)}}
+  @keyframes kinBounce{0%{transform:scale(1,1)}40%{transform:scale(1.07,1.05)}100%{transform:scale(1,1)}}
   @keyframes kinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-3deg)}75%{transform:translateX(4px) rotate(3deg)}}
   @keyframes kinWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
   .kin-say{position:absolute;left:0;top:0;max-width:240px;padding:6px 11px;border-radius:14px;background:#fff;color:#1d1630;
@@ -223,7 +223,7 @@
   function fx(cls) { const s = K.fxEl; s.classList.remove('kin-fx-bounce', 'kin-fx-shake', 'kin-fx-wobble'); if (!cls || REDUCED) return; void s.offsetWidth; s.classList.add(cls); }
 
   /* ---------- actions ---------- */
-  const STEP = { ms: 440, move: .62 };     // one step: foot up and body forward (62%), then the foot is down and the body still
+  const STEP = { ms: 460, move: .8 };      // one step: body forward while the foot swings (80%), then the foot is down
   function start(a) {
     a.t = 0; a.started = true;
     if (a.type === 'jump') a.x0 = K.x;
@@ -262,11 +262,11 @@
         }
         if (!done) {
           const p = a.st / SD;
-          if (p < STEP.move) { const e = ease(p / STEP.move); K.x = a.sx + (a.tx - a.sx) * e; K.ground = a.sg + (a.tg - a.sg) * e; K.lift = Math.sin(p / STEP.move * Math.PI) * K.charH * .07; }
+          if (p < STEP.move) { const e = ease(p / STEP.move); K.x = a.sx + (a.tx - a.sx) * e; K.ground = a.sg + (a.tg - a.sg) * e; K.lift = 0; }
           else { K.x = a.tx; K.ground = a.tg; }
         }
       }
-      if (K.lane === 'free') K.depth = depthAt(K.ground);
+      if (K.lane === 'free') { const want = overLetters() ? Math.min(depthAt(K.ground), K.gridDepth * 1.1) : depthAt(K.ground); K.depth += (want - K.depth) * Math.min(1, dt * 5); }
       if (done) { K.x = a.x1; K.ground = a.g1; K.lift = 0; if (a.lane === 'bot') { K.lane = 'bot'; K.depth = 1; K.ground = K.gBot; } else if (a.lane) K.lane = a.lane; }
     } else if (a.type === 'jump') {
       const T = a.ms / 1000, p = Math.min(1, a.t / T);
@@ -386,10 +386,8 @@
   // back home: hop off the letters, then walk – or one big hop when the way home crosses the letters
   function routeHome() {
     const h = K.home;
-    if (K.lane === 'grid' || overLetters()) return [stepOff(), call(routeHome)];
-    if (dist(h.x, h.g) < 3) { K.lane = h.bot ? 'bot' : 'free'; K.onHint = false; return []; }
-    if (crossesLetters(h.x, h.g) || Math.abs(K.ground - h.g) > K.charH * 2.5)
-      return [{ type: 'leap', lane: h.bot ? 'bot' : 'free', x1: h.x, g1: h.g, ms: 1000, h: .6 }, call(routeHome)];
+    if (K.lane === 'grid') K.lane = 'free';
+    if (dist(h.x, h.g) < 3) { K.lane = h.bot ? 'bot' : 'free'; K.depth = h.bot ? 1 : depthAt(h.g); K.onHint = false; return []; }
     return [A.walkTo(h.x, h.g, h.bot ? 'bot' : 'free'), call(routeHome)];
   }
   const goHome = () => call(routeHome);
@@ -454,7 +452,7 @@
     const sc = S(), hw = K.charH * .7 * sc, cx = K.x + K.w / 2, feet = K.ground + K.sink;
     return !(cx + hw / 2 <= ib.left || cx - hw / 2 >= ib.right || feet <= ib.top || feet - K.charH * sc >= ib.bottom);
   }
-  function offLetters() { return K.lane === 'grid' || K.leaping || overLetters() ? [stepOff()] : []; }
+  function offLetters() { return []; }        // reactions happen right where he is; then he walks home
 
   // ---------- showing where a hidden word starts: walks onto the boxes and points at its first letter ----------
   function hintVisit() {
@@ -471,13 +469,9 @@
       .sort((p, q) => (isFree(q) - isFree(p)) || (Math.abs(p[0] - entryRow) - Math.abs(q[0] - entryRow)))[0] || target;
     K.lastHint = performance.now(); K.wrongStreak = 0; K.onHint = true;
     const entry = [entryRow, nb[1]], colX = clampX(g.left + (nb[1] + .5) * g.cs - K.w / 2);
-    const list = [call(() => {             // to the column of the box it enters by
-      if (K.ground <= g.top) return [A.walkTo(colX, K.ground, 'free')];
-      if (K.lane === 'bot') return [A.walkTo(colX, K.gBot, 'bot')];
-      return [{ type: 'leap', lane: 'bot', x1: colX, ms: 900, h: .5 }];
-    })];
-    list.push({ type: 'leap', lane: 'grid', cell: entry, ms: 800, h: .5, say: pick(['Nifuate!', 'Ngoja, nakuonyesha!', 'Nimeona kitu!']), sayMs: 1600 });
-    for (const st of steps(entry, nb, 12)) list.push(stepTo(st));
+    const spot = cellPos(nb[0], nb[1]);
+    const list = [A.walkTo(spot.x, spot.g, 'free', { stepMs: 400, say: pick(['Nifuate!', 'Ngoja, nakuonyesha!', 'Nimeona kitu!']), sayMs: 1600, onEnd: () => { K.cell = nb; } })];
+    void entry; void colX;
     const tx = g.left + (target[1] + .5) * g.cs;
     list.push(A.pose('point', 3400, { fx: 'bounce', say: pick(['Anza hapa!', 'Neno linaanza hapa!', 'Tazama herufi hii!']), sayMs: 3000,
       onStart: () => { K.face = tx >= K.x + K.w / 2 ? 1 : -1; try { K.host.flashCell ? K.host.flashCell(target[0], target[1]) : K.host.softHint(); } catch (_) {} } }));
@@ -584,7 +578,7 @@
       K.lastTouch = K.lastFind = performance.now(); K.wrongStreak = 0;
       if (!K.ready) return; wake(true);
       const r = Math.random();
-      const list = r < .35 ? [A.jump(0, .45, 'jumpjoy'), A.pose('cheer', 1300)]
+      const list = r < .35 ? [A.pose('cheer', 2000, { fx: 'bounce' })]
                  : r < .7 ? [A.pose('thumbs', 2000, { fx: 'bounce' })]
                  : [A.pose('yay', 1800, { fx: 'bounce' })];
       if (Math.random() < .65) list[0].say = pick(SAY.correct);
@@ -604,7 +598,7 @@
     },
     onWin() {
       if (!K.ready) return; wake(true); K.onHint = false;
-      doNow([...offLetters(), A.jump(0, .55, 'jumpjoy'), A.seq(['party', 'dance', 'cheer', 'party'], 500, 2000, { fx: 'bounce', say: pick(SAY.win) }), A.pose('tada', 1200), goHome()], 3500);
+      doNow([A.pose('party', 1800, { fx: 'bounce', say: pick(SAY.win), sayMs: 2400 }), A.pose('cheer', 1500), A.pose('tada', 1200), goHome()], 3500);
     },
     tap() {
       if (!K.ready || K.y > 2) return;
@@ -624,7 +618,7 @@
         () => [A.pose('tease', 1800, { fx: 'wobble', say: T.tease })],
         () => [A.pose('wow', 1800, { fx: 'shake', say: T.wow })],
         () => [A.pose('cool', 2000, { say: T.cool })],
-        () => [A.jump(0, .6, 'yay'), A.pose('cheer', 1200, { say: T.yay })]
+        () => [A.pose('yay', 2000, { fx: 'bounce', say: T.yay })]
       ];
       let i; do { i = Math.floor(Math.random() * choices.length); } while (i === K.lastTap && choices.length > 1);
       K.lastTap = i;
