@@ -48,7 +48,7 @@
   .kin{position:absolute;left:0;top:0;will-change:transform;pointer-events:none;transform-origin:50% 100%}
   .kin-spr{width:100%;height:100%;background-repeat:no-repeat;transform-origin:50% 100%}
   .kin-spr.flip{transform:scaleX(-1)}
-  .kin-hit{position:absolute;left:0;top:0;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .kin-hit{position:absolute;left:0;top:0;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
   .kin-fx-bounce{animation:kinBounce .5s ease-out}
   .kin-fx-shake{animation:kinShake .45s ease-in-out}
   .kin-fx-wobble{animation:kinWobble .9s ease-in-out}
