@@ -464,7 +464,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script src="haraka.js?v=2"></script>
-<script src="kinyonga.js?v=1"></script>
+<script src="kinyonga.js?v=2"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1821,7 +1821,8 @@ $('homeBtn').addEventListener('click',()=>{ sfx.back(); showMenu('home'); });
 
 window.addEventListener('resize',fitBoard);
 if(window.Kinyonga) Kinyonga.init({
-  parent: document.querySelector('.app'), inner: ()=>innerEl, sfx,
+  parent: document.querySelector('.app'), inner: ()=>innerEl, board: ()=>$('board'), sfx,
+  topLimit: ()=>$('category').getBoundingClientRect().bottom, avoid: ()=>[$('hintBtn').getBoundingClientRect()],
   isPlaying: ()=> document.querySelector('.app').style.visibility!=='hidden' && !$('overlay').classList.contains('show')
                   && !$('sheet').classList.contains('show') && !(window.Haraka && Haraka.isOpen()),
   softHint: ()=>{ const w=words && words.find(x=>!x.found); if(!w) return; const e=cellEl(w.cells[0][0],w.cells[0][1]);

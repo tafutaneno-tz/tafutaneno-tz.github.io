@@ -72,7 +72,7 @@
   const K = {
     ready: false, host: null, layer: null, el: null, spr: null, hit: null, bubble: null,
     d: .5, w: 88, h: 70, charH: 56, ground: 0, minX: 4, maxX: 200,
-    x: 40, y: 0, face: 1, queue: [], act: null, frameKey: '', raf: 0, last: 0,
+    x: 40, y: 0, face: 1, lane: 'bot', gBot: 0, gTop: 0, topOk: false, climbing: false, queue: [], act: null, frameKey: '', raf: 0, last: 0,
     lastTouch: 0, hintStage: 0, nextBrain: 0, lastSlip: 0, lastSay: 0, sayT: 0, busyUntil: 0
   };
 
@@ -100,7 +100,7 @@
     const hw = K.charH * .85, hh = K.charH * .95;
     const hx = K.x + K.w / 2 - hw / 2, hy = K.ground - hh;
     Object.assign(K.hit.style, { width: hw + 'px', height: hh + 'px', transform: `translate3d(${hx}px,${hy}px,0)` });
-    K.hit.style.pointerEvents = K.y > 2 ? 'none' : 'auto';
+    K.hit.style.pointerEvents = (K.y > 2 || K.climbing) ? 'none' : 'auto';
     if (K.bubble.classList.contains('on')) placeBubble();
   }
 
@@ -108,18 +108,34 @@
   function layout() {
     if (!K.ready) return;
     const inner = K.host.inner().getBoundingClientRect();
+    const board = K.host.board ? K.host.board().getBoundingClientRect() : inner;
     const vb = (window.visualViewport ? visualViewport.height : innerHeight);
     const ground = vb - 4;
     const space = ground - inner.bottom - 4;                  // free height between the last row of letters and the screen bottom
     K.charH = Math.max(40, Math.min(66, space));
     K.d = K.charH / META.charPx;
     K.w = META.cell[0] * K.d; K.h = META.cell[1] * K.d;
-    K.ground = ground + 3 * K.d;                              // cells keep 3px under the feet
+    K.gBot = ground + 3 * K.d;                                // cells keep 3px under the feet
+    // second lane: standing on the top edge of the board, below the word card, left of the hint button
+    const topLimit = K.host.topLimit ? K.host.topLimit() : 0;
+    const topSpace = board.top - topLimit - 2;
+    K.gTop = board.top + 3 * K.d;
+    const avoid = K.host.avoid ? K.host.avoid().filter(r => r && r.width && r.bottom > board.top - K.charH && r.top < board.top) : [];
+    K.topMaxX = avoid.length ? Math.min(...avoid.map(r => r.left)) - K.w * .82 : innerWidth - K.w * .88;
+    K.topMinX = Math.max(-K.w * .12, board.left - K.w * .2);
+    K.topOk = topSpace >= K.charH * .95 && K.topMaxX - K.topMinX > K.w * 1.2;
+    if (!K.topOk && K.lane === 'top') K.lane = 'bot';
+    K.ground = K.lane === 'top' ? K.gTop : K.gBot;
     K.el.style.width = K.w + 'px'; K.el.style.height = K.h + 'px';
-    K.minX = -K.w * .12; K.maxX = innerWidth - K.w * .88;
+    setLaneX();
     K.x = Math.max(K.minX, Math.min(K.maxX, K.x));
     K.layer.style.display = space < 34 ? 'none' : '';          // too little room on this screen: stay hidden instead of covering letters
     K.frameKey = ''; draw(); place();
+  }
+
+  function setLaneX() {
+    if (K.lane === 'top') { K.minX = K.topMinX; K.maxX = K.topMaxX; }
+    else { K.minX = -K.w * .12; K.maxX = innerWidth - K.w * .88; }
   }
 
   /* ---------- speech bubble beside the head (never over the letters) ---------- */
@@ -177,6 +193,12 @@
       K.y = Math.sin(p * Math.PI) * K.charH * (a.height || .45);
       if (a.dx) { K.x = Math.max(K.minX, Math.min(K.maxX, a.x0 + a.dx * p)); K.face = Math.sign(a.dx); }
       if (p >= 1) { K.y = 0; done = true; }
+    } else if (a.type === 'climb') {
+      if (a.g0 === undefined) { a.g0 = K.ground; a.g1 = a.to === 'top' ? K.gTop : K.gBot; K.climbing = true; }
+      const p = Math.min(1, a.t / (a.ms / 1000)), e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      K.ground = a.g0 + (a.g1 - a.g0) * e;
+      K.y = Math.sin(p * Math.PI) * K.charH * .25;
+      if (p >= 1) { K.lane = a.to; K.ground = a.g1; K.y = 0; K.climbing = false; setLaneX(); done = true; }
     } else {                       // 'play' (frame sequence) or 'pose' (single picture) or 'wait'
       if (a.t * 1000 >= a.ms) done = true;
     }
@@ -193,21 +215,25 @@
   function draw() { const [k, i] = frameFor(K.act || K.idleAct); setFrame(k, i); }
 
   const A = {
-    walk: to => ({ type: 'move', to, speed: K.charH * 1.1, anim: 'walk', fps: 12 }),
-    run: to => ({ type: 'move', to, speed: K.charH * 3, anim: 'run', fps: 16 }),
-    hopTo: to => ({ type: 'move', to, speed: K.charH * 1.8, anim: 'jump', fps: 13, hop: .55 }),
-    jump: (dx, h) => ({ type: 'jump', ms: 700, dx: dx || 0, height: h || .45, anim: 'jump', fps: 13 }),
-    play: (anim, ms, fps, extra) => Object.assign({ type: 'play', anim, ms, fps: fps || 11 }, extra || {}),
+    walk: to => ({ type: 'move', to, speed: K.charH * .7, anim: 'walk', fps: 7 }),
+    run: to => ({ type: 'move', to, speed: K.charH * 1.7, anim: 'run', fps: 10 }),
+    hopTo: to => ({ type: 'move', to, speed: K.charH * 1.1, anim: 'jump', fps: 9, hop: .8 }),
+    jump: (dx, h) => ({ type: 'jump', ms: 950, dx: dx || 0, height: h || .45, anim: 'jump', fps: 9 }),
+    climb: to => ({ type: 'climb', to, ms: 1500, anim: 'jump', fps: 8 }),
+    play: (anim, ms, fps, extra) => Object.assign({ type: 'play', anim, ms, fps: Math.round((fps || 11) * .75) }, extra || {}),
     pose: (pose, ms, extra) => Object.assign({ type: 'pose', pose, ms }, extra || {}),
-    wait: ms => ({ type: 'wait', ms, anim: 'idle', fps: 5 })
+    wait: ms => ({ type: 'wait', ms, anim: 'idle', fps: 3 })
   };
-  function doNow(list, busyMs) { K.queue = list.slice(); K.act = null; K.y = 0; K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(800, 2000); }
+  function doNow(list, busyMs) {
+    if (K.climbing) { K.lane = K.ground < (K.gTop + K.gBot) / 2 ? 'top' : 'bot'; K.ground = K.lane === 'top' ? K.gTop : K.gBot; K.climbing = false; setLaneX(); }
+    K.queue = list.slice(); K.act = null; K.y = 0; K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(800, 2000); }
   const randX = () => rnd(K.minX + 10, K.maxX - 10);
 
   /* ---------- free-time behaviour ---------- */
   function brain(now) {
     if (K.act || K.queue.length || now < K.nextBrain) return;
     const r = Math.random();
+    if (K.topOk && !REDUCED && r < .16) { travel(); K.nextBrain = now + rnd(4000, 7000); return; }
     if (!REDUCED && now - K.lastSlip > 75000 && r < .07) slip();
     else if (r < .42) K.queue.push(A.walk(randX()), A.wait(rnd(900, 2200)));
     else if (r < .55 && !REDUCED) K.queue.push(A.run(randX()), A.wait(900));
@@ -216,7 +242,20 @@
     else if (r < .86) K.queue.push(A.pose(pick(['think', 'magnify', 'peek', 'question']), 1800, { fx: 'wobble' }));
     else if (r < .93) K.queue.push(A.jump(rnd(-1, 1) * K.w * .8));
     else K.queue.push(A.pose('dance', 1400, { fx: 'bounce' }), A.pose('cheer', 900));
-    K.nextBrain = now + rnd(2500, 5500);
+    K.nextBrain = now + rnd(3500, 7500);
+  }
+  // walk to one side of the board, climb up (or down) along it, and wander on the other edge
+  function travel() {
+    const to = K.lane === 'top' ? 'bot' : 'top';
+    // climb on the left when something (the hint button) sits at the top right; otherwise on the nearer side
+    const blockedRight = K.topMaxX < innerWidth - K.w * 1.2;
+    const leftSide = blockedRight || K.x + K.w / 2 < innerWidth / 2;
+    const sideX = leftSide ? -K.w * .12 : innerWidth - K.w * .88;
+    const land = to === 'top' ? (leftSide ? K.topMinX + K.w * .3 : K.topMaxX) : rnd(K.w, innerWidth - K.w * 1.5);
+    K.queue.push(A.run(sideX), A.climb(to),
+      { type: 'move', to: land, speed: K.charH * .7, anim: 'walk', fps: 7 },
+      A.play('talk', 1200, 8, { say: Math.random() < .3 ? (to === 'top' ? 'Naona vizuri hapa juu!' : 'Nimerudi!') : '' }),
+      A.wait(1200));
   }
   function slip() {
     K.lastSlip = performance.now();
@@ -310,7 +349,7 @@
       if (!playing) { K.raf = requestAnimationFrame(tick); return; }    // cheap wait while menus / popups are open
       if (LITE && K.last && now - K.last < 30) { K.raf = requestAnimationFrame(tick); return; }   // weak phones: ~30 fps is plenty
       const dt = K.last ? Math.min(.06, (now - K.last) / 1000) : 0; K.last = now;
-      if (!K.act && !K.queue.length) { K.idleAct = K.idleAct || { anim: 'idle', fps: 4, t: 0 }; K.idleAct.t += dt; }
+      if (!K.act && !K.queue.length) { K.idleAct = K.idleAct || { anim: 'idle', fps: 3, t: 0 }; K.idleAct.t += dt; }
       update(dt); brain(now); stuck(now);
       draw(); place();
       K.raf = requestAnimationFrame(tick);
