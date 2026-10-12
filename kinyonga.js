@@ -17,7 +17,7 @@
 (function () {
   'use strict';
 
-  const VER = 2;   // sprite sheet version (bump when the .webp files change)
+  const VER = 3;   // sprite sheet version (bump when the .webp files change)
   const META = {
     cell: [176, 140], charPx: 112,                 // side frames: character ~106px tall inside a 176×140 cell
     anim: { cols: 12, url: 'images/kinyonga-anim.webp?v=' + VER, seq: { jump: [21, 22, 23, 24, 25, 26, 27, 28, 29] } },
@@ -26,13 +26,13 @@
       wave: 0, thumbs: 1, cheer: 2, yay: 3, stepL: 4, stepR: 5, dash: 6, hello: 7, wide: 8, love: 9, kiss: 10, inlove: 11,
       idea: 12, oh: 13, magnify: 14, map: 15, question: 16, think: 17, cool: 18, hi: 19, fall: 20, slip: 21, cry: 22, sob: 23,
       sad: 24, sleep: 25, laughpoint: 26, tease: 27, wow: 28, giggle: 29, dance: 30, party: 31, jumpjoy: 32, shy: 33, kiss2: 34,
-      shy2: 35, cute: 36, hearts: 37, handheart: 38, point: 39, tada: 40 } },
+      shy2: 35, cute: 36, hearts: 37, handheart: 38, point: 39, tada: 40, angry: 41 } },
     poses: { cols: 6, url: 'images/kinyonga-poses.webp?v=' + VER, index: { sit: 17 } },
     close: { cols: 4, url: 'images/kinyonga-close.webp?v=' + VER, index: { point: 0, winkwalk: 1, cheer: 2, kiss: 3, laughpoint: 4, magnify: 5, think: 6, shock: 7 } }
   };
   // when he is close to the camera the sharp close-up pictures are used
   const CLOSE_OF = { point: 'point', hi: 'winkwalk', wave: 'winkwalk', hello: 'winkwalk', tada: 'winkwalk', cheer: 'cheer', yay: 'cheer', party: 'cheer',
-    kiss: 'kiss', kiss2: 'kiss', love: 'kiss', laughpoint: 'laughpoint', giggle: 'laughpoint', tease: 'laughpoint', magnify: 'magnify',
+    kiss: 'kiss', kiss2: 'kiss', love: 'kiss', laughpoint: 'laughpoint', giggle: 'laughpoint', magnify: 'magnify',
     think: 'think', question: 'think', wow: 'shock', oh: 'shock' };
 
   const SAY = {
@@ -63,6 +63,7 @@
   .kin-fx-bounce{animation:kinBounce .5s ease-out}
   .kin-fx-shake{animation:kinShake .45s ease-in-out}
   .kin-fx-wobble{animation:kinWobble .9s ease-in-out}
+  .kin-fx-angry{animation:kinShake .28s ease-in-out 6}
   @keyframes kinBounce{0%{transform:scale(1,1)}40%{transform:scale(1.07,1.05)}100%{transform:scale(1,1)}}
   @keyframes kinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px) rotate(-3deg)}75%{transform:translateX(4px) rotate(3deg)}}
   @keyframes kinWobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
@@ -223,7 +224,7 @@
       K.layer.appendChild(h); setTimeout(() => h.remove(), 1800 + i * 200);
     }
   }
-  function fx(cls) { const s = K.fxEl; s.classList.remove('kin-fx-bounce', 'kin-fx-shake', 'kin-fx-wobble'); if (!cls || REDUCED) return; void s.offsetWidth; s.classList.add(cls); }
+  function fx(cls) { const s = K.fxEl; s.classList.remove('kin-fx-bounce', 'kin-fx-shake', 'kin-fx-wobble', 'kin-fx-angry'); if (!cls || REDUCED) return; void s.offsetWidth; s.classList.add(cls); }
 
   /* ---------- actions ---------- */
   const STEP = { ms: 270 };                // one step (half a walking cycle)
@@ -289,7 +290,7 @@
       if (a.z0 === undefined) a.z0 = K.zoom;
       const p = Math.min(1, a.t / (a.ms / 1000)), e = ease(p);
       K.zoom = a.z0 + (a.to - a.z0) * e; K.sink = (K.zoom - 1) * K.charH * .42;
-      if (a.walking) { const sp = (a.t % (STEP.ms / 1000)) / (STEP.ms / 1000); K.lift = Math.sin(sp * Math.PI) * K.charH * .05; K.stepN = Math.floor(a.t / (STEP.ms / 1000)); }
+      if (a.walking) { K.lift = 0; K.stepN = Math.floor(a.t / .3); }      // stepping towards / away from the camera
       if (p >= 1) { K.zoom = a.to; if (a.to === 1) K.sink = 0; done = true; }
     } else if (a.type === 'call') {    // decides the next steps at the moment it runs
       const more = a.fn() || []; K.queue.unshift(...more); done = true;
@@ -306,7 +307,8 @@
   }
   function frameFor(a) {
     if (!a) return front(K.idlePose);
-    if (a.type === 'walk' || (a.type === 'zoom' && a.walking) || (a.type === 'leap' && a.step)) return K.walkReady ? ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n] : front(((K.walkPh || 0) % 1 + 1) % 1 < .5 ? 'stepL' : 'stepR');
+    if (a.type === 'zoom' && a.walking) return front(K.stepN % 2 ? 'stepR' : 'stepL');
+    if (a.type === 'walk' || (a.type === 'leap' && a.step)) return K.walkReady ? ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n] : front(((K.walkPh || 0) % 1 + 1) % 1 < .5 ? 'stepL' : 'stepR');
     if (a.type === 'leap') {        // hop: arms up on the way up, happy face on the way down
       const p = a.t / (a.ms / 1000);
       return front(p < .5 ? 'jumpjoy' : 'yay');
@@ -343,7 +345,7 @@
       if (K.lane !== 'grid') ghost(false);
     }
     if (K.act && K.act.type === 'walk' && K.act.tx !== undefined && K.act.st / (STEP.ms / 1000) < STEP.move) { K.x = K.act.sx; K.ground = K.act.sg; }   // put the foot back down
-    K.queue = list.slice(); K.act = null; K.y = 0; K.lift = 0;
+    K.queue = list.slice(); K.act = null; K.y = 0; K.lift = 0; K.angry = false;
     if (K.zoom > 1.02 && !(K.queue[0] && K.queue[0].type === 'zoom')) K.queue.unshift({ type: 'zoom', to: 1, ms: 320 });
     K.busyUntil = performance.now() + (busyMs || 0); K.nextBrain = performance.now() + (busyMs || 1500) + rnd(600, 1400);
   }
@@ -573,7 +575,7 @@
       K.lastTouch = performance.now();
       if (!K.ready || K.drag) return;
       wake(!!fromEvent);
-      if (fromEvent) return;
+      if (fromEvent || K.angry) return;
       if (K.lane === 'grid' || overLetters() || (K.leaping && K.act && K.act.lane === 'grid')) {
         ghost(true); K.ghostHold = true; clearTimeout(K.ghostT);      // the letters under him stay readable and selectable
         if (!K.onHint && !atHome()) doNow([goHome()], 600);
@@ -622,6 +624,10 @@
       K.lastTouch = performance.now();
       try { K.host.sfx && K.host.sfx.select && K.host.sfx.select(); } catch (_) {}
       if (wake(false)) return;                            // a tap on a sleeping Kinyonga wakes him up
+      if (K.angry) return;
+      const tnow = performance.now();
+      K.tapTimes = (K.tapTimes || []).filter(t => tnow - t < 4000); K.tapTimes.push(tnow);
+      if (K.tapTimes.length >= 5 && tnow - (K.lastAngry || -1e9) > 15000 && !REDUCED) { angry(); return; }
       const now = performance.now();
       const T = SAY.tap, choices = [
         () => [A.pose('shy', 2000, { say: T.shy, hearts: 2 })],
@@ -642,8 +648,24 @@
     // the letter board asks: is this finger pressing Kinyonga? (then it is not the start of a letter swipe)
     boardDown(e) { return !!(K.lp && K.lp.id === e.pointerId); },
     // exposed for tests
-    _K: K, _say: say, _hint: () => hintVisit(), _over: () => overLetters(), _home: () => K.home
+    _K: K, _say: say, _hint: () => hintVisit(), _over: () => overLetters(), _home: () => K.home, _angry: () => angry()
   };
+
+  /* ---------- tapped too much: he walks up to the camera, grows big, looks cross, sticks his tongue out ---------- */
+  function angry() {
+    const Z = Math.max(1.8, Math.min(2.5, innerHeight * .3 / K.charH));
+    const cx = innerWidth / 2 - K.w / 2;
+    doNow([
+      A.pose('oh', 700, { say: 'Acha!', sayMs: 900 }),
+      A.walkTo(cx, K.gBot, 'bot', { stepMs: 230 }),
+      { type: 'zoom', to: Z, ms: 1500, walking: true, onStart: () => { K.face = 1; } },
+      A.pose('angry', 2200, { fx: 'angry', hearts: 3, glyph: '💢', say: pick(['Inatosha! Acha kunigusa!', 'Wee! Inatosha!', 'Acha basi!']), sayMs: 2200 }),
+      A.pose('tease', 1900, { fx: 'wobble', say: 'Bleee! 😛', sayMs: 1800 }),
+      { type: 'zoom', to: 1, ms: 1100, walking: true, onEnd: () => { K.angry = false; } },
+      goHome()
+    ], 9000);
+    K.angry = true; K.lastAngry = performance.now(); K.tapTimes = [];
+  }
 
   /* ---------- carrying Kinyonga with a finger ---------- */
   function startDrag(px, py, id) {
