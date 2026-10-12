@@ -22,10 +22,11 @@
 (function () {
   'use strict';
 
-  const VER = 4;
+  const VER = 5;
   const MOVES = {                      // regions of the movement atlas (made from the character sheets)
-    url: 'images/kinyonga-moves.webp?v=' + VER, cols: 8, cell: [200, 190], anchor: [100, 182], h: 140,
-    anims: { idle: 0, walk: 1, run: 2, jump: 3, fall: 4, react: 5, celebrate: 6, tease: 7, cry: 8, angry: 9 }
+    url: 'images/kinyonga-moves.webp?v=' + VER, cols: 11, cell: [240, 190], anchor: [130, 182], h: 140,
+    anims: { idle: 0, walk: 1, run: 2, jump: 3, fall: 4, react: 5, celebrate: 6, tease: 7, cry: 8, angry: 9 },
+    n: { idle: 8, walk: 9, run: 8, jump: 8, fall: 6, react: 7, celebrate: 6, tease: 8, cry: 6, angry: 8 }
   };
   const FRONT = {
     url: 'images/kinyonga-front.webp?v=' + VER, cols: 8, cell: [250, 210], anchor: [125, 204], h: 188,
@@ -185,7 +186,7 @@
     idle: {
       enter(d) { d.blinkAt = rnd(2, 5); },
       update(dt, d) { return d.ms != null && K.st * 1000 >= d.ms; },
-      draw(d) { const t = K.st % 6; moveFrame('idle', t > d.blinkAt && t < d.blinkAt + .25 ? 3 : 2); }   // calm smile, now and then a wink
+      draw(d) { const t = K.st % 6; moveFrame('idle', t > d.blinkAt && t < d.blinkAt + .25 ? 6 : 7); }   // calm smile, now and then a wink
     },
     walk: {           // to d.x on the current platform; the 8 leg pictures advance with the distance walked
       update(dt, d) {
@@ -203,7 +204,7 @@
         return false;
       },
       exit() { K.bob = 0; },
-      draw(d) { moveFrame(d.run ? 'run' : 'walk', Math.floor((K.cycle % 1) * 8) % 8); }
+      draw(d) { { const a = d.run ? 'run' : 'walk', n = MOVES.n[a]; moveFrame(a, Math.floor((K.cycle % 1) * n) % n); } }
     },
     jump: {           // d: vx, vy, ignoreAbove (to drop through rows)
       enter(d) { K.ground = null; K.vx = d.vx || 0; K.vy = d.vy; K.ignoreAbove = d.ignoreAbove != null ? d.ignoreAbove : null; d.crouch = d.noCrouch ? 0 : .09; K.fallFrom = K.y; },
@@ -224,7 +225,7 @@
         if (d.hard) { if (K.st > 2.6) { say(pick(SAY.up), 1400); return true; } return false; }
         return K.st > .22;
       },
-      draw(d) { if (d.hard) moveFrame('fall', Math.min(7, Math.floor(K.st / 2.6 * 8))); else moveFrame('jump', K.st < .11 ? 6 : 7); }
+      draw(d) { if (d.hard) moveFrame('fall', Math.min(5, Math.floor(K.st / 2.6 * 6))); else moveFrame('jump', K.st < .11 ? 6 : 7); }
     },
     sit: { update(dt, d) { return K.st * 1000 >= (d.ms || 6000); }, draw() { frame('p', POSES.index.sit); } },
     sleep: {
@@ -235,7 +236,7 @@
     talk: {           // mouth open / closed while the bubble is on
       enter(d) { say(d.text, d.ms); },
       update(dt, d) { return K.st * 1000 >= (d.ms || 2000); },
-      draw() { moveFrame('idle', Math.floor(K.st * 4) % 2 ? 0 : 2); }
+      draw() { moveFrame('idle', Math.floor(K.st * 4) % 2 ? 4 : 7); }
     },
     pose: {           // one picture held for a while (pointing at a letter, thumbs up, a wink…)
       enter(d) { if (d.text) say(d.text, d.ms); if (d.onStart) d.onStart(); },
@@ -245,7 +246,7 @@
     play: {           // a row of the atlas played through (laugh, cry, celebrate, interact)
       enter(d) { if (d.text) say(d.text, d.ms); d.fps = d.fps || 9; },
       update(dt, d) { return K.st * 1000 >= (d.ms || 8 / d.fps * 1000 * (d.times || 1)); },
-      draw(d) { const i = Math.floor(K.st * d.fps); moveFrame(d.anim, d.hold ? Math.min(i, 7) : i % 8); }
+      draw(d) { const i = Math.floor(K.st * d.fps); const n = MOVES.n[d.anim]; moveFrame(d.anim, d.hold ? Math.min(i, n - 1) : i % n); }
     },
     angry: {          // grows towards the player right where he is: cross face, tongue out, back to normal
       enter(d) {
@@ -267,7 +268,7 @@
         if (t < 1.2) moveFrame('angry', Math.min(5, Math.floor(t / 1.2 * 6)));
         else if (t < 3) moveFrame('angry', 6 + (Math.floor(t * 3) % 2));
         else if (t < 4.4) frame('f', FRONT.index.tease);
-        else moveFrame('idle', 2);
+        else moveFrame('idle', 7);
       }
     },
     dragged: {
@@ -392,11 +393,11 @@
         return [{ go: 'r' + r, x: clamp(K.x, p.x0 + K.H, p.x1 - K.H) }, { do: 'pose', kind: 'm', anim: 'react', idx: 6, ms: 1600 }, { go: pick(['r0', 'floor']), x: K.x }];
       }],
       ['hop', .7, () => [{ call: () => jumpTo(here, clamp(K.x + K.face * K.H * .4, here.x0 + 4, here.x1 - 4)) }]],
-      ['wink', 1, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 5, ms: 1500 }]],
-      ['thumbs', .8, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 6, ms: 1800 }]],
+      ['wink', 1, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 6, ms: 1500 }]],
+      ['thumbs', .8, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 3, ms: 1800 }]],
       ['chat', 1, () => [{ do: 'talk', text: t - K.lastChat > 15000 ? (K.lastChat = t, pick(SAY.chat)) : '', ms: 2200 }]],
       ['sit', .7, () => [{ do: 'sit', ms: rnd(4000, 7000) }]],
-      ['wave', .6, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 7, ms: 1600 }]],
+      ['wave', .6, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 0, ms: 1600 }]],
       ['stumble', t - K.lastTumble > 90000 ? .35 : 0, () => { K.lastTumble = t; return [{ do: 'play', anim: 'fall', fps: 3.1, ms: 2600, hold: true, text: pick(SAY.tumble) }, { do: 'talk', text: pick(SAY.up), ms: 1400 }]; }]
     ].filter(o => o[1] > 0 && !K.lastActs.includes(o[0]));
     let sum = options.reduce((s, o) => s + o[1], 0), r = Math.random() * sum, ch = options[0];
@@ -539,7 +540,7 @@
     if (K.tapTimes.length >= 5 && t - K.lastAngry > 15000 && !isAir() && K.state !== 'land') {   // tapped again and again: cross, right where he is
       K.lastAngry = t; K.tapTimes = []; K.plan = []; K.pending = null; setState('angry'); return;
     }
-    const i = pick([0, 1, 2, 3, 5, 6, 7].filter(v => v !== K.lastTapPose)); K.lastTapPose = i;
+    const i = pick([0, 1, 2, 3, 5, 6].filter(v => v !== K.lastTapPose)); K.lastTapPose = i;
     react([{ do: 'pose', kind: 'm', anim: 'react', idx: i, ms: 1700, text: pick(SAY.tap) }], 1700);
   }
   function startDrag(px, py, id) {
