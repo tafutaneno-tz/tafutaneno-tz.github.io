@@ -122,10 +122,11 @@
 
   /* ---------- drawing ---------- */
   function frame(kind, idx) {
-    const key = kind + idx + '/' + K.H;
+    const hh = K.H * K.zoom;
+    const key = kind + idx + '/' + hh.toFixed(1);
     if (key === K.frameKey) return; K.frameKey = key;
     const m = kind === 'm' ? MOVES : kind === 'f' ? FRONT : POSES;
-    const k = K.H / m.h, s = K.spr.style;
+    const k = hh / m.h, s = K.spr.style;
     const c = idx % m.cols, r = Math.floor(idx / m.cols);
     s.width = m.cell[0] * k + 'px'; s.height = m.cell[1] * k + 'px';
     s.left = -m.anchor[0] * k + 'px'; s.top = -m.anchor[1] * k + 'px';
@@ -138,9 +139,9 @@
   const moveFrame = (anim, i) => frame('m', MOVES.anims[anim] * MOVES.cols + i);
   let lastTf = '';
   function render() {
-    const tf = `translate3d(${K.x.toFixed(1)}px,${(K.y + K.bob).toFixed(1)}px,0)`;
+    const tf = `translate3d(${(K.x + (K.shake || 0)).toFixed(1)}px,${(K.y + K.bob).toFixed(1)}px,0)`;
     if (tf !== lastTf) { K.el.style.transform = tf; lastTf = tf; }
-    const sc = `scale(${((K.face < 0 ? -1 : 1) * K.zoom).toFixed(3)},${K.zoom.toFixed(3)})`;
+    const sc = K.face < 0 ? 'scaleX(-1)' : 'none';
     if (sc !== K.lastSc) { K.spr.style.transform = sc; K.lastSc = sc; }
     const h = K.H * .95 * K.zoom, w = K.H * .7 * K.zoom, hx = K.x - w / 2, hy = K.y - h;
     Object.assign(K.hit.style, { width: w + 'px', height: h + 'px', transform: `translate3d(${hx}px,${hy}px,0)` });
@@ -251,7 +252,7 @@
     angry: {          // grows towards the player right where he is: cross face, tongue out, back to normal
       enter(d) {
         const room = Math.min(K.x, K.W - K.x) / (K.H * .42), up = (K.y - 14) / (K.H * 1.05);
-        d.Z = clamp(Math.min(2.4, room, up), 1.25, 2.4);
+        d.Z = clamp(Math.min(2.4, room, up), 1.25, 2.4); K.face = 1;
         K.quietUntil = now() + 9000; say('Acha!', 900);
       },
       update(dt, d) {
@@ -259,16 +260,16 @@
         K.zoom = t < 1.2 ? 1 + (d.Z - 1) * ease(t / 1.2) : t < 4.4 ? d.Z : t < 5.4 ? d.Z + (1 - d.Z) * ease(t - 4.4) : 1;
         if (!d.s1 && t > 1.2) { d.s1 = 1; say(pick(SAY.angry), 2000); effect('💢', 3); }
         if (!d.s2 && t > 3) { d.s2 = 1; say('Bleee! 😛', 1500); }
-        if (t > 5.4) { K.zoom = 1; return true; }
+        K.shake = t > 1.2 && t < 3 && !REDUCED ? Math.sin(t * 55) * K.H * .03 : 0;
+        if (t > 5.4) { K.zoom = 1; K.shake = 0; return true; }
         return false;
       },
-      exit() { K.zoom = 1; },
+      exit() { K.zoom = 1; K.shake = 0; K.face = K.face; },
       draw() {
         const t = K.st;
-        if (t < 1.2) moveFrame('angry', Math.min(5, Math.floor(t / 1.2 * 6)));
-        else if (t < 3) moveFrame('angry', 6 + (Math.floor(t * 3) % 2));
+        if (t < 3) frame('f', FRONT.index.angry);
         else if (t < 4.4) frame('f', FRONT.index.tease);
-        else moveFrame('idle', 7);
+        else frame('f', FRONT.index.cute);
       }
     },
     dragged: {
