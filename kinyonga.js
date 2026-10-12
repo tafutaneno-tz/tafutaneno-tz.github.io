@@ -128,8 +128,10 @@
     K.spr.classList.toggle('flip', K.face < 0);
     // the touch area covers only the body; it is off in the air, near the camera, and wherever it would cover
     // letters or buttons – a finger there always reaches the game underneath
-    const hw = K.charH * .85 * sc, hh = K.charH * .95 * sc;
-    const hx = K.x + K.w / 2 - hw / 2, hy = feet - K.y - hh;
+    const hw = K.charH * .85 * sc;
+    let hh = K.charH * .95 * sc, hy = feet - K.y - hh;
+    const hx = K.x + K.w / 2 - hw / 2;
+    if (K.lane === 'bot' && K.innerBox && hy < K.innerBox.bottom) { const nb = Math.min(feet - 14, K.innerBox.bottom); hh = feet - K.y - nb; hy = nb; }
     Object.assign(K.hit.style, { width: hw + 'px', height: hh + 'px', transform: `translate3d(${hx}px,${hy}px,0)` });
     const box = { left: hx, top: hy, right: hx + hw, bottom: hy + hh };
     const blocked = K.protect.some(r => !(box.right <= r.left || box.left >= r.right || box.bottom <= r.top || box.top >= r.bottom));
@@ -147,8 +149,8 @@
     const space = ground - inner.bottom - 4;                  // free height between the last row of letters and the screen bottom
     const gi = K.host.grid ? K.host.grid() : null;
     const cs = gi && gi.n ? inner.width / gi.n : 60;
-    K.charH = Math.max(44, Math.min(82, space));
-    K.gridDepth = Math.min(1, cs * 1.25 / K.charH);
+    K.charH = Math.max(58, Math.min(100, Math.max(space, innerWidth * .21)));
+    K.gridDepth = Math.min(1, cs * 1.9 / K.charH);    // on the letters: about two boxes tall
     const sameGrid = K.grid && gi && K.grid.n === gi.n;
     K.grid = gi && gi.n ? { left: inner.left, top: inner.top, cs, n: gi.n } : null;
     K.d = K.charH / META.charPx;
@@ -574,7 +576,7 @@
       if (fromEvent) return;
       if (K.lane === 'grid' || overLetters() || (K.leaping && K.act && K.act.lane === 'grid')) {
         ghost(true); K.ghostHold = true; clearTimeout(K.ghostT);      // the letters under him stay readable and selectable
-        if (!K.onHint) doNow([goHome()], 600);
+        if (!K.onHint && !atHome()) doNow([goHome()], 600);
       }
     },
     onLevelStart(first) {
@@ -585,7 +587,7 @@
       K.onHint = false;
       layout();
       const r = Math.random();
-      const text = first ? SAY.greet[0] : r < .3 ? pick(SAY.greet) : r < .5 ? 'Ukikwama, niguse!' : '';
+      const text = first ? SAY.greet[0] : r < .3 ? pick(SAY.greet) : '';
       doNow([A.talk('hi', 2400, text)], 2400);
       K.nextVar = performance.now() + rnd(9000, 14000);
     },
@@ -621,10 +623,6 @@
       try { K.host.sfx && K.host.sfx.select && K.host.sfx.select(); } catch (_) {}
       if (wake(false)) return;                            // a tap on a sleeping Kinyonga wakes him up
       const now = performance.now();
-      // stuck for a while? a tap is a call for help: he shows where a word starts
-      if (!K.onHint && now - K.lastFind > 15000 && now - K.lastHint > 12000) {
-        doNow([A.talk('hi', 1200, 'Nikusaidie? Twende!')], 1200); hintVisit(); return;
-      }
       const T = SAY.tap, choices = [
         () => [A.pose('shy', 2000, { say: T.shy, hearts: 2 })],
         () => [A.pose('kiss', 2000, { fx: 'bounce', say: T.kiss, hearts: 4 })],
