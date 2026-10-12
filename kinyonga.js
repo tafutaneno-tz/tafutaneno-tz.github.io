@@ -22,7 +22,7 @@
 (function () {
   'use strict';
 
-  const VER = 5;
+  const VER = 6;
   const MOVES = {                      // regions of the movement atlas (made from the character sheets)
     url: 'images/kinyonga-moves.webp?v=' + VER, cols: 11, cell: [240, 190], anchor: [130, 182], h: 140,
     anims: { idle: 0, walk: 1, run: 2, jump: 3, fall: 4, react: 5, celebrate: 6, tease: 7, cry: 8, angry: 9 },
@@ -32,6 +32,14 @@
     url: 'images/kinyonga-front.webp?v=' + VER, cols: 8, cell: [250, 210], anchor: [125, 204], h: 188,
     index: { point: 39, sleep: 25, hi: 19, cute: 36, think: 17, tease: 27, angry: 41, wow: 28, cheer: 2, kiss: 10, handheart: 38, shy: 33, cool: 18 }
   };
+  const BRAIN = { url: 'images/kinyonga-brain.webp?v=' + VER, cols: 8, cell: [250, 230], anchor: [125, 226], h: 172,
+    index: { wave: 0, thumbs: 1, laugh: 2, magnify: 3, map: 4, bulb: 5, point: 6, question: 7, heart: 8, cool: 9, celebrate: 10, trophy: 11, sleeprock: 12,
+      sad: 13, grumpy: 14, playsign: 15, chest: 16, star: 17, gift: 18, compass: 19, scroll: 20, megaphone: 21, flag: 22 } };
+  const THEMES = { url: 'images/kinyonga-themes.webp?v=' + VER, cols: 8, cell: [240, 230], anchor: [120, 226], h: 172,
+    index: { point: 0, magnify: 1, map: 2, binoculars: 3, wave: 4, thumbs: 5, thumbs2: 6, question: 7, trophy: 8, laughthumb: 9, cool: 10, read: 11,
+      stars: 14, heart: 15, monkey: 16, butterfly: 17, camera: 18, parrot: 19, exclaim: 20, shield: 21, knight: 22, builder: 23, scientist: 24, santa: 25,
+      football: 26, graduate: 27, chef: 28, guitar: 29, garden: 30, painter: 31 } };
+  const FACES = { url: 'images/kinyonga-faces.webp?v=' + VER, names: ['happy', 'wink', 'oh', 'laughing', 'worried', 'cool', 'cross', 'thinking'] };
   const POSES = { url: 'images/kinyonga-poses.webp?v=' + VER, cols: 6, cell: [282, 224], anchor: [141, 219], h: 149, index: { sit: 17 } };
 
   const SAY = {
@@ -58,6 +66,7 @@
     font:900 .92rem/1.2 "Nunito",system-ui,sans-serif;box-shadow:0 4px 0 rgba(0,0,0,.18),0 6px 16px rgba(0,0,0,.25);
     border:2px solid rgba(29,22,48,.85);opacity:0;transform:scale(.6);transition:opacity .18s,transform .18s;pointer-events:none;white-space:normal}
   .kin-say.on{opacity:1;transform:scale(1)}
+  .kin-face{display:inline-block;width:26px;height:26px;margin:-4px 6px -8px -4px;vertical-align:baseline;background:url(images/kinyonga-faces.webp?v=6) 0 0/208px 26px no-repeat}
   .kin-fx{position:absolute;font-size:20px;line-height:1;pointer-events:none;animation:kinFx 1.4s ease-out forwards}
   @keyframes kinFx{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-70px) scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.kin-fx{animation:none;opacity:0}}
@@ -125,7 +134,7 @@
     const hh = K.H * K.zoom;
     const key = kind + idx + '/' + hh.toFixed(1);
     if (key === K.frameKey) return; K.frameKey = key;
-    const m = kind === 'm' ? MOVES : kind === 'f' ? FRONT : POSES;
+    const m = kind === 'm' ? MOVES : kind === 'f' ? FRONT : kind === 'b' ? BRAIN : kind === 't' ? THEMES : POSES;
     const k = hh / m.h, s = K.spr.style;
     const c = idx % m.cols, r = Math.floor(idx / m.cols);
     s.width = m.cell[0] * k + 'px'; s.height = m.cell[1] * k + 'px';
@@ -153,9 +162,11 @@
   function ghost(on) { K.ghosted = on; K.layer.style.transition = 'opacity .2s'; K.layer.style.opacity = on ? '.25' : ''; }
 
   /* ---------- speech bubble ---------- */
-  function say(text, ms) {
+  function say(text, ms, face) {
     if (!text) return;
     const b = K.bubble; b.textContent = text; b.style.background = pick(BUBBLE);
+    const fi = face && K.facesReady ? FACES.names.indexOf(face) : -1;
+    if (fi >= 0) { const i = document.createElement('i'); i.className = 'kin-face'; i.style.backgroundPosition = (-fi * 26) + 'px 0'; b.prepend(i); }
     b.classList.add('on'); placeBubble();
     clearTimeout(K.sayT); K.sayT = setTimeout(() => b.classList.remove('on'), ms || 2200);
   }
@@ -232,7 +243,7 @@
     sleep: {
       enter(d) { d.z = .8; },
       update(dt, d) { if (K.st > d.z) { d.z = K.st + 1.9; effect('z', 1, ['#60a5fa', '#3b82f6']); } return false; },
-      draw() { frame('f', FRONT.index.sleep); }
+      draw() { if (K.brainReady && K.ground && K.ground.kind === 'floor') frame('b', BRAIN.index.sleeprock); else frame('f', FRONT.index.sleep); }
     },
     talk: {           // mouth open / closed while the bubble is on
       enter(d) { say(d.text, d.ms); },
@@ -240,7 +251,7 @@
       draw() { moveFrame('idle', Math.floor(K.st * 4) % 2 ? 4 : 7); }
     },
     pose: {           // one picture held for a while (pointing at a letter, thumbs up, a wink…)
-      enter(d) { if (d.text) say(d.text, d.ms); if (d.onStart) d.onStart(); },
+      enter(d) { if (d.text) say(d.text, d.ms, d.face); if (d.onStart) d.onStart(); },
       update(dt, d) { return K.st * 1000 >= d.ms; },
       draw(d) { if (d.kind === 'm') moveFrame(d.anim, d.idx); else frame(d.kind, d.idx); }
     },
@@ -379,9 +390,9 @@
     if (onLetters() && t - K.onBoardSince > 6000) { act('offLetters', [{ go: pick(['r0', 'floor']), x: K.x }]); return; }   // words stay readable
     if (idle > SLEEP_AFTER) { act('sleep', [{ do: 'sleep' }]); return; }
     if (idle > ATTENTION_AFTER && last() !== 'attention' && last() !== 'sleep') {         // the player is quiet: come closer, wave
-      act('attention', [{ go: 'floor', x: clamp(K.W / 2 + rnd(-1, 1) * K.H, minX(), maxX()) }, { do: 'pose', kind: 'm', anim: 'react', idx: 1, ms: 1800, text: pick(SAY.attention) }]); return;
+      act('attention', [{ go: 'floor', x: clamp(K.W / 2 + rnd(-1, 1) * K.H, minX(), maxX()) }, P('megaphone', 2000, pick(SAY.attention), { face: 'happy' })]); return;
     }
-    if (t - K.lastHint > HINT_GAP && ((t - K.lastFind > STRUGGLE && idle < 9000) || K.wrongStreak >= 3)) { if (hintVisit()) return; }
+    if (t >= BR.hintNext && ((t - K.lastFind > 28000 && idle < 9000) || K.wrongStreak >= 3)) { if (hintStep()) return; }
     const here = K.ground;
     const options = [
       ['stroll', 3, () => [{ go: here.id, x: K.x + (Math.random() < .5 ? -1 : 1) * rnd(1, 3) * K.H }, { do: 'idle', ms: rnd(1500, 3000) }]],
@@ -398,6 +409,7 @@
       ['thumbs', .8, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 3, ms: 1800 }]],
       ['chat', 1, () => [{ do: 'talk', text: t - K.lastChat > 15000 ? (K.lastChat = t, pick(SAY.chat)) : '', ms: 2200 }]],
       ['sit', .7, () => [{ do: 'sit', ms: rnd(4000, 7000) }]],
+      ['hobby', K.themesReady ? 2 : 0, () => { const n = pickHobby(); return [T(n, rnd(4200, 5600), Math.random() < .6 ? HOBBY_SAY[n] : '', { face: 'happy' })]; }],
       ['wave', .6, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 0, ms: 1600 }]],
       ['stumble', t - K.lastTumble > 90000 ? .35 : 0, () => { K.lastTumble = t; return [{ do: 'play', anim: 'fall', fps: 3.1, ms: 2600, hold: true, text: pick(SAY.tumble) }, { do: 'talk', text: pick(SAY.up), ms: 1400 }]; }]
     ].filter(o => o[1] > 0 && !K.lastActs.includes(o[0]));
@@ -407,9 +419,9 @@
   }
 
   // a hint from the real puzzle: stand next to the first letter of a hidden word and point at it
-  function hintVisit() {
+  function hintVisit(cell) {
     if (!K.grid) return false;
-    let starts = []; try { starts = (K.host.starts && K.host.starts()) || []; } catch (_) {}
+    let starts = []; try { starts = cell ? [cell] : (K.host.starts && K.host.starts()) || []; } catch (_) {}
     if (!starts.length) return false;
     const g = K.grid;
     const [r, c] = starts.slice().sort((a, b) => Math.abs(g.left + (a[1] + .5) * g.cs - K.x) - Math.abs(g.left + (b[1] + .5) * g.cs - K.x))[0];
@@ -436,6 +448,109 @@
     if (isAir() || K.state === 'land' || K.state === 'angry') { K.pending = steps; return; }
     K.plan = []; setState('idle', { soft: true, wait: 0 }); plan(steps, true);
     K.quietUntil = now() + (quietMs || 2000);
+  }
+
+  /* =====================================================================
+     BRAIN – he follows the puzzle: which words are left, how the player is doing, what the level is about,
+     what day it is. Hints get clearer step by step; tries that were nearly right get a helpful answer.
+     ===================================================================== */
+  const MEM_KEY = 'tn_kin_mem';
+  const memLoad = () => { try { return JSON.parse(localStorage.getItem(MEM_KEY)) || {}; } catch (_) { return {}; } };
+  const memSave = m => { try { localStorage.setItem(MEM_KEY, JSON.stringify(m)); } catch (_) {} };
+  const BR = { streak: 0, prevFind: 0, levelStart: 0, found: 0, hintWord: null, hintStage: 0, hintNext: 0, greeted: false };
+  function puzzle() { try { return (K.host.words && K.host.words()) || []; } catch (_) { return []; } }
+  const unfound = () => puzzle().filter(w => !w.found);
+  const category = () => { try { return (K.host.category && K.host.category()) || ''; } catch (_) { return ''; } };
+  const dirOf = cells => cells.length > 1 ? [Math.sign(cells[1][0] - cells[0][0]), Math.sign(cells[1][1] - cells[0][1])] : [0, 1];
+  function dirWord([dr, dc]) { if (dr && dc) return 'kwa mshazari'; if (dc > 0) return 'kulia'; if (dc < 0) return 'kushoto'; return dr > 0 ? 'chini' : 'juu'; }
+  function placeWord([r, c]) {
+    const n = K.grid ? K.grid.n : 8;
+    const v = r < n / 3 ? 'juu' : r >= n * 2 / 3 ? 'chini' : '', h = c < n / 3 ? 'kushoto' : c >= n * 2 / 3 ? 'kulia' : '';
+    if (!v && !h) return 'katikati ya ubao';
+    if (!h) return v + ', katikati';
+    return (v ? v + ', ' : '') + 'upande wa ' + h;
+  }
+  // a pose from the new sheets (brain first, then themes); falls back to a reaction picture
+  function P(name, ms, text, extra) {
+    let kind = null, idx = 0;
+    if (K.brainReady && BRAIN.index[name] != null) { kind = 'b'; idx = BRAIN.index[name]; }
+    else if (K.themesReady && THEMES.index[name] != null) { kind = 't'; idx = THEMES.index[name]; }
+    return Object.assign(kind ? { do: 'pose', kind, idx, ms, text } : { do: 'pose', kind: 'm', anim: 'react', idx: 3, ms, text }, extra || {});
+  }
+  function T(name, ms, text, extra) {          // themes first (hobbies and costumes)
+    if (K.themesReady && THEMES.index[name] != null) return Object.assign({ do: 'pose', kind: 't', idx: THEMES.index[name], ms, text }, extra || {});
+    return P(name, ms, text, extra);
+  }
+  const CAT_POSES = { CHAKULA: ['chef'], JIKONI: ['chef'], MATUNDA: ['chef', 'garden'], MBOGA: ['garden', 'chef'], SOKONI: ['chef', 'map'], BUSTANI: ['garden'],
+    MICHEZO: ['football'], MUZIKI: ['guitar'], KAZI: ['builder'], TEKNOLOJIA: ['scientist', 'camera'], SHULE: ['read', 'graduate'], RANGI: ['painter'],
+    WANYAMA: ['monkey', 'binoculars', 'camera'], MIFUGO: ['monkey'], NDEGE: ['parrot', 'binoculars'], WADUDU: ['butterfly', 'magnify'], BAHARI: ['binoculars'],
+    ANGA: ['binoculars'], USAFIRI: ['map', 'compass'], MIJI: ['map', 'camera'], NCHI: ['map', 'compass'], FAMILIA: ['heart'], HISIA: ['heart'], SALAMU: ['wave'],
+    MAVAZI: ['cool'], METHALI: ['read', 'scroll'], SIFA: ['star'], NYUMBANI: ['read'], NAMBA: ['scientist'] };
+  const HOBBY_SAY = { chef: 'Nitapika chakula kitamu! 🍲', garden: 'Namwagilia mmea wangu 🌱', football: 'Goli! ⚽', guitar: 'La la la! 🎵', builder: 'Ninajenga nyumba! 🔨',
+    scientist: 'Jaribio la sayansi! 🧪', camera: 'Tabasamu! 📸', read: 'Ninasoma kitabu 📖', graduate: 'Nimehitimu! 🎓', painter: 'Ninachora picha 🎨',
+    monkey: 'Tumbili ni rafiki yangu! 🐒', binoculars: 'Naona mbali sana! 🔭', parrot: 'Kasuku anasema habari! 🦜', butterfly: 'Kipepeo mzuri! 🦋',
+    magnify: 'Ninachunguza… 🔍', map: 'Tuko wapi sasa? 🗺️', compass: 'Kaskazini iko huku! 🧭', heart: 'Nakupenda, rafiki! ❤️', wave: 'Habari yako!',
+    cool: 'Mimi ni maridadi! 😎', scroll: 'Methali nzuri!', star: 'Wewe ni nyota! ⭐', knight: 'Mimi ni shujaa! 🛡️', santa: 'Heri ya Krismasi! 🎁' };
+  const GENERAL_HOBBIES = ['read', 'camera', 'butterfly', 'guitar', 'binoculars', 'garden', 'painter', 'cool', 'heart', 'parrot', 'monkey'];
+  function pickHobby() {
+    const own = CAT_POSES[category()] || [];
+    let pool = Math.random() < .6 && own.length ? own : GENERAL_HOBBIES;
+    if (new Date().getMonth() === 11 && Math.random() < .3) pool = ['santa'];
+    pool = pool.filter(n => n !== K.lastHobby); const n = pick(pool.length ? pool : GENERAL_HOBBIES); K.lastHobby = n; return n;
+  }
+
+  // hints: the same hidden word each time, a clearer clue each step
+  function hintTarget() {
+    const u = unfound(); if (!u.length) return null;
+    if (BR.hintWord) { const w = u.find(x => x.w === BR.hintWord); if (w) return w; }
+    const w = u.slice().sort((a, b) => a.w.length - b.w.length)[0];
+    BR.hintWord = w.w; BR.hintStage = 0; return w;
+  }
+  function hintStep() {
+    const w = hintTarget(); if (!w) return false;
+    const st = BR.hintStage++, t = now();
+    BR.hintNext = t + (st < 3 ? 16000 : 26000); K.lastHint = t; K.wrongStreak = 0;
+    if (st === 0) act('hint', [P('magnify', 2400, 'Ngoja… ninatafuta! 🔍', { face: 'thinking' }), P('scroll', 3000, `Neno moja lina herufi ${w.w.length}.`, { face: 'thinking' })]);
+    else if (st === 1) act('hint', [P('map', 3800, `Liko ${placeWord(w.cells[0])}. Linaenda ${dirWord(dirOf(w.cells))}.`, { face: 'thinking' })]);
+    else if (st === 2) act('hint', [P('bulb', 3200, `Linaanza na herufi “${w.w[0]}”!`, { face: 'oh' })]);
+    else return hintVisit(w.cells[0]);
+    return true;
+  }
+  // a wrong try: was it nearly right?
+  function analyse(info) {
+    if (!info || !info.cells || info.cells.length < 2) return null;
+    const sel = info.cells, sd = dirOf(sel), s0 = sel[0];
+    const same = (a, b) => a[0] === b[0] && a[1] === b[1];
+    for (const w of unfound()) {
+      const wd = dirOf(w.cells), last = w.cells[w.cells.length - 1];
+      const fwd = same(s0, w.cells[0]) && sd[0] === wd[0] && sd[1] === wd[1];
+      const back = same(s0, last) && sd[0] === -wd[0] && sd[1] === -wd[1];
+      if (fwd || back) return sel.length < w.w.length ? 'short' : 'long';
+    }
+    for (const w of unfound()) { const n = sel.filter(a => w.cells.some(b => same(a, b))).length; if (n >= 2) return 'close'; }
+    return null;
+  }
+  function dayKey(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function sessionGreeting() {
+    const m = memLoad(), d = new Date(), today = dayKey(d), h = d.getHours();
+    const tod = h < 11 ? 'Habari za asubuhi!' : h < 16 ? 'Habari za mchana!' : h < 21 ? 'Habari za jioni!' : 'Usiku mwema!';
+    const steps = [P('wave', 2200, tod, { face: 'happy' })];
+    if (!m.last) { m.streak = 1; steps.push(P('playsign', 2800, 'Mimi ni Kinyonga. Tucheze pamoja!', { face: 'happy' })); }
+    else if (m.last !== today) {
+      const gap = Math.round((new Date(today) - new Date(m.last)) / 864e5);
+      m.streak = gap === 1 ? (m.streak || 1) + 1 : 1;
+      if (m.streak >= 2) steps.push(P('gift', 2800, `Siku ${m.streak} mfululizo! Hongera! 🎁`, { face: 'happy' }));
+      else if (gap >= 3) steps.push(P('heart', 2600, 'Nimekukumbuka, rafiki! ❤️', { face: 'happy' }));
+    } else if (Math.random() < .5) steps.push(P('thumbs', 1800, 'Karibu tena!', { face: 'wink' }));
+    if (h >= 23 || h < 5) steps.push({ do: 'talk', text: 'Ni usiku sana… usisahau kulala 😴', ms: 2400 });
+    m.last = today; memSave(m);
+    return steps;
+  }
+  function categoryIntro() {
+    const c = category(); if (!c || c === 'KAWAIDA') return null;
+    const own = CAT_POSES[c];
+    const text = c === 'METHALI' ? 'Tutafute methali! 📜' : c === 'MCHANGANYIKO' ? 'Changamoto! Uko tayari? 🏁' : `Tutafute maneno ya ${c.toLowerCase()}!`;
+    return own ? T(own[0], 2600, text, { face: 'happy' }) : (c === 'MCHANGANYIKO' ? P('flag', 2400, text) : { do: 'talk', text, ms: 2200 });
   }
 
   /* =====================================================================
@@ -479,7 +594,9 @@
       let n = 0; const need = [MOVES.url, FRONT.url, POSES.url];
       const done = () => { if (++n === need.length) {
         K.ready = true; layout(); K.ground = floor(); K.y = floor().y; K.x = rnd(minX(), K.W * .3); setState('idle');
-        layer.style.visibility = ''; loop(); } };
+        layer.style.visibility = ''; loop();
+        [[BRAIN.url, 'brainReady'], [THEMES.url, 'themesReady'], [FACES.url, 'facesReady']].forEach(([u, f]) => { const im = new Image(); im.onload = () => { K[f] = true; }; im.src = u; });
+      } };
       need.forEach(u => { const im = new Image(); im.onload = done; im.onerror = done; im.src = u; });
       addEventListener('resize', () => layout());
       document.addEventListener('visibilitychange', () => { if (!document.hidden) { K.last = 0; loop(); } });
@@ -497,29 +614,60 @@
     },
     onLevelStart(first) {
       K.lastTouch = K.lastFind = now(); K.wrongStreak = 0;
+      BR.levelStart = now(); BR.found = 0; BR.streak = 0; BR.hintWord = null; BR.hintStage = 0; BR.hintNext = 0;
       if (!K.ready) return;
       K.plan = []; K.pending = null; K.zoom = 1;
       layout();
       if (!isAir()) setState('idle', { soft: true, wait: 0 });
-      plan([{ do: 'talk', text: first ? SAY.greet[0] : (Math.random() < .4 ? pick(SAY.greet) : ''), ms: 2000 }], true);
+      let steps;
+      if (!BR.greeted) { BR.greeted = true; steps = sessionGreeting(); const ci = categoryIntro(); if (ci && Math.random() < .5) steps.push(ci); }
+      else { const ci = Math.random() < .45 ? categoryIntro() : null; steps = ci ? [ci] : [{ do: 'talk', text: Math.random() < .3 ? pick(SAY.greet) : '', ms: 1600 }]; }
+      plan(steps, true);
     },
-    onCorrect() {
-      K.lastTouch = K.lastFind = now(); K.wrongStreak = 0;
-      if (K.ready) react([{ do: 'play', anim: 'celebrate', fps: 10, ms: 1700, text: pick(SAY.correct) }]);
+    onCorrect(word) {
+      const t = now(); K.lastTouch = K.lastFind = t; K.wrongStreak = 0;
+      BR.streak = t - BR.prevFind < 7000 ? BR.streak + 1 : 1; BR.prevFind = t; BR.found++;
+      if (!K.ready) return;
+      const left = unfound().length;
+      let step;
+      if (word && word === BR.hintWord) step = P('thumbs', 1900, 'Umeipata! Hongera! 👏', { face: 'happy' });
+      else if (left === 1) step = P('megaphone', 2200, 'Neno moja tu limebaki! 📣', { face: 'oh' });
+      else if (BR.streak >= 3) step = P('cool', 2000, 'Moto moto! Uko kasi! 🔥', { face: 'cool' });
+      else if (word && word.length >= 7) step = P('star', 2000, 'Neno refu! Hodari! ⭐', { face: 'happy' });
+      else if (BR.found === 1) step = P('laugh', 1700, 'Mwanzo mzuri!', { face: 'laughing' });
+      else step = { do: 'play', anim: 'celebrate', fps: 10, ms: 1700, text: pick(SAY.correct) };
+      if (word === BR.hintWord) BR.hintWord = null;
+      BR.hintStage = 0; BR.hintNext = t + 12000;
+      react([step]);
     },
-    onBonus() { if (K.ready) react([{ do: 'pose', kind: 'm', anim: 'react', idx: 5, ms: 1500, text: 'Neno la ziada! Safi!' }]); },
-    onWrong() {
+    onBonus(word) { if (K.ready) react([P('chest', 2200, 'Hazina! Neno la ziada! 💎', { face: 'happy' })]); },
+    onRepeat() { K.lastTouch = now(); if (K.ready && !helping()) react([P('question', 1800, 'Umeshalipata hili! 😄', { face: 'laughing' })]); },
+    onWrong(info) {
       K.lastTouch = now(); K.wrongStreak++;
       if (!K.ready || helping()) return;
-      react([{ do: 'play', anim: 'tease', fps: 9, ms: 1700, text: pick(SAY.wrong) }]);
+      const kind = analyse(info);
+      let step;
+      if (kind === 'short') step = P('question', 2000, 'Endelea kidogo! 👉', { face: 'thinking' });
+      else if (kind === 'long') step = P('question', 2000, 'Umezidi kidogo!', { face: 'oh' });
+      else if (kind === 'close') step = P('question', 2000, 'Umekaribia sana!', { face: 'thinking' });
+      else if (K.wrongStreak >= 3) { step = P('sad', 2200, 'Usijali, tutaipata pamoja!', { face: 'worried' }); BR.hintNext = now() + 2500; }
+      else step = { do: 'play', anim: 'tease', fps: 9, ms: 1700, text: pick(SAY.wrong) };
+      K.lastWrongKind = kind;
+      react([step]);
     },
     onWin() {
       if (!K.ready) return;
-      react([{ call: () => { if (K.ground) jumpTo(K.ground, K.x); } }, { do: 'play', anim: 'celebrate', fps: 10, ms: 2400, text: pick(SAY.win) }], 3500);
+      const m = memLoad(), time = now() - BR.levelStart, avg = m.avgWin || 0;
+      m.wins = (m.wins || 0) + 1; m.avgWin = avg ? avg * .8 + time * .2 : time; memSave(m);
+      let lvl = 0; try { lvl = K.host.levelNo ? K.host.levelNo() : 0; } catch (_) {}
+      const step = lvl && lvl % 10 === 0 ? P('celebrate', 2600, `Viwango ${lvl}! Hongera sana! 🎉`, { face: 'happy' })
+        : m.wins > 3 && avg && time < avg * .75 ? P('trophy', 2600, 'Haraka sana! Bingwa! 🏆', { face: 'happy' })
+        : P('flag', 2400, pick(SAY.win), { face: 'happy' });
+      react([{ call: () => { if (K.ground) jumpTo(K.ground, K.x); } }, step], 3500);
     },
     boardDown(e) { return !!(K.press && K.press.id === e.pointerId); },
     // exposed for tests
-    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }
+    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }, _BR: BR, _hintStep: () => hintStep(), _analyse: analyse
   };
 
   function onBody(px, py) {
