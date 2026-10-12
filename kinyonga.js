@@ -60,6 +60,7 @@
     font:900 .92rem/1.2 "Nunito",system-ui,sans-serif;box-shadow:0 4px 0 rgba(0,0,0,.18),0 6px 16px rgba(0,0,0,.25);
     border:2px solid rgba(29,22,48,.85);opacity:0;transform:scale(.6);transition:opacity .18s,transform .18s;pointer-events:none;white-space:normal}
   .kin-say.on{opacity:1;transform:scale(1)}
+  .kin-say.think{border-style:dashed;font-style:italic}
   .kin-fx{position:absolute;font-size:20px;line-height:1;pointer-events:none;animation:kinFx 1.4s ease-out forwards}
   @keyframes kinFx{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-70px) scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.kin-fx{animation:none;opacity:0}}
@@ -157,7 +158,7 @@
   /* ---------- speech bubble ---------- */
   function say(text, ms, face) {
     if (!text) return;
-    const b = K.bubble; b.textContent = text; b.style.background = pick(BUBBLE);
+    const b = K.bubble; b.textContent = text; b.classList.toggle('think', text.startsWith('💭')); b.style.background = text.startsWith('💭') ? '#ffffff' : pick(BUBBLE);
     b.classList.add('on'); placeBubble();
     clearTimeout(K.sayT); K.sayT = setTimeout(() => b.classList.remove('on'), ms || 2200);
   }
@@ -182,7 +183,7 @@
   /* =====================================================================
      STATE MACHINE – each state: enter(d), update(dt,d) -> true when it is over, draw(d)
      ===================================================================== */
-  const WALK_SPEED = () => K.H * 1.05;
+  const WALK_SPEED = () => K.H * 1.05 * (.85 + .15 * M.energy);
   const RUN_SPEED = () => K.H * 2.4;
   const G = () => K.H * 24;                      // gravity, scaled with his size
   const STATES = {
@@ -374,41 +375,63 @@
      ===================================================================== */
   const SLEEP_AFTER = 26000, ATTENTION_AFTER = 12000, STRUGGLE = 35000, HINT_GAP = 30000;
   const last = () => K.lastActs[K.lastActs.length - 1];
-  function act(name, steps) { K.lastActs.push(name); if (K.lastActs.length > 2) K.lastActs.shift(); plan(steps, true); }
+  function act(name, steps) { K.lastActs.push(name); if (K.lastActs.length > 3) K.lastActs.shift(); M.last = name; plan(steps, true); }
   function think() {
     if (K.plan.length || K.state !== 'idle' || K.drag || !K.ground) return;
     if (K.st < (K.data.wait != null ? K.data.wait : 1.2)) return;            // a short pause between activities
     const t = now(), idle = t - K.lastTouch;
+    // 1) things that cannot wait
     if (onLetters() && t - K.onBoardSince > 6000) { act('offLetters', [{ go: pick(['r0', 'floor']), x: K.x }]); return; }   // words stay readable
     if (idle > SLEEP_AFTER) { act('sleep', [{ do: 'sleep' }]); return; }
+    if (M.energy < .2 && idle > 7000) { M.why = 'tired'; act('sleep', [P('yawn', 1700, '💭 ' + pick(THOUGHT.yawn)), { do: 'sleep', tired: true }]); return; }
     if (idle > ATTENTION_AFTER && last() !== 'attention' && last() !== 'sleep') {         // the player is quiet: come closer, wave
+      M.social = Math.max(0, M.social - .5);
       act('attention', [{ go: 'floor', x: clamp(K.W / 2 + rnd(-1, 1) * K.H, minX(), maxX()) }, P('wave', 2000, pick(SAY.attention))]); return;
     }
-    if (t >= BR.hintNext && ((t - K.lastFind > 28000 && idle < 9000) || K.wrongStreak >= 3)) { if (hintStep()) return; }
-    const here = K.ground;
-    const options = [
-      ['stroll', 3, () => [{ go: here.id, x: K.x + (Math.random() < .5 ? -1 : 1) * rnd(1, 3) * K.H }, { do: 'idle', ms: rnd(1500, 3000) }]],
-      ['explore', 1.6, () => {
+    if (t >= BR.hintNext && ((helpNeed() >= .5 && idle < 9000) || K.wrongStreak >= 3)) { M.why = 'help'; if (hintStep()) return; }
+    // 2) everything else: each choice is worth what he needs and feels right now
+    const here = K.ground, tr = traits(), active = idle < 4000, mo = mood();
+    const A = [   // [name, worth, what it satisfies, steps]
+      ['watch', active ? .8 : 0, { boredom: -.05 }, () => [{ do: 'idle', ms: rnd(2000, 3500) }]],
+      ['stroll', .2 + M.boredom * .4, { boredom: -.15 }, () => [{ go: here.id, x: K.x + (Math.random() < .5 ? -1 : 1) * rnd(1, 3) * K.H }, { do: 'idle', ms: rnd(1500, 3000) }]],
+      ['explore', M.curiosity * (active ? .5 : 1.1), { curiosity: -.5, boredom: -.2 }, () => {
         const id = here.id === 'floor' && K.grid ? 'r0' : 'floor', p = platById(id) || floor();
         return [{ go: id, x: rnd(p.x0 + K.H, p.x1 - K.H) }, { do: 'idle', ms: rnd(1500, 3000) }];
       }],
-      ['boxes', K.grid ? .9 : 0, () => {           // up onto a row of boxes for a little while
+      ['boxes', K.grid ? M.curiosity * (active ? .35 : .9) : 0, { curiosity: -.6, boredom: -.25 }, () => {   // up onto a row of boxes for a little while
         const r = Math.max(1, Math.floor(rnd(K.grid.n * .4, K.grid.n))), p = platById('r' + r);
         return [{ go: 'r' + r, x: clamp(K.x, p.x0 + K.H, p.x1 - K.H) }, P('binoculars', 2200, Math.random() < .4 ? 'Naona mbali kutoka hapa!' : ''), { go: pick(['r0', 'floor']), x: K.x }];
       }],
-      ['hop', .7, () => [{ call: () => jumpTo(here, clamp(K.x + K.face * K.H * .4, here.x0 + 4, here.x1 - 4)) }]],
-      ['wink', 1, () => [P('heartwink', 1800)]],
-      ['thumbs', .8, () => [P(pick(['thumbs', 'thumbsup', 'cool']), 2000)]],
-      ['chat', 1, () => [{ do: 'talk', text: t - K.lastChat > 15000 ? (K.lastChat = t, pick(SAY.chat)) : '', ms: 2200 }]],
-      ['sit', .7, () => [{ do: 'sit', ms: rnd(4000, 7000) }]],
-      ['hobby', 1.6, () => { const n = pickHobby(); return [T(n, rnd(4200, 5600), Math.random() < .6 ? HOBBY_SAY[n] : '', { face: 'happy' })]; }],
-      ['wave', .6, () => [P('wave', 1800)]],
-      ['calm', 1, () => [P(pick(['calm', 'shy', 'music']), rnd(3000, 4500))]],
-      ['stumble', t - K.lastTumble > 90000 ? .35 : 0, () => { K.lastTumble = t; return [{ do: 'play', anim: 'fall', fps: 3.1, ms: 2600, hold: true, text: pick(SAY.tumble) }, { do: 'talk', text: pick(SAY.up), ms: 1400 }]; }]
-    ].filter(o => o[1] > 0 && !K.lastActs.includes(o[0]));
-    let sum = options.reduce((s, o) => s + o[1], 0), r = Math.random() * sum, ch = options[0];
-    for (const o of options) { r -= o[1]; if (r <= 0) { ch = o; break; } }
-    act(ch[0], ch[2]());
+      ['hobby', M.boredom * 1.5 * (.6 + .4 * tr.playful), { boredom: -.7, val: .1 }, () => { const n = pickHobby(); return [T(n, rnd(4200, 5600), Math.random() < .6 ? HOBBY_SAY[n] : '')]; }],
+      ['chat', M.social * .8, { social: -.3 }, () => [{ do: 'talk', text: t - K.lastChat > 15000 ? (K.lastChat = t, chatLine()) : '', ms: 2400 }]],
+      ['sit', (1 - M.energy) * 1.3, {}, () => [{ do: 'sit', ms: rnd(4000, 7000) }]],
+      ['yawn', M.energy < .45 ? (1 - M.energy) * .9 : 0, {}, () => [P('yawn', 1800)]],
+      ['happy', M.val > .45 ? M.val * M.aro * 2.2 : 0, { aro: -.25 }, () => [P(pick(['party', 'music', 'jumpwave', 'laugh']), 2200)]],
+      ['sulk', M.val < -.1 ? -M.val * 1.6 : 0, { val: .2 }, () => [P(pick(['sad', 'shy']), 2600)]],
+      ['ponder', unfound().length ? .3 * tr.helpful : 0, {}, () => [P('question', 2200)]],
+      ['hop', M.energy > .4 ? .25 * tr.playful : 0, { boredom: -.1 }, () => [{ call: () => jumpTo(here, clamp(K.x + K.face * K.H * .4, here.x0 + 4, here.x1 - 4)) }]],
+      ['wink', .3 * tr.playful, { social: -.1 }, () => [P('heartwink', 1800)]],
+      ['thumbs', .25, {}, () => [P(pick(['thumbs', 'thumbsup', 'cool']), 2000)]],
+      ['wave', .2 + M.social * .3, { social: -.15 }, () => [P('wave', 1800)]],
+      ['calm', .3 + (mo === 'calm' ? .2 : 0), {}, () => [P(pick(['calm', 'shy', 'music']), rnd(3000, 4500))]],
+      ['stumble', t - K.lastTumble > 90000 ? .12 : 0, { boredom: -.2 }, () => { K.lastTumble = t; return [{ do: 'play', anim: 'fall', fps: 3.1, ms: 2600, hold: true, text: pick(SAY.tumble) }, { do: 'talk', text: pick(SAY.up), ms: 1400 }]; }]
+    ];
+    let best = null, bs = -1;
+    for (const o of A) {
+      if (o[1] <= 0) continue;
+      const sc = o[1] * (K.lastActs.includes(o[0]) ? .15 : 1) + rnd(0, .3);      // never the same thing over and over
+      if (sc > bs) { bs = sc; best = o; }
+    }
+    if (!best) best = A[1];
+    for (const k in best[2]) { if (k === 'val' || k === 'aro') feel(k === 'val' ? best[2][k] : 0, k === 'aro' ? best[2][k] : 0); else need(k, best[2][k]); }
+    M.why = best[0];
+    let steps = best[3]();
+    const th = THOUGHT[best[0]];                               // now and then he thinks out loud first
+    if (th && t - M.lastThought > 18000 && Math.random() < .45) {
+      M.lastThought = t;
+      steps = [P(THINK_POSE[mo] || 'question', 1700, '💭 ' + pick(th)), ...steps];
+    }
+    act(best[0], steps);
   }
 
   // a hint from the real puzzle: stand next to the first letter of a hidden word and point at it
@@ -549,6 +572,78 @@
     return own ? T(own[0], 2600, text, { face: 'happy' }) : (c === 'MCHANGANYIKO' ? P('flag', 2400, text) : { do: 'talk', text, ms: 2200 });
   }
 
+
+  /* =====================================================================
+     MIND – he lives like a person: needs that grow and get satisfied (energy, boredom, company,
+     curiosity, wish to help), feelings that come and fade, a character of his own and a memory.
+     Every moment he asks himself "what do I need most now?" and does that.
+     ===================================================================== */
+  const M = {
+    energy: .9, boredom: .15, social: .25, curiosity: .35,   // needs 0..1 (energy: 1 = fresh)
+    val: .3, aro: .3,                                         // feeling: sad -1 … happy 1, calm 0 … excited 1
+    trait: null, gaze: { x: null, t: -1e9 }, lastThought: 0, wrongsSinceFind: 0, why: '', last: ''
+  };
+  function traits() {                  // his own character: the same on every visit
+    if (M.trait) return M.trait;
+    const m = memLoad();
+    if (!m.trait) { m.trait = { playful: +rnd(.5, 1).toFixed(2), helpful: +rnd(.5, 1).toFixed(2), curious: +rnd(.5, 1).toFixed(2) }; memSave(m); }
+    return (M.trait = m.trait);
+  }
+  const feel = (dv, da) => { M.val = clamp(M.val + dv, -1, 1); M.aro = clamp(M.aro + da, 0, 1); };
+  const need = (k, d) => { M[k] = clamp(M[k] + d, 0, 1); };
+  function mood() {
+    if (M.energy < .3) return 'tired';
+    if (M.val > .55 && M.aro > .5) return 'excited';
+    if (M.val > .35) return 'happy';
+    if (M.val < -.2) return 'sad';
+    return 'calm';
+  }
+  function helpNeed() {                // how much he wants to help: the longer nothing is found, the more
+    return clamp((now() - K.lastFind - 15000) / 30000, 0, 1) * (.6 + .4 * traits().helpful) + K.wrongStreak * .2;
+  }
+  const lateNight = () => { const h = new Date().getHours(); return h >= 22 || h < 5; };
+  const THOUGHT = {
+    explore: ['Kuna nini kule?', 'Nikachunguze kidogo…'], boxes: ['Nipande juu nione vizuri…'],
+    hobby: ['Nimechoka kusimama tu… nicheze kidogo!', 'Nifanye nini sasa? Aha!'], sit: ['Miguu imechoka…', 'Nipumzike kidogo.'],
+    yawn: ['Nina usingizi kidogo…'], happy: ['Leo ni siku nzuri!', 'Ninafurahi sana!'], sulk: ['Hmm… si rahisi leo.'],
+    ponder: ['Neno gani limebaki?', 'Hmm… nafikiri…'], chat: ['Nimwambie kitu rafiki yangu…']
+  };
+  const THINK_POSE = { tired: 'yawn', sad: 'sad', happy: 'calm', excited: 'laugh', calm: 'question' };
+  function chatLine() {                // small talk from what he remembers and how he feels
+    const m = memLoad(), opts = SAY.chat.slice(), c = category(), mo = mood();
+    if (m.words >= 10) opts.push(`Tumepata maneno ${m.words} pamoja! 💪`);
+    if (m.bestStreak >= 3) opts.push(`Rekodi yako: maneno ${m.bestStreak} mfululizo!`);
+    if (m.wins >= 3) opts.push(`Tumemaliza viwango ${m.wins} pamoja!`);
+    if (c && !['KAWAIDA', 'METHALI', 'MCHANGANYIKO'].includes(c)) opts.push(`Napenda maneno ya ${c.toLowerCase()}!`);
+    if (mo === 'tired') opts.push('Nimechoka kidogo… lakini niko nawe!');
+    if (mo === 'excited' || mo === 'happy') opts.push('Tunaenda vizuri sana!');
+    return pick(opts);
+  }
+  function lookAtWord(word) {          // he turns to the word that was just found
+    const w = puzzle().find(x => x.w === word); if (!w || !K.grid) return;
+    const c = w.cells[Math.floor(w.cells.length / 2)];
+    M.gaze = { x: K.grid.left + (c[1] + .5) * K.grid.cs, t: now() + 2000 };
+  }
+  function mindTick(dt) {
+    const t = now(), idle = t - K.lastTouch, s = K.state;
+    if (s === 'sleep') M.energy = Math.min(1, M.energy + dt / 30);
+    else if (s === 'sit') M.energy = Math.min(1, M.energy + dt / 90);
+    else M.energy = Math.max(0, M.energy - dt * (s === 'walk' || s === 'jump' ? 1 / 220 : 1 / 480) * (lateNight() ? 1.5 : 1));
+    if (s !== 'sleep') {
+      need('boredom', dt / (idle < 4000 ? 110 : 45));       // watching someone play is less boring than waiting
+      need('social', idle > 6000 ? dt / 50 : -dt / 120);
+      need('curiosity', dt / 55 * (traits().curious + .3));
+    }
+    M.val += (.25 - M.val) * (1 - Math.exp(-dt / 25));       // feelings slowly fade back to calm and content
+    M.aro += ((s === 'sleep' ? .05 : .3) - M.aro) * (1 - Math.exp(-dt / 15));
+    if ((s === 'idle' || s === 'talk' || s === 'sit') && M.gaze.x != null && t - M.gaze.t < 2500 && !helping()) {   // eyes follow the finger
+      const dx = M.gaze.x - K.x; if (Math.abs(dx) > K.H * .3) K.face = Math.sign(dx);
+    }
+    if (s === 'sleep' && K.data.tired && M.energy > .97 && idle < SLEEP_AFTER) {           // slept enough: wakes up by himself
+      setState('idle', { soft: true, wait: 0 }); plan([P('yawn', 1600, 'Nimepumzika vizuri!'), P('thumbs', 1500)], true);
+    }
+  }
+
   /* =====================================================================
      PUBLIC API
      ===================================================================== */
@@ -571,7 +666,9 @@
         if (!onBody(e.clientX, e.clientY)) return;
         press(e, true);
       }, true);
+      addEventListener('pointerdown', e => { M.gaze = { x: e.clientX, t: now() }; }, { passive: true });
       addEventListener('pointermove', e => {
+        if (e.pointerType !== 'mouse' || e.buttons) M.gaze = { x: e.clientX, t: now() };
         if (K.drag && e.pointerId === K.drag.id) { moveDrag(e.clientX, e.clientY); return; }
         const p = K.press;
         if (p && e.pointerId === p.id && Math.hypot(e.clientX - p.x, e.clientY - p.y) > 7) {
@@ -609,7 +706,7 @@
       }
     },
     onLevelStart(first) {
-      K.lastTouch = K.lastFind = now(); K.wrongStreak = 0;
+      K.lastTouch = K.lastFind = now(); K.wrongStreak = 0; M.wrongsSinceFind = 0; feel(.1, .15);
       BR.levelStart = now(); BR.found = 0; BR.streak = 0; BR.hintWord = null; BR.hintStage = 0; BR.hintNext = 0;
       if (!K.ready) return;
       K.plan = []; K.pending = null; K.zoom = 1;
@@ -621,25 +718,35 @@
       plan(steps, true);
     },
     onCorrect(word) {
-      const t = now(); K.lastTouch = K.lastFind = t; K.wrongStreak = 0;
+      const t = now(), struggled = t - K.lastFind > 45000 || M.wrongsSinceFind >= 3;
+      K.lastTouch = K.lastFind = t; K.wrongStreak = 0; M.wrongsSinceFind = 0;
       BR.streak = t - BR.prevFind < 7000 ? BR.streak + 1 : 1; BR.prevFind = t; BR.found++;
+      feel(struggled ? .35 : .22, .25); need('social', -.2); need('boredom', -.3);
+      const m = memLoad(); m.words = (m.words || 0) + 1;
+      const record = BR.streak >= 4 && BR.streak > (m.bestStreak || 0); if (record) m.bestStreak = BR.streak;
+      memSave(m);
       if (!K.ready) return;
+      lookAtWord(word);
       const left = unfound().length;
       let step;
-      if (word && word === BR.hintWord) step = P('thumbs', 1900, 'Umeipata! Hongera! 👏', { face: 'happy' });
-      else if (left === 1) step = P('megaphone', 2200, 'Neno moja tu limebaki! 📣', { face: 'oh' });
-      else if (BR.streak >= 3) step = P('cool', 2000, 'Moto moto! Uko kasi! 🔥', { face: 'cool' });
-      else if (word && word.length >= 7) step = P('star', 2000, 'Neno refu! Hodari! ⭐', { face: 'happy' });
-      else if (BR.found === 1) step = P('laugh', 1700, 'Mwanzo mzuri!', { face: 'laughing' });
+      if (word && word === BR.hintWord) step = P('thumbs', 1900, 'Umeipata! Hongera! 👏');
+      else if (m.words % 50 === 0) step = P('star', 2400, `Maneno ${m.words} pamoja! Hongera! 🎉`);
+      else if (left === 1) step = P('megaphone', 2200, 'Neno moja tu limebaki! 📣');
+      else if (struggled) step = P('jumpwave', 2200, pick(['Hatimaye! Umeweza! 😅', 'Uff! Umelipata mwishowe!']));
+      else if (record) step = P('cool', 2200, `Rekodi mpya: ${BR.streak} mfululizo! 🔥`);
+      else if (BR.streak >= 3) step = P('cool', 2000, 'Moto moto! Uko kasi! 🔥');
+      else if (word && word.length >= 7) step = P('star', 2000, 'Neno refu! Hodari! ⭐');
+      else if (BR.found === 1) step = P('laugh', 1700, 'Mwanzo mzuri!');
       else step = P(pick(['party', 'jumpwave', 'thumbs', 'star', 'thumbsup']), 1800, pick(SAY.correct));
       if (word === BR.hintWord) BR.hintWord = null;
       BR.hintStage = 0; BR.hintNext = t + 12000;
+      if (M.val > .7) effect('✨', 2);
       react([step]);
     },
     onBonus(word) { if (K.ready) react([P('chest', 2200, 'Hazina! Neno la ziada! 💎', { face: 'happy' })]); },
     onRepeat() { K.lastTouch = now(); if (K.ready && !helping()) react([P('question', 1800, 'Umeshalipata hili! 😄', { face: 'laughing' })]); },
     onWrong(info) {
-      K.lastTouch = now(); K.wrongStreak++;
+      K.lastTouch = now(); K.wrongStreak++; M.wrongsSinceFind++; feel(-.06, .05);
       if (!K.ready || helping()) return;
       const kind = analyse(info);
       let step;
@@ -654,6 +761,7 @@
     onWin() {
       if (!K.ready) return;
       const m = memLoad(), time = now() - BR.levelStart, avg = m.avgWin || 0;
+      feel(.5, .5); M.boredom = 0;
       m.wins = (m.wins || 0) + 1; m.avgWin = avg ? avg * .8 + time * .2 : time; memSave(m);
       let lvl = 0; try { lvl = K.host.levelNo ? K.host.levelNo() : 0; } catch (_) {}
       const step = lvl && lvl % 10 === 0 ? P('celebrate', 2600, `Viwango ${lvl}! Hongera sana! 🎉`, { face: 'happy' })
@@ -663,7 +771,7 @@
     },
     boardDown(e) { return !!(K.press && K.press.id === e.pointerId); },
     // exposed for tests
-    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }, _BR: BR, _hintStep: () => hintStep(), _analyse: analyse, _idx: (k, n) => (k === 'k' ? COS.index : FRONT.index)[n]
+    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }, _BR: BR, _hintStep: () => hintStep(), _analyse: analyse, _mind: () => M, _mood: () => mood(), _help: () => helpNeed(), _idx: (k, n) => (k === 'k' ? COS.index : FRONT.index)[n]
   };
 
   function onBody(px, py) {
@@ -683,8 +791,9 @@
     const t = now();
     K.tapTimes = K.tapTimes.filter(x => t - x < 12000); K.tapTimes.push(t);
     if (K.tapTimes.length >= 5 && t - K.lastAngry > 15000 && !isAir() && K.state !== 'land') {   // tapped again and again: cross, right where he is
-      K.lastAngry = t; K.tapTimes = []; K.plan = []; K.pending = null; setState('angry'); return;
+      K.lastAngry = t; K.tapTimes = []; K.plan = []; K.pending = null; feel(-.5, .6); setState('angry'); return;
     }
+    feel(.08, .15); need('social', -.35);
     const i = pick([0, 1, 2, 3, 4, 5, 6, 7].filter(v => v !== K.lastTapPose)); K.lastTapPose = i;
     const TAP = [['shy', 'Hihi! Umenipata!'], ['inlove', 'Nakupenda!'], ['laugh', 'Hehe! Unanicheka?'], ['gasp', 'Lo! Umenishtua!'], ['cool', 'Poa sana!'],
       ['heartwink', 'Wewe ni rafiki yangu!'], ['tease', 'Bleee! 😛'], ['jumpwave', 'Juu! Juu!']];
@@ -694,7 +803,7 @@
   function startDrag(px, py, id) {
     K.plan = []; K.pending = null; K.zoom = 1; ghost(false); K.ghostHold = false;
     K.drag = { id, ox: K.x - px, oy: K.y - py, lx: px, ly: py, lt: now(), vx: 0, vy: 0 };
-    setState('dragged'); K.lastTouch = now();
+    setState('dragged'); K.lastTouch = now(); feel(0, .3);
   }
   function moveDrag(px, py) {
     const d = K.drag; if (!d) return;
@@ -733,6 +842,7 @@
   function draw() { STATES[K.state].draw(K.data); }
   function step(dt) {
     K.st += dt;
+    mindTick(dt);
     if (STATES[K.state].update(dt, K.data)) stateDone();
     if (K.pending && !isAir() && K.state !== 'land' && K.state !== 'angry' && !K.drag) { const p = K.pending; K.pending = null; K.plan = []; setState('idle', { soft: true, wait: 0 }); plan(p, true); }
     runPlan();
