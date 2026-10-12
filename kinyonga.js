@@ -22,24 +22,18 @@
 (function () {
   'use strict';
 
-  const VER = 6;
+  const VER = 7;
   const MOVES = {                      // regions of the movement atlas (made from the character sheets)
     url: 'images/kinyonga-moves.webp?v=' + VER, cols: 11, cell: [240, 190], anchor: [130, 182], h: 140,
     anims: { idle: 0, walk: 1, run: 2, jump: 3, fall: 4, react: 5, celebrate: 6, tease: 7, cry: 8, angry: 9 },
     n: { idle: 8, walk: 9, run: 8, jump: 8, fall: 6, react: 7, celebrate: 6, tease: 8, cry: 6, angry: 8 }
   };
   const FRONT = {
-    url: 'images/kinyonga-front.webp?v=' + VER, cols: 8, cell: [250, 210], anchor: [125, 204], h: 188,
-    index: { point: 39, sleep: 25, hi: 19, cute: 36, think: 17, tease: 27, angry: 41, wow: 28, cheer: 2, kiss: 10, handheart: 38, shy: 33, cool: 18 }
+    url: 'images/kinyonga-emo.webp?v=' + VER, cols: 8, cell: [330, 290], anchor: [150, 280], h: 220,
+    index: {wave: 0, thumbs: 1, laugh: 2, jumpwave: 3, star: 4, heartwink: 5, inlove: 6, shy: 7, shock: 8, gasp: 9, question: 10, grumpy: 11, angry: 12, cry: 13, tease: 14, cool: 15, sleep: 16, yawn: 17, calm: 18, map: 19, magnify: 20, binoculars: 21, bulb: 22, thumbsup: 23, run: 24, fist: 25, point: 26, sign: 27, party: 28, music: 29, sad: 30, hi: 0, cute: 7, think: 10, wow: 9, cheer: 3, kiss: 5, handheart: 5, yay: 3, hello: 0, love: 6, idea: 22, oh: 8, giggle: 2, dance: 28, hearts: 6, tada: 4}
   };
-  const BRAIN = { url: 'images/kinyonga-brain.webp?v=' + VER, cols: 8, cell: [250, 230], anchor: [125, 226], h: 172,
-    index: { wave: 0, thumbs: 1, laugh: 2, magnify: 3, map: 4, bulb: 5, point: 6, question: 7, heart: 8, cool: 9, celebrate: 10, trophy: 11, sleeprock: 12,
-      sad: 13, grumpy: 14, playsign: 15, chest: 16, star: 17, gift: 18, compass: 19, scroll: 20, megaphone: 21, flag: 22 } };
-  const THEMES = { url: 'images/kinyonga-themes.webp?v=' + VER, cols: 8, cell: [240, 230], anchor: [120, 226], h: 172,
-    index: { point: 0, magnify: 1, map: 2, binoculars: 3, wave: 4, thumbs: 5, thumbs2: 6, question: 7, trophy: 8, laughthumb: 9, cool: 10, read: 11,
-      stars: 14, heart: 15, monkey: 16, butterfly: 17, camera: 18, parrot: 19, exclaim: 20, shield: 21, knight: 22, builder: 23, scientist: 24, santa: 25,
-      football: 26, graduate: 27, chef: 28, guitar: 29, garden: 30, painter: 31 } };
-  const FACES = { url: 'images/kinyonga-faces.webp?v=' + VER, names: ['happy', 'wink', 'oh', 'laughing', 'worried', 'cool', 'cross', 'thinking'] };
+  const COS = { url: 'images/kinyonga-cos.webp?v=' + VER, cols: 8, cell: [330, 290], anchor: [150, 280], h: 220,
+    index: {pointexp: 0, binoculars2: 1, map2: 2, camera: 3, magnify2: 4, hiker: 5, tourist: 6, beach: 7, chef: 8, doctor: 9, graduate: 10, football: 11, basketball: 12, builder: 13, miner: 14, fish: 15, guitar: 16, drum: 17, maasai: 18, spear: 19, pilot: 20, waveexp: 21, santa: 22, wizard: 23, astronaut: 24, knight: 25, samurai: 26, ninja: 27, superhero: 28, detective: 29, scientist: 30, diver: 31, cowboy: 32, pirate: 33, rocker: 34, garden: 35, winter: 36, surf: 37, photo: 38, birthday: 39} };
   const POSES = { url: 'images/kinyonga-poses.webp?v=' + VER, cols: 6, cell: [282, 224], anchor: [141, 219], h: 149, index: { sit: 17 } };
 
   const SAY = {
@@ -66,7 +60,6 @@
     font:900 .92rem/1.2 "Nunito",system-ui,sans-serif;box-shadow:0 4px 0 rgba(0,0,0,.18),0 6px 16px rgba(0,0,0,.25);
     border:2px solid rgba(29,22,48,.85);opacity:0;transform:scale(.6);transition:opacity .18s,transform .18s;pointer-events:none;white-space:normal}
   .kin-say.on{opacity:1;transform:scale(1)}
-  .kin-face{display:inline-block;width:26px;height:26px;margin:-4px 6px -8px -4px;vertical-align:baseline;background:url(images/kinyonga-faces.webp?v=6) 0 0/208px 26px no-repeat}
   .kin-fx{position:absolute;font-size:20px;line-height:1;pointer-events:none;animation:kinFx 1.4s ease-out forwards}
   @keyframes kinFx{0%{opacity:0;transform:translate(0,0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-70px) scale(1.15)}}
   @media (prefers-reduced-motion:reduce){.kin-fx{animation:none;opacity:0}}
@@ -134,7 +127,7 @@
     const hh = K.H * K.zoom;
     const key = kind + idx + '/' + hh.toFixed(1);
     if (key === K.frameKey) return; K.frameKey = key;
-    const m = kind === 'm' ? MOVES : kind === 'f' ? FRONT : kind === 'b' ? BRAIN : kind === 't' ? THEMES : POSES;
+    const m = kind === 'm' ? MOVES : kind === 'f' ? FRONT : kind === 'k' ? COS : POSES;
     const k = hh / m.h, s = K.spr.style;
     const c = idx % m.cols, r = Math.floor(idx / m.cols);
     s.width = m.cell[0] * k + 'px'; s.height = m.cell[1] * k + 'px';
@@ -165,8 +158,6 @@
   function say(text, ms, face) {
     if (!text) return;
     const b = K.bubble; b.textContent = text; b.style.background = pick(BUBBLE);
-    const fi = face && K.facesReady ? FACES.names.indexOf(face) : -1;
-    if (fi >= 0) { const i = document.createElement('i'); i.className = 'kin-face'; i.style.backgroundPosition = (-fi * 26) + 'px 0'; b.prepend(i); }
     b.classList.add('on'); placeBubble();
     clearTimeout(K.sayT); K.sayT = setTimeout(() => b.classList.remove('on'), ms || 2200);
   }
@@ -239,11 +230,11 @@
       },
       draw(d) { if (d.hard) moveFrame('fall', Math.min(5, Math.floor(K.st / 2.6 * 6))); else moveFrame('jump', K.st < .11 ? 6 : 7); }
     },
-    sit: { update(dt, d) { return K.st * 1000 >= (d.ms || 6000); }, draw() { frame('p', POSES.index.sit); } },
+    sit: { update(dt, d) { return K.st * 1000 >= (d.ms || 6000); }, draw() { frame('f', FRONT.index.calm); } },
     sleep: {
       enter(d) { d.z = .8; },
       update(dt, d) { if (K.st > d.z) { d.z = K.st + 1.9; effect('z', 1, ['#60a5fa', '#3b82f6']); } return false; },
-      draw() { if (K.brainReady && K.ground && K.ground.kind === 'floor') frame('b', BRAIN.index.sleeprock); else frame('f', FRONT.index.sleep); }
+      draw() { frame('f', FRONT.index.sleep); }
     },
     talk: {           // mouth open / closed while the bubble is on
       enter(d) { say(d.text, d.ms); },
@@ -278,9 +269,10 @@
       exit() { K.zoom = 1; K.shake = 0; K.face = K.face; },
       draw() {
         const t = K.st;
-        if (t < 3) frame('f', FRONT.index.angry);
+        if (t < 1.2) frame('f', FRONT.index.grumpy);
+        else if (t < 3) frame('f', FRONT.index.angry);
         else if (t < 4.4) frame('f', FRONT.index.tease);
-        else frame('f', FRONT.index.cute);
+        else frame('f', FRONT.index.shy);
       }
     },
     dragged: {
@@ -390,7 +382,7 @@
     if (onLetters() && t - K.onBoardSince > 6000) { act('offLetters', [{ go: pick(['r0', 'floor']), x: K.x }]); return; }   // words stay readable
     if (idle > SLEEP_AFTER) { act('sleep', [{ do: 'sleep' }]); return; }
     if (idle > ATTENTION_AFTER && last() !== 'attention' && last() !== 'sleep') {         // the player is quiet: come closer, wave
-      act('attention', [{ go: 'floor', x: clamp(K.W / 2 + rnd(-1, 1) * K.H, minX(), maxX()) }, P('megaphone', 2000, pick(SAY.attention), { face: 'happy' })]); return;
+      act('attention', [{ go: 'floor', x: clamp(K.W / 2 + rnd(-1, 1) * K.H, minX(), maxX()) }, P('wave', 2000, pick(SAY.attention))]); return;
     }
     if (t >= BR.hintNext && ((t - K.lastFind > 28000 && idle < 9000) || K.wrongStreak >= 3)) { if (hintStep()) return; }
     const here = K.ground;
@@ -402,15 +394,16 @@
       }],
       ['boxes', K.grid ? .9 : 0, () => {           // up onto a row of boxes for a little while
         const r = Math.max(1, Math.floor(rnd(K.grid.n * .4, K.grid.n))), p = platById('r' + r);
-        return [{ go: 'r' + r, x: clamp(K.x, p.x0 + K.H, p.x1 - K.H) }, { do: 'pose', kind: 'm', anim: 'react', idx: 6, ms: 1600 }, { go: pick(['r0', 'floor']), x: K.x }];
+        return [{ go: 'r' + r, x: clamp(K.x, p.x0 + K.H, p.x1 - K.H) }, P('binoculars', 2200, Math.random() < .4 ? 'Naona mbali kutoka hapa!' : ''), { go: pick(['r0', 'floor']), x: K.x }];
       }],
       ['hop', .7, () => [{ call: () => jumpTo(here, clamp(K.x + K.face * K.H * .4, here.x0 + 4, here.x1 - 4)) }]],
-      ['wink', 1, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 6, ms: 1500 }]],
-      ['thumbs', .8, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 3, ms: 1800 }]],
+      ['wink', 1, () => [P('heartwink', 1800)]],
+      ['thumbs', .8, () => [P(pick(['thumbs', 'thumbsup', 'cool']), 2000)]],
       ['chat', 1, () => [{ do: 'talk', text: t - K.lastChat > 15000 ? (K.lastChat = t, pick(SAY.chat)) : '', ms: 2200 }]],
       ['sit', .7, () => [{ do: 'sit', ms: rnd(4000, 7000) }]],
-      ['hobby', K.themesReady ? 2 : 0, () => { const n = pickHobby(); return [T(n, rnd(4200, 5600), Math.random() < .6 ? HOBBY_SAY[n] : '', { face: 'happy' })]; }],
-      ['wave', .6, () => [{ do: 'pose', kind: 'm', anim: 'idle', idx: 0, ms: 1600 }]],
+      ['hobby', 1.6, () => { const n = pickHobby(); return [T(n, rnd(4200, 5600), Math.random() < .6 ? HOBBY_SAY[n] : '', { face: 'happy' })]; }],
+      ['wave', .6, () => [P('wave', 1800)]],
+      ['calm', 1, () => [P(pick(['calm', 'shy', 'music']), rnd(3000, 4500))]],
       ['stumble', t - K.lastTumble > 90000 ? .35 : 0, () => { K.lastTumble = t; return [{ do: 'play', anim: 'fall', fps: 3.1, ms: 2600, hold: true, text: pick(SAY.tumble) }, { do: 'talk', text: pick(SAY.up), ms: 1400 }]; }]
     ].filter(o => o[1] > 0 && !K.lastActs.includes(o[0]));
     let sum = options.reduce((s, o) => s + o[1], 0), r = Math.random() * sum, ch = options[0];
@@ -470,32 +463,35 @@
     if (!h) return v + ', katikati';
     return (v ? v + ', ' : '') + 'upande wa ' + h;
   }
-  // a pose from the new sheets (brain first, then themes); falls back to a reaction picture
+  const POSE_OF = { laugh: 'laugh', heart: 'heartwink', celebrate: 'party', trophy: 'star', playsign: 'wave', chest: 'star', star: 'star', gift: 'jumpwave',
+    compass: 'map', scroll: 'question', megaphone: 'sign', flag: 'party', bulb: 'bulb' };
   function P(name, ms, text, extra) {
-    let kind = null, idx = 0;
-    if (K.brainReady && BRAIN.index[name] != null) { kind = 'b'; idx = BRAIN.index[name]; }
-    else if (K.themesReady && THEMES.index[name] != null) { kind = 't'; idx = THEMES.index[name]; }
-    return Object.assign(kind ? { do: 'pose', kind, idx, ms, text } : { do: 'pose', kind: 'm', anim: 'react', idx: 3, ms, text }, extra || {});
+    const e = Object.assign({}, extra || {}); delete e.face;
+    if (COS.index[name] != null && FRONT.index[name] == null) return Object.assign({ do: 'pose', kind: 'k', idx: COS.index[name], ms, text }, e);
+    const idx = FRONT.index[POSE_OF[name] || name];
+    return Object.assign(idx != null ? { do: 'pose', kind: 'f', idx, ms, text } : { do: 'pose', kind: 'f', idx: FRONT.index.wave, ms, text }, e);
   }
-  function T(name, ms, text, extra) {          // themes first (hobbies and costumes)
-    if (K.themesReady && THEMES.index[name] != null) return Object.assign({ do: 'pose', kind: 't', idx: THEMES.index[name], ms, text }, extra || {});
-    return P(name, ms, text, extra);
-  }
-  const CAT_POSES = { CHAKULA: ['chef'], JIKONI: ['chef'], MATUNDA: ['chef', 'garden'], MBOGA: ['garden', 'chef'], SOKONI: ['chef', 'map'], BUSTANI: ['garden'],
-    MICHEZO: ['football'], MUZIKI: ['guitar'], KAZI: ['builder'], TEKNOLOJIA: ['scientist', 'camera'], SHULE: ['read', 'graduate'], RANGI: ['painter'],
-    WANYAMA: ['monkey', 'binoculars', 'camera'], MIFUGO: ['monkey'], NDEGE: ['parrot', 'binoculars'], WADUDU: ['butterfly', 'magnify'], BAHARI: ['binoculars'],
-    ANGA: ['binoculars'], USAFIRI: ['map', 'compass'], MIJI: ['map', 'camera'], NCHI: ['map', 'compass'], FAMILIA: ['heart'], HISIA: ['heart'], SALAMU: ['wave'],
-    MAVAZI: ['cool'], METHALI: ['read', 'scroll'], SIFA: ['star'], NYUMBANI: ['read'], NAMBA: ['scientist'] };
-  const HOBBY_SAY = { chef: 'Nitapika chakula kitamu! 🍲', garden: 'Namwagilia mmea wangu 🌱', football: 'Goli! ⚽', guitar: 'La la la! 🎵', builder: 'Ninajenga nyumba! 🔨',
-    scientist: 'Jaribio la sayansi! 🧪', camera: 'Tabasamu! 📸', read: 'Ninasoma kitabu 📖', graduate: 'Nimehitimu! 🎓', painter: 'Ninachora picha 🎨',
-    monkey: 'Tumbili ni rafiki yangu! 🐒', binoculars: 'Naona mbali sana! 🔭', parrot: 'Kasuku anasema habari! 🦜', butterfly: 'Kipepeo mzuri! 🦋',
-    magnify: 'Ninachunguza… 🔍', map: 'Tuko wapi sasa? 🗺️', compass: 'Kaskazini iko huku! 🧭', heart: 'Nakupenda, rafiki! ❤️', wave: 'Habari yako!',
-    cool: 'Mimi ni maridadi! 😎', scroll: 'Methali nzuri!', star: 'Wewe ni nyota! ⭐', knight: 'Mimi ni shujaa! 🛡️', santa: 'Heri ya Krismasi! 🎁' };
-  const GENERAL_HOBBIES = ['read', 'camera', 'butterfly', 'guitar', 'binoculars', 'garden', 'painter', 'cool', 'heart', 'parrot', 'monkey'];
+  const T = P;
+  const CAT_POSES = { CHAKULA: ['chef'], JIKONI: ['chef'], MATUNDA: ['garden', 'chef'], MBOGA: ['garden'], BUSTANI: ['garden'], SOKONI: ['chef', 'tourist'],
+    MICHEZO: ['football', 'basketball'], MUZIKI: ['guitar', 'drum', 'rocker'], KAZI: ['builder', 'doctor', 'pilot', 'miner'], TEKNOLOJIA: ['astronaut', 'scientist'],
+    SHULE: ['graduate'], WANYAMA: ['binoculars2', 'camera', 'photo'], MIFUGO: ['cowboy'], NDEGE: ['binoculars2'], WADUDU: ['magnify2'],
+    BAHARI: ['diver', 'fish', 'surf', 'pirate'], ANGA: ['astronaut', 'pilot'], USAFIRI: ['pilot', 'map2', 'hiker'], MIJI: ['tourist', 'camera'],
+    NCHI: ['maasai', 'map2'], MAVAZI: ['tourist', 'cowboy', 'wizard'], SIKU: ['birthday'], FAMILIA: ['birthday'], SALAMU: ['waveexp'],
+    NYUMBANI: ['garden'], NAMBA: ['scientist'], SIFA: ['superhero', 'knight'], METHALI: ['detective', 'wizard'], MCHANGANYIKO: ['ninja', 'samurai', 'superhero'],
+    MWILI: ['doctor'], HISIA: ['heartwink'], RANGI: ['rocker'] };
+  const HOBBY_SAY = { chef: 'Nitapika chakula kitamu! 🍕', garden: 'Namwagilia mmea wangu 🌱', football: 'Goli! ⚽', basketball: 'Ndani ya kikapu! 🏀',
+    guitar: 'La la la! 🎸', drum: 'Dum dum dum! 🥁', rocker: 'Rock na roll! 🤘', builder: 'Ninajenga! 🔧', doctor: 'Daktari Kinyonga yuko hapa! 🩺',
+    pilot: 'Tunaruka angani! ✈️', miner: 'Natafuta dhahabu! ⛏️', astronaut: 'Safari ya mwezini! 🚀', scientist: 'Jaribio la sayansi! 🧪', graduate: 'Nimehitimu! 🎓',
+    binoculars2: 'Naona wanyama mbali! 🔭', camera: 'Tabasamu! 📸', photo: 'Picha nzuri! 📷', cowboy: 'Yiihaa! 🤠', magnify2: 'Ninachunguza… 🔍',
+    diver: 'Chini ya bahari! 🐠', fish: 'Nimevua samaki! 🐟', surf: 'Mawimbi makubwa! 🏄', pirate: 'Ahoy! Hazina iko wapi? 🏴‍☠️', map2: 'Tuko wapi sasa? 🗺️',
+    hiker: 'Twende safari! 🎒', tourist: 'Likizo njema! 😎', maasai: 'Karibu Tanzania! 🇹🇿', spear: 'Mimi ni shujaa!', wizard: 'Abrakadabra! ✨',
+    birthday: 'Sherehe! 🎉', waveexp: 'Habari yako!', superhero: 'Shujaa Kinyonga! 💪', knight: 'Mimi ni shujaa! 🛡️', detective: 'Nina fununu… 🔎',
+    ninja: 'Hii! Ninja! 🥷', samurai: 'Kiaa!', santa: 'Heri ya Krismasi! 🎁', winter: 'Baridi sana! ⛄', beach: 'Maji ya nazi! 🥥', heartwink: 'Nakupenda, rafiki! ❤️' };
+  const GENERAL_HOBBIES = ['camera', 'guitar', 'garden', 'fish', 'football', 'chef', 'detective', 'photo', 'beach', 'hiker', 'binoculars2', 'drum', 'map2'];
   function pickHobby() {
     const own = CAT_POSES[category()] || [];
     let pool = Math.random() < .6 && own.length ? own : GENERAL_HOBBIES;
-    if (new Date().getMonth() === 11 && Math.random() < .3) pool = ['santa'];
+    const mon = new Date().getMonth(); if (mon === 11 && Math.random() < .35) pool = ['santa', 'winter'];
     pool = pool.filter(n => n !== K.lastHobby); const n = pick(pool.length ? pool : GENERAL_HOBBIES); K.lastHobby = n; return n;
   }
 
@@ -592,10 +588,10 @@
       };
       addEventListener('pointerup', up); addEventListener('pointercancel', up);
       let n = 0; const need = [MOVES.url, FRONT.url, POSES.url];
+      { const ci = new Image(); ci.src = COS.url; }
       const done = () => { if (++n === need.length) {
         K.ready = true; layout(); K.ground = floor(); K.y = floor().y; K.x = rnd(minX(), K.W * .3); setState('idle');
         layer.style.visibility = ''; loop();
-        [[BRAIN.url, 'brainReady'], [THEMES.url, 'themesReady'], [FACES.url, 'facesReady']].forEach(([u, f]) => { const im = new Image(); im.onload = () => { K[f] = true; }; im.src = u; });
       } };
       need.forEach(u => { const im = new Image(); im.onload = done; im.onerror = done; im.src = u; });
       addEventListener('resize', () => layout());
@@ -605,7 +601,7 @@
     activity(fromEvent) {
       K.lastTouch = now();
       if (!K.ready || K.drag) return;
-      if (K.state === 'sleep') { setState('idle', { soft: true, wait: 0 }); if (!fromEvent) plan([{ do: 'pose', kind: 'm', anim: 'react', idx: 4, ms: 1100, text: 'Lo! Nimeamka!' }], true); }
+      if (K.state === 'sleep') { setState('idle', { soft: true, wait: 0 }); if (!fromEvent) plan([P('yawn', 1600, 'Aah… nimeamka!')], true); }
       if (fromEvent) return;
       if (overLetters() && K.state !== 'angry') {        // the player works on the letters: he fades and gets out of the way
         ghost(true); K.ghostHold = true; clearTimeout(K.ghostT);
@@ -635,7 +631,7 @@
       else if (BR.streak >= 3) step = P('cool', 2000, 'Moto moto! Uko kasi! 🔥', { face: 'cool' });
       else if (word && word.length >= 7) step = P('star', 2000, 'Neno refu! Hodari! ⭐', { face: 'happy' });
       else if (BR.found === 1) step = P('laugh', 1700, 'Mwanzo mzuri!', { face: 'laughing' });
-      else step = { do: 'play', anim: 'celebrate', fps: 10, ms: 1700, text: pick(SAY.correct) };
+      else step = P(pick(['party', 'jumpwave', 'thumbs', 'star', 'thumbsup']), 1800, pick(SAY.correct));
       if (word === BR.hintWord) BR.hintWord = null;
       BR.hintStage = 0; BR.hintNext = t + 12000;
       react([step]);
@@ -651,7 +647,7 @@
       else if (kind === 'long') step = P('question', 2000, 'Umezidi kidogo!', { face: 'oh' });
       else if (kind === 'close') step = P('question', 2000, 'Umekaribia sana!', { face: 'thinking' });
       else if (K.wrongStreak >= 3) { step = P('sad', 2200, 'Usijali, tutaipata pamoja!', { face: 'worried' }); BR.hintNext = now() + 2500; }
-      else step = { do: 'play', anim: 'tease', fps: 9, ms: 1700, text: pick(SAY.wrong) };
+      else step = P(pick(['tease', 'laugh', 'gasp']), 1800, pick(SAY.wrong));
       K.lastWrongKind = kind;
       react([step]);
     },
@@ -663,11 +659,11 @@
       const step = lvl && lvl % 10 === 0 ? P('celebrate', 2600, `Viwango ${lvl}! Hongera sana! 🎉`, { face: 'happy' })
         : m.wins > 3 && avg && time < avg * .75 ? P('trophy', 2600, 'Haraka sana! Bingwa! 🏆', { face: 'happy' })
         : P('flag', 2400, pick(SAY.win), { face: 'happy' });
-      react([{ call: () => { if (K.ground) jumpTo(K.ground, K.x); } }, step], 3500);
+      react([{ call: () => { if (K.ground) jumpTo(K.ground, K.x); } }, step, P('jumpwave', 1500)], 3500);
     },
     boardDown(e) { return !!(K.press && K.press.id === e.pointerId); },
     // exposed for tests
-    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }, _BR: BR, _hintStep: () => hintStep(), _analyse: analyse
+    _K: K, _go: (id, x) => { setState('idle', { soft: true, wait: 0 }); plan([{ go: id, x }], true); }, _plats: () => K.plats, _hint: () => hintVisit(), _over: () => overLetters(), _setState: setState, _quiet: ms => { K.quietUntil = now() + ms; }, _BR: BR, _hintStep: () => hintStep(), _analyse: analyse, _idx: (k, n) => (k === 'k' ? COS.index : FRONT.index)[n]
   };
 
   function onBody(px, py) {
@@ -683,14 +679,17 @@
     if (!K.ready || K.state === 'angry') return;
     K.lastTouch = now();
     try { K.host.sfx && K.host.sfx.select && K.host.sfx.select(); } catch (_) {}
-    if (K.state === 'sleep') { setState('idle', { soft: true, wait: 0 }); plan([{ do: 'pose', kind: 'm', anim: 'react', idx: 4, ms: 1100, text: 'Lo! Nimeamka!' }], true); return; }
+    if (K.state === 'sleep') { setState('idle', { soft: true, wait: 0 }); plan([P('yawn', 1600, 'Aah… nimeamka!')], true); return; }
     const t = now();
     K.tapTimes = K.tapTimes.filter(x => t - x < 12000); K.tapTimes.push(t);
     if (K.tapTimes.length >= 5 && t - K.lastAngry > 15000 && !isAir() && K.state !== 'land') {   // tapped again and again: cross, right where he is
       K.lastAngry = t; K.tapTimes = []; K.plan = []; K.pending = null; setState('angry'); return;
     }
-    const i = pick([0, 1, 2, 3, 5, 6].filter(v => v !== K.lastTapPose)); K.lastTapPose = i;
-    react([{ do: 'pose', kind: 'm', anim: 'react', idx: i, ms: 1700, text: pick(SAY.tap) }], 1700);
+    const i = pick([0, 1, 2, 3, 4, 5, 6, 7].filter(v => v !== K.lastTapPose)); K.lastTapPose = i;
+    const TAP = [['shy', 'Hihi! Umenipata!'], ['inlove', 'Nakupenda!'], ['laugh', 'Hehe! Unanicheka?'], ['gasp', 'Lo! Umenishtua!'], ['cool', 'Poa sana!'],
+      ['heartwink', 'Wewe ni rafiki yangu!'], ['tease', 'Bleee! 😛'], ['jumpwave', 'Juu! Juu!']];
+    const [tp, tt] = TAP[i % TAP.length];
+    react([P(tp, 1800, tt)], 1800);
   }
   function startDrag(px, py, id) {
     K.plan = []; K.pending = null; K.zoom = 1; ghost(false); K.ghostHold = false;
