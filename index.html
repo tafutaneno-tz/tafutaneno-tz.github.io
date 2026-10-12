@@ -464,7 +464,7 @@ html.lite .overlay{background:rgba(20,8,40,.82)!important}
 <div class="sheet" id="sheet"><div class="sheet-card" id="sheetCard"></div></div>
 
 <script src="haraka.js?v=2"></script>
-<script src="kinyonga.js?v=22"></script>
+<script src="kinyonga.js?v=23"></script>
 <script>
 /* ---------- Levels (placeholder word pool — to be replaced with Neno's pool) ---------- */
 const LEVELS = [
@@ -1218,16 +1218,16 @@ function endSel(){
     if(!maanaTip){ let t=null; try{ t=localStorage.getItem('tn_maanatip'); }catch(_){}
       if(!t){ maanaTip=true; try{ localStorage.setItem('tn_maanatip','1'); }catch(_){} setTimeout(()=>toast('📖 Gusa neno ulilopata kuona maana yake'),1400); } else maanaTip=true; }
     if(navigator.vibrate) try{navigator.vibrate(25)}catch(_){}
-    if(foundCount===words.length) setTimeout(showWin,1250); else { sfx.correct(); kin('onCorrect'); }
+    if(foundCount===words.length) setTimeout(showWin,1250); else { sfx.correct(); kin('onCorrect', w.w); }
     stopHand(); clearHint();
   }else{
     const dead=tempCap; lightPath([]);
     const again=words.find(w=>w.found&&(w.w===str||w.w===rev));
     const bw = cells.length>=3 ? (DICT.has(str)?str:DICT.has(rev)?rev:null) : null;
-    if(again){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Umeshalipata neno hili!'); sfx.wrong(); }
+    if(again){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Umeshalipata neno hili!'); sfx.wrong(); kin('onRepeat'); }
     else if(bw && bonus.has(bw)){ dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); toast('Tayari ni neno lako la ziada ⭐'); }
-    else if(bw){ addBonus(bw); dead.classList.add('gold'); setTimeout(()=>dead.remove(),900); sfx.bonus(); kin('onBonus'); }
-    else if(cells.length>1){ dead.classList.remove('temp'); dead.classList.add('bad'); setTimeout(()=>dead.remove(),720); sfx.wrong(); kin('onWrong');
+    else if(bw){ addBonus(bw); dead.classList.add('gold'); setTimeout(()=>dead.remove(),900); sfx.bonus(); kin('onBonus', bw); }
+    else if(cells.length>1){ dead.classList.remove('temp'); dead.classList.add('bad'); setTimeout(()=>dead.remove(),720); sfx.wrong(); kin('onWrong', {str, cells});
       cells.forEach(([r,c])=>{ const e=cellEl(r,c); e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); setTimeout(()=>e.classList.remove('shake'),460); });
       if(navigator.vibrate) try{navigator.vibrate(60)}catch(_){} }
     else { dead.classList.add('fail'); setTimeout(()=>dead.remove(),360); }
@@ -1830,6 +1830,10 @@ if(window.Kinyonga) Kinyonga.init({
   hintCell: ()=>{ const w=words && words.find(x=>!x.found); return w ? w.cells[0] : null; },
   // first letters of the words still hidden (Kinyonga walks to one of them and points at it)
   starts: ()=> words ? words.filter(x=>!x.found).map(x=>x.cells[0]) : [],
+  // the whole puzzle, for Kinyonga's thinking (hints, close tries, how many words are left)
+  words: ()=> words ? words.map(x=>({w:x.w, cells:x.cells, found:!!x.found})) : [],
+  category: ()=> (typeof L!=='undefined' && L) ? (levelType()==='methali' ? 'METHALI' : L.cat) : '',
+  levelNo: ()=> mode==='daily' ? 0 : levelIdx+1,
   flashCell: (r,c)=>{ const e=cellEl(r,c); if(!e) return; e.classList.remove('kin-flash'); void e.offsetWidth; e.classList.add('kin-flash'); setTimeout(()=>e.classList.remove('kin-flash'),2600); },
   // things it must never take touches from
   protect: ()=>['homeBtn','bonusBtn','musicBtnGame','hintBtn'].map(id=>$(id)).filter(Boolean).map(e=>e.getBoundingClientRect()),
