@@ -21,7 +21,8 @@
   const META = {
     cell: [176, 140], charPx: 112,                 // side frames: character ~106px tall inside a 176×140 cell
     anim: { cols: 12, url: 'images/kinyonga-anim.webp?v=' + VER, seq: { jump: [21, 22, 23, 24, 25, 26, 27, 28, 29] } },
-    walk: { cols: 8, n: 8, stride: 40, url: 'images/kinyonga-walk.webp?v=' + VER },   // side walking cycle; stride = ground per cycle (sheet px)
+    walk: { cols: 8, n: 8, stride: 40, url: 'images/kinyonga-walk.webp?v=' + VER },
+    walk2: { cols: 4, n: 4, stride: 48, url: 'images/kinyonga-walk2.webp?v=' + VER },   // drawn step: passing, lift, stride, land   // side walking cycle; stride = ground per cycle (sheet px)
     front: { cols: 8, cell: [250, 210], foot: 6, h: 188, url: 'images/kinyonga-front.webp?v=' + VER, index: {
       wave: 0, thumbs: 1, cheer: 2, yay: 3, stepL: 4, stepR: 5, dash: 6, hello: 7, wide: 8, love: 9, kiss: 10, inlove: 11,
       idea: 12, oh: 13, magnify: 14, map: 15, question: 16, think: 17, cool: 18, hi: 19, fall: 20, slip: 21, cry: 22, sob: 23,
@@ -115,13 +116,15 @@
       s.backgroundPosition = `${-c * f.cell[0] * df}px ${-r * f.cell[1] * df}px`;
       return;
     }
-    const m = kind === 'a' ? META.anim : kind === 'w' ? META.walk : kind === 'c' ? META.close : META.poses, k = kind === 'p' ? 1.2 : 1;
+    const m = kind === 'a' ? META.anim : kind === 'w' ? META.walk : kind === 'v' ? META.walk2 : kind === 'c' ? META.close : META.poses, k = kind === 'p' ? 1.2 : 1;
     const c = idx % m.cols, r = Math.floor(idx / m.cols);
     s.backgroundImage = `url(${m.url})`;
     s.backgroundSize = `${m.cols * CW * d * k}px auto`;
     s.backgroundPosition = `${-c * CW * d * k}px ${-r * CH * d * k}px`;
   }
   const S = () => K.depth * K.zoom;
+  // which walking pictures to use: the drawn steps, else the leg-swing cycle, else the front steps
+  const WALK = () => (K.walk2Ready && !K.forceWalk1) ? META.walk2 : K.walkReady ? META.walk : { stride: 40 };
   function place() {
     const sc = S(), feet = K.ground + K.sink;
     const top = feet - K.h - K.y;
@@ -261,7 +264,7 @@
         // real walking: the legs swing through an 8-picture cycle and the body moves exactly as far as the
         // foot on the ground pushes it – so the feet never slide and he never leaves the ground
         const T = (a.stepMs || STEP.ms) * 2 / 1000;                 // one cycle = two steps
-        const stride = META.walk.stride * K.d * K.depth;
+        const stride = WALK().stride * K.d * K.depth;
         const dx = a.x1 - K.x, dg = a.g1 - K.ground, d = Math.hypot(dx, dg), mv = stride / T * dt;
         if (Math.abs(dx) > 1) K.face = Math.sign(dx);
         if (d <= mv) { K.x = a.x1; K.ground = a.g1; done = true; }
@@ -289,7 +292,7 @@
     } else if (a.type === 'zoom') {
       if (a.z0 === undefined) a.z0 = K.zoom;
       const p = Math.min(1, a.t / (a.ms / 1000)), e = ease(p);
-      K.zoom = a.z0 + (a.to - a.z0) * e; K.sink = (K.zoom - 1) * K.charH * .42;
+      K.zoom = a.z0 + (a.to - a.z0) * e; K.sink = (K.zoom - 1) * K.charH * (a.sinkK != null ? a.sinkK : .42);
       if (a.walking) { K.lift = 0; K.stepN = Math.floor(a.t / .3); }      // stepping towards / away from the camera
       if (p >= 1) { K.zoom = a.to; if (a.to === 1) K.sink = 0; done = true; }
     } else if (a.type === 'call') {    // decides the next steps at the moment it runs
@@ -308,7 +311,7 @@
   function frameFor(a) {
     if (!a) return front(K.idlePose);
     if (a.type === 'zoom' && a.walking) return front(K.stepN % 2 ? 'stepR' : 'stepL');
-    if (a.type === 'walk' || (a.type === 'leap' && a.step)) return K.walkReady ? ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n] : front(((K.walkPh || 0) % 1 + 1) % 1 < .5 ? 'stepL' : 'stepR');
+    if (a.type === 'walk' || (a.type === 'leap' && a.step)) { const ph = (((K.walkPh || 0) % 1) + 1) % 1, m = WALK(); return m === META.walk2 ? ['v', Math.floor(ph * m.n) % m.n] : m === META.walk ? ['w', Math.floor(ph * m.n) % m.n] : front(ph < .5 ? 'stepL' : 'stepR'); }
     if (a.type === 'leap') {        // hop: arms up on the way up, happy face on the way down
       const p = a.t / (a.ms / 1000);
       return front(p < .5 ? 'jumpjoy' : 'yay');
@@ -564,7 +567,8 @@
       const need = [META.front.url, META.poses.url];
       let n = 0; const done = () => { if (++n === need.length) { K.ready = true;
           const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url;
-          const wk = new Image(); wk.onload = () => { K.walkReady = true; }; wk.src = META.walk.url;   /* walking cycle; if it is missing he walks with the front pictures */
+          const wk = new Image(); wk.onload = () => { K.walkReady = true; }; wk.src = META.walk.url;
+          const wk2 = new Image(); wk2.onload = () => { K.walk2Ready = true; }; wk2.src = META.walk2.url;   /* walking cycle; if it is missing he walks with the front pictures */
           K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
       need.forEach(u => { const im = new Image(); im.onload = done; im.onerror = () => { layer.remove(); }; im.src = u; });
       addEventListener('resize', () => layout());
@@ -654,15 +658,27 @@
 
   /* ---------- tapped too much: he walks up to the camera, grows big, looks cross, sticks his tongue out ---------- */
   function angry() {
-    const Z = Math.max(1.8, Math.min(2.5, innerHeight * .3 / K.charH));
-    const cx = innerWidth / 2 - K.w / 2;
+    // right where he is: grows towards the player as much as the screen allows around him
+    const dep = K.depth, h1 = K.charH * dep, W = innerWidth;
+    const atBottom = K.lane === 'bot';
+    const room = (cx) => Math.min(cx, W - cx) / (h1 * .5);              // how big he can get without leaving the sides
+    const upRoom = (K.ground - 16) / (h1 * 1.02);                       // ... or the top of the screen
+    const zMax = Math.min(2.5, atBottom ? 2.5 : upRoom);
+    let cx = K.x + K.w / 2, nudge = null;
+    if (room(cx) < Math.min(1.8, zMax)) {                               // too close to a side: a few steps inwards first
+      const want = h1 * .5 * Math.min(1.8, zMax);
+      cx = Math.max(want, Math.min(W - want, cx));
+      nudge = A.walkTo(cx - K.w / 2, K.ground, atBottom ? 'bot' : 'free', { stepMs: 230 });
+    }
+    const Z = Math.max(1.3, Math.min(zMax, room(cx)));
+    const sinkK = atBottom ? .42 : 0;
     doNow([
       A.pose('oh', 700, { say: 'Acha!', sayMs: 900 }),
-      A.walkTo(cx, K.gBot, 'bot', { stepMs: 230 }),
-      { type: 'zoom', to: Z, ms: 1500, walking: true, onStart: () => { K.face = 1; } },
+      ...(nudge ? [nudge] : []),
+      { type: 'zoom', to: Z, ms: 1400, walking: true, sinkK, onStart: () => { K.face = 1; } },
       A.pose('angry', 2200, { fx: 'angry', hearts: 3, glyph: '💢', say: pick(['Inatosha! Acha kunigusa!', 'Wee! Inatosha!', 'Acha basi!']), sayMs: 2200 }),
       A.pose('tease', 1900, { fx: 'wobble', say: 'Bleee! 😛', sayMs: 1800 }),
-      { type: 'zoom', to: 1, ms: 1100, walking: true, onEnd: () => { K.angry = false; } },
+      { type: 'zoom', to: 1, ms: 1100, walking: true, sinkK, onEnd: () => { K.angry = false; } },
       goHome()
     ], 9000);
     K.angry = true; K.lastAngry = performance.now(); K.tapTimes = [];
