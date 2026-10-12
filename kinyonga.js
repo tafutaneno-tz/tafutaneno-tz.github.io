@@ -21,6 +21,7 @@
   const META = {
     cell: [176, 140], charPx: 112,                 // side frames: character ~106px tall inside a 176×140 cell
     anim: { cols: 12, url: 'images/kinyonga-anim.webp?v=' + VER, seq: { jump: [21, 22, 23, 24, 25, 26, 27, 28, 29] } },
+    walk: { cols: 8, n: 8, stride: 40, url: 'images/kinyonga-walk.webp?v=' + VER },   // side walking cycle; stride = ground per cycle (sheet px)
     front: { cols: 8, cell: [250, 210], foot: 6, h: 188, url: 'images/kinyonga-front.webp?v=' + VER, index: {
       wave: 0, thumbs: 1, cheer: 2, yay: 3, stepL: 4, stepR: 5, dash: 6, hello: 7, wide: 8, love: 9, kiss: 10, inlove: 11,
       idea: 12, oh: 13, magnify: 14, map: 15, question: 16, think: 17, cool: 18, hi: 19, fall: 20, slip: 21, cry: 22, sob: 23,
@@ -113,7 +114,7 @@
       s.backgroundPosition = `${-c * f.cell[0] * df}px ${-r * f.cell[1] * df}px`;
       return;
     }
-    const m = kind === 'a' ? META.anim : kind === 'c' ? META.close : META.poses, k = kind === 'p' ? 1.2 : 1;
+    const m = kind === 'a' ? META.anim : kind === 'w' ? META.walk : kind === 'c' ? META.close : META.poses, k = kind === 'p' ? 1.2 : 1;
     const c = idx % m.cols, r = Math.floor(idx / m.cols);
     s.backgroundImage = `url(${m.url})`;
     s.backgroundSize = `${m.cols * CW * d * k}px auto`;
@@ -223,7 +224,7 @@
   function fx(cls) { const s = K.fxEl; s.classList.remove('kin-fx-bounce', 'kin-fx-shake', 'kin-fx-wobble'); if (!cls || REDUCED) return; void s.offsetWidth; s.classList.add(cls); }
 
   /* ---------- actions ---------- */
-  const STEP = { ms: 460, move: .8 };      // one step: body forward while the foot swings (80%), then the foot is down
+  const STEP = { ms: 270 };                // one step (half a walking cycle)
   function start(a) {
     a.t = 0; a.started = true;
     if (a.type === 'jump') a.x0 = K.x;
@@ -251,20 +252,18 @@
       if (!a.init) {
         a.init = true;
         if (Math.hypot(a.x1 - K.x, a.g1 - K.ground) < 2) { done = true; }
-        else { if (!(a.lane === 'bot' && K.lane === 'bot')) K.lane = 'free'; nextStep(a); }
+        else { if (!(a.lane === 'bot' && K.lane === 'bot')) K.lane = 'free'; }
       }
       if (!done) {
-        const SD = (a.stepMs || STEP.ms) / 1000;
-        a.st += dt;
-        if (a.st >= SD) {                               // foot is down: start the next step or stop
-          K.x = a.tx; K.ground = a.tg; K.stepN++;
-          if (a.last) done = true; else { const over = a.st - SD; nextStep(a); a.st = over; }
-        }
-        if (!done) {
-          const p = a.st / SD;
-          if (p < STEP.move) { const e = ease(p / STEP.move); K.x = a.sx + (a.tx - a.sx) * e; K.ground = a.sg + (a.tg - a.sg) * e; K.lift = 0; }
-          else { K.x = a.tx; K.ground = a.tg; }
-        }
+        // real walking: the legs swing through an 8-picture cycle and the body moves exactly as far as the
+        // foot on the ground pushes it – so the feet never slide and he never leaves the ground
+        const T = (a.stepMs || STEP.ms) * 2 / 1000;                 // one cycle = two steps
+        const stride = META.walk.stride * K.d * K.depth;
+        const dx = a.x1 - K.x, dg = a.g1 - K.ground, d = Math.hypot(dx, dg), mv = stride / T * dt;
+        if (Math.abs(dx) > 1) K.face = Math.sign(dx);
+        if (d <= mv) { K.x = a.x1; K.ground = a.g1; done = true; }
+        else { K.x += dx / d * mv; K.ground += dg / d * mv; }
+        K.walkPh = (K.walkPh || 0) + Math.min(d, mv) / Math.max(1, stride);
       }
       if (K.lane === 'free') { const want = overLetters() ? Math.min(depthAt(K.ground), K.gridDepth * 1.1) : depthAt(K.ground); K.depth += (want - K.depth) * Math.min(1, dt * 5); }
       if (done) { K.x = a.x1; K.ground = a.g1; K.lift = 0; if (a.lane === 'bot') { K.lane = 'bot'; K.depth = 1; K.ground = K.gBot; } else if (a.lane) K.lane = a.lane; }
@@ -305,7 +304,7 @@
   }
   function frameFor(a) {
     if (!a) return front(K.idlePose);
-    if (a.type === 'walk' || (a.type === 'zoom' && a.walking) || (a.type === 'leap' && a.step)) return front(K.stepN % 2 ? 'stepR' : 'stepL');
+    if (a.type === 'walk' || (a.type === 'zoom' && a.walking) || (a.type === 'leap' && a.step)) return ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n];
     if (a.type === 'leap') {        // hop: arms up on the way up, happy face on the way down
       const p = a.t / (a.ms / 1000);
       return front(p < .5 ? 'jumpjoy' : 'yay');
@@ -391,6 +390,17 @@
     return [A.walkTo(h.x, h.g, h.bot ? 'bot' : 'free'), call(routeHome)];
   }
   const goHome = () => call(routeHome);
+  // a few steps away from his place and back, right where the player put him
+  function homeStroll() {
+    const h = K.home; if (!h) return null;
+    for (const dir of Math.random() < .5 ? [1, -1] : [-1, 1]) {
+      const x = clampX(h.x + dir * rnd(.8, 1.6) * K.charH);
+      if (Math.abs(x - h.x) < K.charH * .5 || crossesLetters(x, h.g)) continue;
+      const lane = h.bot ? 'bot' : 'free';
+      return [A.walkTo(x, h.g, lane, { stepMs: 420 }), A.pose(pick(['think', 'magnify', 'hi', 'cute']), 2200), A.walkTo(h.x, h.g, lane, { stepMs: 420 })];
+    }
+    return null;
+  }
 
   function sleepNow() {
     K.sleeping = true; K.nextZ = performance.now() + 900;
@@ -421,6 +431,7 @@
     if (now - K.lastHint > HINT_GAP && ((now - K.lastFind > STRUGGLE && idle < 8000) || K.wrongStreak >= 3)) { if (hintVisit()) return; }
     if (now < K.nextVar) return;              // standing calmly, breathing, looking at the player
     K.nextVar = now + rnd(9000, 15000);
+    if (Math.random() < .4 && !REDUCED) { const st = homeStroll(); if (st) { K.queue.push(...st); return; } }
     const c = pick(CALM)(); c.calm = true; K.queue.push(c);
   }
 
@@ -470,7 +481,7 @@
     K.lastHint = performance.now(); K.wrongStreak = 0; K.onHint = true;
     const entry = [entryRow, nb[1]], colX = clampX(g.left + (nb[1] + .5) * g.cs - K.w / 2);
     const spot = cellPos(nb[0], nb[1]);
-    const list = [A.walkTo(spot.x, spot.g, 'free', { stepMs: 400, say: pick(['Nifuate!', 'Ngoja, nakuonyesha!', 'Nimeona kitu!']), sayMs: 1600, onEnd: () => { K.cell = nb; } })];
+    const list = [A.walkTo(spot.x, spot.g, 'free', { stepMs: 230, say: pick(['Nifuate!', 'Ngoja, nakuonyesha!', 'Nimeona kitu!']), sayMs: 1600, onEnd: () => { K.cell = nb; } })];
     void entry; void colX;
     const tx = g.left + (target[1] + .5) * g.cs;
     list.push(A.pose('point', 3400, { fx: 'bounce', say: pick(['Anza hapa!', 'Neno linaanza hapa!', 'Tazama herufi hii!']), sayMs: 3000,
@@ -487,7 +498,7 @@
     for (let i = 0; i < 3; i++) {
       x = Math.max(ib.left - K.w * .4, Math.min(ib.right - K.w * .6, x + rnd(-1, 1) * K.charH * .9));
       g = Math.max(ib.top + K.charH * .6, Math.min(ib.bottom, g + rnd(-.5, .5) * K.charH));
-      out.push(A.walkTo(x, g, 'free', { stepMs: 720 }), A.pose(pick(['magnify', 'think', 'question']), 1600));
+      out.push(A.walkTo(x, g, 'free', { stepMs: 400 }), A.pose(pick(['magnify', 'think', 'question']), 1600));
     }
     out.push(goHome());
     return out;
@@ -510,10 +521,12 @@
         e.preventDefault(); e.stopPropagation();
         K.press = { id: e.pointerId, x: e.clientX, y: e.clientY };
         try { K.hit.setPointerCapture(e.pointerId); } catch (_) {}
+        const pr = K.press;     // held still for a moment: picked up as well
+        pr.t = setTimeout(() => { if (K.press === pr && !K.drag) { K.press = null; startDrag(pr.x, pr.y, pr.id); } }, 450);
       });
       addEventListener('pointermove', e => {
         if (K.drag && e.pointerId === K.drag.id) { moveDrag(e.clientX, e.clientY); return; }
-        if (K.press && e.pointerId === K.press.id && Math.hypot(e.clientX - K.press.x, e.clientY - K.press.y) > 7) { startDrag(K.press.x, K.press.y, e.pointerId); K.press = null; moveDrag(e.clientX, e.clientY); return; }
+        if (K.press && e.pointerId === K.press.id && Math.hypot(e.clientX - K.press.x, e.clientY - K.press.y) > 7) { clearTimeout(K.press.t); startDrag(K.press.x, K.press.y, e.pointerId); K.press = null; moveDrag(e.clientX, e.clientY); return; }
         // finger on him over the letters and moving: he is picked up (the letter selection under him is cancelled)
         if (K.lp && e.pointerId === K.lp.id && Math.hypot(e.clientX - K.lp.x, e.clientY - K.lp.y) > 7) {
           const lp = K.lp; clearTimeout(lp.t); K.lp = null;
@@ -524,7 +537,7 @@
       const up = e => {
         if (K.ghostHold) { K.ghostHold = false; clearTimeout(K.ghostT); K.ghostT = setTimeout(() => { if (!K.drag && K.lane !== 'grid' && !K.leaping) ghost(false); }, 700); }
         if (K.drag && e.pointerId === K.drag.id) { endDrag(); return; }
-        if (K.press && e.pointerId === K.press.id) { K.press = null; if (e.type === 'pointerup') Kin.tap(); return; }
+        if (K.press && e.pointerId === K.press.id) { clearTimeout(K.press.t); K.press = null; if (e.type === 'pointerup') Kin.tap(); return; }
         if (K.lp && e.pointerId === K.lp.id) { clearTimeout(K.lp.t); K.lp = null; if (e.type === 'pointerup') Kin.tap(); }
       };
       addEventListener('pointerup', up); addEventListener('pointercancel', up);
@@ -544,7 +557,7 @@
         }, 380);
       }, true);
       // the sprite sheets must be loaded before Kinyonga shows up
-      const need = [META.front.url, META.poses.url];
+      const need = [META.front.url, META.poses.url, META.walk.url];
       let n = 0; const done = () => { if (++n === need.length) { K.ready = true;
           const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url; K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
       need.forEach(u => { const im = new Image(); im.onload = done; im.onerror = () => { layer.remove(); }; im.src = u; });
@@ -607,7 +620,7 @@
       if (wake(false)) return;                            // a tap on a sleeping Kinyonga wakes him up
       const now = performance.now();
       // stuck for a while? a tap is a call for help: he shows where a word starts
-      if (!K.onHint && now - K.lastFind > 15000 && now - K.lastHint > 12000 && atHome()) {
+      if (!K.onHint && now - K.lastFind > 15000 && now - K.lastHint > 12000) {
         doNow([A.talk('hi', 1200, 'Nikusaidie? Twende!')], 1200); hintVisit(); return;
       }
       const T = SAY.tap, choices = [
@@ -660,7 +673,7 @@
     if (!bot && overLetters()) { K.queue = strollOnLetters(); return; }     // on the letters: a slow walk, then back home
     K.home = { x: K.x, g: K.ground, bot };                                // anywhere else: this is his new home
     K.face = K.x + K.w / 2 < innerWidth / 2 ? 1 : -1;
-    K.queue = [A.pose('tada', 1800, { fx: 'bounce', say: pick(DROP_SAY), sayMs: 1800 })];
+    K.queue = [A.pose('tada', 1800, { fx: 'bounce', say: pick(DROP_SAY), sayMs: 1800 })].concat(homeStroll() || []);
   }
 
   /* ---------- main loop ---------- */
