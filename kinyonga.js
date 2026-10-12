@@ -626,8 +626,9 @@
       if (wake(false)) return;                            // a tap on a sleeping Kinyonga wakes him up
       if (K.angry) return;
       const tnow = performance.now();
-      K.tapTimes = (K.tapTimes || []).filter(t => tnow - t < 4000); K.tapTimes.push(tnow);
-      if (K.tapTimes.length >= 5 && tnow - (K.lastAngry || -1e9) > 15000 && !REDUCED) { angry(); return; }
+      // five taps within 12 seconds (even when the player waits to watch each reaction): he gets cross
+      K.tapTimes = (K.tapTimes || []).filter(t => tnow - t < 12000); K.tapTimes.push(tnow);
+      if (K.tapTimes.length >= 5 && tnow - (K.lastAngry || -1e9) > 15000) { angry(); return; }
       const now = performance.now();
       const T = SAY.tap, choices = [
         () => [A.pose('shy', 2000, { say: T.shy, hearts: 2 })],
