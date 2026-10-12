@@ -304,7 +304,7 @@
   }
   function frameFor(a) {
     if (!a) return front(K.idlePose);
-    if (a.type === 'walk' || (a.type === 'zoom' && a.walking) || (a.type === 'leap' && a.step)) return ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n];
+    if (a.type === 'walk' || (a.type === 'zoom' && a.walking) || (a.type === 'leap' && a.step)) return K.walkReady ? ['w', Math.floor((((K.walkPh || 0) % 1) + 1) % 1 * META.walk.n) % META.walk.n] : front(((K.walkPh || 0) % 1 + 1) % 1 < .5 ? 'stepL' : 'stepR');
     if (a.type === 'leap') {        // hop: arms up on the way up, happy face on the way down
       const p = a.t / (a.ms / 1000);
       return front(p < .5 ? 'jumpjoy' : 'yay');
@@ -557,9 +557,11 @@
         }, 380);
       }, true);
       // the sprite sheets must be loaded before Kinyonga shows up
-      const need = [META.front.url, META.poses.url, META.walk.url];
+      const need = [META.front.url, META.poses.url];
       let n = 0; const done = () => { if (++n === need.length) { K.ready = true;
-          const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url; K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
+          const cl = new Image(); cl.onload = () => { K.closeReady = true; }; cl.src = META.close.url;
+          const wk = new Image(); wk.onload = () => { K.walkReady = true; }; wk.src = META.walk.url;   /* walking cycle; if it is missing he walks with the front pictures */
+          K.x = rnd(10, 60); layout(); layer.style.visibility = ''; loop(); } };
       need.forEach(u => { const im = new Image(); im.onload = done; im.onerror = () => { layer.remove(); }; im.src = u; });
       addEventListener('resize', () => layout());
       document.addEventListener('visibilitychange', () => { if (!document.hidden) { K.last = 0; loop(); } });
